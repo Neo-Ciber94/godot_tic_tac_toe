@@ -1,9 +1,25 @@
-[gd_scene load_steps=8 format=3 uid="uid://b04esyl8u473x"]
+[gd_scene load_steps=9 format=3 uid="uid://b04esyl8u473x"]
 
 [ext_resource type="Script" path="res://game.gd" id="1_cebgk"]
 [ext_resource type="FontFile" uid="uid://dy04l2c31hyma" path="res://art/Silkscreen-Regular.ttf" id="1_u48lr"]
 [ext_resource type="Script" path="res://mark.gd" id="2_b00uh"]
+[ext_resource type="Texture2D" uid="uid://cbm8yyfsvqone" path="res://art/background.png" id="2_ntjxn"]
 [ext_resource type="Script" path="res://winner.gd" id="4_pv7p2"]
+
+[sub_resource type="Animation" id="Animation_epslx"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
 
 [sub_resource type="Animation" id="Animation_ni2l7"]
 resource_name = "scale_pulse"
@@ -21,21 +37,6 @@ tracks/0/keys = {
 "values": [Vector2(1, 1), Vector2(1.2, 1.2), Vector2(1, 1)]
 }
 
-[sub_resource type="Animation" id="Animation_epslx"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(1, 1)]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_5rwvu"]
 _data = {
 "RESET": SubResource("Animation_epslx"),
@@ -51,13 +52,12 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_cebgk")
 
-[node name="Background" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 1157.0
+offset_bottom = 869.0
+texture = ExtResource("2_ntjxn")
+expand_mode = 5
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 1
