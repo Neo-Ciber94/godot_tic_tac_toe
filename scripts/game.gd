@@ -42,7 +42,7 @@ func has_value(index: int):
 	return get_value(index) != PLACEHOLDER;
 
 func is_game_over():
-	return _winner.is_game_over()
+	return _winner.is_finished()
 
 func set_value(value: String, index: int):
 	_cells[index].draw_mark(value, get_player_color())
@@ -50,9 +50,9 @@ func set_value(value: String, index: int):
 
 	var winner = Utils.check_winner(_slots, PLACEHOLDER);
 			
-	if winner.is_game_over():
+	if winner.is_finished():
 		_winner = winner;
-		print("game finished")
+		print("game finished: ", winner)
 	else:
 		switch_player()
 
