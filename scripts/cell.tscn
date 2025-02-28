@@ -1,0 +1,30 @@
+[gd_scene load_steps=3 format=3 uid="uid://1gokhe2unguc"]
+
+[ext_resource type="Script" path="res://scripts/cell.gd" id="1_l1qra"]
+[ext_resource type="FontFile" uid="uid://dy04l2c31hyma" path="res://art/Silkscreen-Regular.ttf" id="2_bfx8d"]
+
+[node name="Cell" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_l1qra")
+metadata/_edit_group_ = true
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_bfx8d")
+theme_override_font_sizes/font_size = 100
+text = "~"
+horizontal_alignment = 1
+vertical_alignment = 1
