@@ -1,9 +1,9 @@
 [gd_scene load_steps=8 format=3 uid="uid://b04esyl8u473x"]
 
-[ext_resource type="Script" path="res://scripts/game.gd" id="1_fdmr4"]
-[ext_resource type="Texture2D" uid="uid://cbm8yyfsvqone" path="res://art/background.png" id="2_ffisu"]
-[ext_resource type="PackedScene" uid="uid://1gokhe2unguc" path="res://scripts/cell.tscn" id="3_pcv0h"]
-[ext_resource type="FontFile" uid="uid://dy04l2c31hyma" path="res://art/Silkscreen-Regular.ttf" id="4_wgim8"]
+[ext_resource type="Script" path="res://scripts/game.gd" id="1_oghdo"]
+[ext_resource type="Texture2D" uid="uid://cbm8yyfsvqone" path="res://art/background.png" id="2_1sebn"]
+[ext_resource type="PackedScene" uid="uid://1gokhe2unguc" path="res://scenes/cell.tscn" id="3_a0qbr"]
+[ext_resource type="FontFile" uid="uid://dy04l2c31hyma" path="res://art/Silkscreen-Regular.ttf" id="4_kacpf"]
 
 [sub_resource type="Animation" id="Animation_epslx"]
 length = 0.001
@@ -49,7 +49,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_fdmr4")
+script = ExtResource("1_oghdo")
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
@@ -61,7 +61,7 @@ offset_right = 144.0
 offset_bottom = 216.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_ffisu")
+texture = ExtResource("2_1sebn")
 
 [node name="Container" type="Control" parent="."]
 layout_mode = 1
@@ -116,31 +116,31 @@ grow_horizontal = 2
 grow_vertical = 2
 columns = 3
 
-[node name="Cell" parent="Container/GridContainer" instance=ExtResource("3_pcv0h")]
+[node name="Cell" parent="Container/GridContainer" instance=ExtResource("3_a0qbr")]
 layout_mode = 2
 
-[node name="Cell2" parent="Container/GridContainer" instance=ExtResource("3_pcv0h")]
+[node name="Cell2" parent="Container/GridContainer" instance=ExtResource("3_a0qbr")]
 layout_mode = 2
 
-[node name="Cell3" parent="Container/GridContainer" instance=ExtResource("3_pcv0h")]
+[node name="Cell3" parent="Container/GridContainer" instance=ExtResource("3_a0qbr")]
 layout_mode = 2
 
-[node name="Cell4" parent="Container/GridContainer" instance=ExtResource("3_pcv0h")]
+[node name="Cell4" parent="Container/GridContainer" instance=ExtResource("3_a0qbr")]
 layout_mode = 2
 
-[node name="Cell5" parent="Container/GridContainer" instance=ExtResource("3_pcv0h")]
+[node name="Cell5" parent="Container/GridContainer" instance=ExtResource("3_a0qbr")]
 layout_mode = 2
 
-[node name="Cell6" parent="Container/GridContainer" instance=ExtResource("3_pcv0h")]
+[node name="Cell6" parent="Container/GridContainer" instance=ExtResource("3_a0qbr")]
 layout_mode = 2
 
-[node name="Cell7" parent="Container/GridContainer" instance=ExtResource("3_pcv0h")]
+[node name="Cell7" parent="Container/GridContainer" instance=ExtResource("3_a0qbr")]
 layout_mode = 2
 
-[node name="Cell8" parent="Container/GridContainer" instance=ExtResource("3_pcv0h")]
+[node name="Cell8" parent="Container/GridContainer" instance=ExtResource("3_a0qbr")]
 layout_mode = 2
 
-[node name="Cell9" parent="Container/GridContainer" instance=ExtResource("3_pcv0h")]
+[node name="Cell9" parent="Container/GridContainer" instance=ExtResource("3_a0qbr")]
 layout_mode = 2
 
 [node name="Winner" type="Label" parent="."]
@@ -158,7 +158,7 @@ grow_horizontal = 2
 grow_vertical = 0
 pivot_offset = Vector2(184, 81)
 theme_override_colors/font_color = Color(0.99, 0.0495, 0.6765, 1)
-theme_override_fonts/font = ExtResource("4_wgim8")
+theme_override_fonts/font = ExtResource("4_kacpf")
 theme_override_font_sizes/font_size = 64
 text = "YOU WON!"
 

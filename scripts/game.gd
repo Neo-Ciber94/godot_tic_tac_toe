@@ -44,7 +44,7 @@ func setup_board():
 	for child in grid.get_children():
 			child.queue_free()
 			
-	var cell_scene = preload("res://scripts/cell.tscn");
+	var cell_scene = preload("res://scenes/cell.tscn");
 			
 	for idx in 9:
 		var cell = cell_scene.instantiate();
