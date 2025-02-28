@@ -14,3 +14,10 @@ config/name="tic_tac_toe"
 run/main_scene="res://scripts/game.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
+
+[display]
+
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/size/viewport_width=1280
