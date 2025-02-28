@@ -67,7 +67,7 @@ grow_vertical = 2
 texture = ExtResource("2_ffisu")
 expand_mode = 5
 
-[node name="Control" type="Control" parent="."]
+[node name="Container" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -81,7 +81,7 @@ offset_bottom = 250.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="GridContainer" type="GridContainer" parent="Control"]
+[node name="GridContainer" type="GridContainer" parent="Container"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -90,31 +90,31 @@ grow_horizontal = 2
 grow_vertical = 2
 columns = 3
 
-[node name="Cell" parent="Control/GridContainer" instance=ExtResource("3_pcv0h")]
+[node name="Cell" parent="Container/GridContainer" instance=ExtResource("3_pcv0h")]
 layout_mode = 2
 
-[node name="Cell2" parent="Control/GridContainer" instance=ExtResource("3_pcv0h")]
+[node name="Cell2" parent="Container/GridContainer" instance=ExtResource("3_pcv0h")]
 layout_mode = 2
 
-[node name="Cell3" parent="Control/GridContainer" instance=ExtResource("3_pcv0h")]
+[node name="Cell3" parent="Container/GridContainer" instance=ExtResource("3_pcv0h")]
 layout_mode = 2
 
-[node name="Cell4" parent="Control/GridContainer" instance=ExtResource("3_pcv0h")]
+[node name="Cell4" parent="Container/GridContainer" instance=ExtResource("3_pcv0h")]
 layout_mode = 2
 
-[node name="Cell5" parent="Control/GridContainer" instance=ExtResource("3_pcv0h")]
+[node name="Cell5" parent="Container/GridContainer" instance=ExtResource("3_pcv0h")]
 layout_mode = 2
 
-[node name="Cell6" parent="Control/GridContainer" instance=ExtResource("3_pcv0h")]
+[node name="Cell6" parent="Container/GridContainer" instance=ExtResource("3_pcv0h")]
 layout_mode = 2
 
-[node name="Cell7" parent="Control/GridContainer" instance=ExtResource("3_pcv0h")]
+[node name="Cell7" parent="Container/GridContainer" instance=ExtResource("3_pcv0h")]
 layout_mode = 2
 
-[node name="Cell8" parent="Control/GridContainer" instance=ExtResource("3_pcv0h")]
+[node name="Cell8" parent="Container/GridContainer" instance=ExtResource("3_pcv0h")]
 layout_mode = 2
 
-[node name="Cell9" parent="Control/GridContainer" instance=ExtResource("3_pcv0h")]
+[node name="Cell9" parent="Container/GridContainer" instance=ExtResource("3_pcv0h")]
 layout_mode = 2
 
 [node name="Winner" type="Label" parent="."]
@@ -140,3 +140,25 @@ text = "YOU WON!"
 libraries = {
 "": SubResource("AnimationLibrary_5rwvu")
 }
+
+[node name="Line2D" type="Line2D" parent="."]
+position = Vector2(456, 42)
+points = PackedVector2Array(0, -1, 0, 519)
+default_color = Color(0, 0, 0, 1)
+
+[node name="Line2D" type="Line2D" parent="Line2D"]
+position = Vector2(212, 3)
+points = PackedVector2Array(0, -1, 0, 519)
+default_color = Color(0, 0, 0, 1)
+
+[node name="Line2D2" type="Line2D" parent="Line2D"]
+position = Vector2(351, 194)
+rotation = 1.5708
+points = PackedVector2Array(0, -1, 0, 519)
+default_color = Color(0, 0, 0, 1)
+
+[node name="Line2D3" type="Line2D" parent="Line2D"]
+position = Vector2(359, 343)
+rotation = 1.5708
+points = PackedVector2Array(0, -1, 0, 519)
+default_color = Color(0, 0, 0, 1)
