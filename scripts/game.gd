@@ -2,16 +2,24 @@ extends Node
 
 @onready var grid = $Container/GridContainer
 
+enum Versus {
+	SELF,
+	CPU,
+	ONLINE
+}
+
 const PLACEHOLDER = "~";
+const MARK_X = "x";
+const MARK_O = "o";
+
 const COLOR_UNSET = Color(0, 0, 0, 0.5);
 const COLOR_P1 = Color(1, 0, 0);
 const COLOR_P2 = Color(0, 0, 1);
-const MARK_X = "x";
-const MARK_O = "o";
 
 var _cells : Array[Cell] = [];
 var _slots: Array[String] = [];
 var _winner: Winner = Winner.None();
+var _versus = Versus.SELF;
 
 signal waiting;
 signal on_game_over;
@@ -50,6 +58,15 @@ func setup_board():
 		_connect_to_signals(cell, idx);
 	
 func setup_players():
+	match _versus:
+		Versus.SELF:
+			start_vs_self()
+		Versus.CPU:
+			start_vs_cpu()
+		Versus.ONLINE:
+			start_vs_online();
+	
+func start_vs_self():
 	_players[MARK_O] = HumanPlayer.new()
 	
 	var is_finished = { value = false }
@@ -84,15 +101,18 @@ func setup_players():
 	
 	print("game its over")
 	
+func start_vs_cpu():
+	print("start vs cpu")
+	
+func start_vs_online():
+	print("start vs online")
+	
 func get_value(index: int):
 	return _slots[index]
 
 func has_value(index: int):
 	return get_value(index) != PLACEHOLDER;
-
-func is_game_over():
-	return _winner.is_finished()
-
+	
 func set_value(value: String, index: int):
 	_cells[index].draw_mark(value, get_player_color())
 	_slots[index] = value;
@@ -103,6 +123,9 @@ func set_value(value: String, index: int):
 		print("finished: ", winner)
 		_winner = winner;
 		on_game_over.emit()
+
+func is_game_over():
+	return _winner.is_finished()
 
 func get_player_mark():
 	return current_player.value;
