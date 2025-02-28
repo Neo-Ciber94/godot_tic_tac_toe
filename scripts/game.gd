@@ -24,9 +24,7 @@ var _versus = Versus.SELF;
 signal waiting;
 signal on_game_over;
 	
-var _players = {
-	MARK_X: HumanPlayer.new()
-}
+var _players = {}
 
 var current_player = {
 	value = MARK_X
@@ -67,6 +65,7 @@ func setup_players():
 			start_vs_online();
 	
 func start_vs_self():
+	_players[MARK_X] = HumanPlayer.new()
 	_players[MARK_O] = HumanPlayer.new()
 	
 	var is_finished = { value = false }
@@ -77,15 +76,15 @@ func start_vs_self():
 	)
 
 	while(not is_finished.value):
-		var has_played = false;
+		var has_played = { value = false };
 		var player: Player = _players[current_player.value];
 		print("current player: ", current_player.value)
 		
 		var callable = Callable(func(idx): 
-			if has_played: 
+			if has_played.value: 
 				return;
 				
-			has_played = true;
+			has_played.value = true;
 
 			set_value(current_player.value, idx);
 			waiting.emit()	
@@ -137,7 +136,7 @@ func switch_player():
 	current_player.value = MARK_O if current_player.value == MARK_X else MARK_X;
 
 func _connect_to_signals(cell: Cell, index: int):
-	cell.on_hover.connect(func(cell, is_over): on_cell_hover(cell, is_over, index))
+	cell.on_hover.connect(func(this_cell, is_over): on_cell_hover(this_cell, is_over, index))
 
 func on_cell_hover(cell: Cell, is_over: bool, index: int):
 	if has_value(index) || is_game_over():
