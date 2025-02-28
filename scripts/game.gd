@@ -41,8 +41,8 @@ func get_value(index: int):
 func has_value(index: int):
 	return get_value(index) != PLACEHOLDER;
 
-func is_finished():
-	return _winner.is_finished()
+func is_game_over():
+	return _winner.is_game_over()
 
 func set_value(value: String, index: int):
 	_cells[index].draw_mark(value, get_player_color())
@@ -50,7 +50,7 @@ func set_value(value: String, index: int):
 
 	var winner = Utils.check_winner(_slots, PLACEHOLDER);
 			
-	if winner.is_finished():
+	if winner.is_game_over():
 		_winner = winner;
 		print("game finished")
 	else:
@@ -70,7 +70,7 @@ func _connect_to_signals(cell: Cell, index: int):
 	cell.on_click.connect(func(cell): on_cell_click(cell, index))
 
 func on_cell_hover(cell: Cell, is_over: bool, index: int):
-	if has_value(index) || is_finished():
+	if has_value(index) || is_game_over():
 		return;
 	
 	print("hover: ", index);
@@ -86,7 +86,7 @@ func on_cell_hover(cell: Cell, is_over: bool, index: int):
 func on_cell_click(cell: Cell, index: int):
 	print("click: ", index);
 	
-	if has_value(index) || is_finished():
+	if has_value(index) || is_game_over():
 		return;
 	
 	set_value(get_player_mark(), index);
