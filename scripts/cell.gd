@@ -27,6 +27,3 @@ func draw_mark(mark: String, color: Color):
 
 func get_mark():
 	return label.text;
-	
-func is_set():
-	return get_mark() != Constants.PLACEHOLDER;

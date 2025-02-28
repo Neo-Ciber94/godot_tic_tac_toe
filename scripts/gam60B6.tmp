@@ -81,36 +81,6 @@ offset_bottom = 250.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Grid" type="Control" parent="Container"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Line2D" type="Line2D" parent="Container/Grid"]
-position = Vector2(124, 117)
-points = PackedVector2Array(21, -106, 17, 404)
-default_color = Color(0, 0, 0, 1)
-
-[node name="Line2D2" type="Line2D" parent="Container/Grid"]
-position = Vector2(312, 122)
-points = PackedVector2Array(26, -121, 25, 399)
-default_color = Color(0, 0, 0, 1)
-
-[node name="Line2D3" type="Line2D" parent="Container/Grid"]
-position = Vector2(348, 143)
-rotation = 1.5708
-points = PackedVector2Array(27, -161, 25, 377)
-default_color = Color(0, 0, 0, 1)
-
-[node name="Line2D4" type="Line2D" parent="Container/Grid"]
-position = Vector2(346, 311)
-rotation = 1.5708
-points = PackedVector2Array(26, -165, 23, 377)
-default_color = Color(0, 0, 0, 1)
-
 [node name="GridContainer" type="GridContainer" parent="Container"]
 layout_mode = 1
 anchors_preset = 15
@@ -146,6 +116,36 @@ layout_mode = 2
 
 [node name="Cell9" parent="Container/GridContainer" instance=ExtResource("3_pcv0h")]
 layout_mode = 2
+
+[node name="Grid" type="Control" parent="Container"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Line2D3" type="Line2D" parent="Container/Grid"]
+position = Vector2(348, 143)
+rotation = 1.5708
+points = PackedVector2Array(24, -192, 21, 410)
+default_color = Color(0, 0, 0, 1)
+
+[node name="Line2D4" type="Line2D" parent="Container/Grid"]
+position = Vector2(346, 311)
+rotation = 1.5708
+points = PackedVector2Array(24, -192, 21, 410)
+default_color = Color(0, 0, 0, 1)
+
+[node name="Line2D2" type="Line2D" parent="Container/Grid"]
+position = Vector2(312, 122)
+points = PackedVector2Array(24, -192, 21, 410)
+default_color = Color(0, 0, 0, 1)
+
+[node name="Line2D" type="Line2D" parent="Container/Grid"]
+position = Vector2(124, 117)
+points = PackedVector2Array(24, -192, 21, 410)
+default_color = Color(0, 0, 0, 1)
 
 [node name="Winner" type="Label" parent="."]
 visible = false

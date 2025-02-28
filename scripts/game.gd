@@ -1,6 +1,6 @@
 extends Node
 
-@onready var grid = $Control/GridContainer
+@onready var grid = $Container/GridContainer
 
 const PLACEHOLDER = "~";
 const COLOR_UNSET = Color(0, 0, 0, 0.5);
