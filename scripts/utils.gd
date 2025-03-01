@@ -2,7 +2,7 @@ extends RefCounted
 
 class_name Utils;
 
-static func check_winner(grid: Array[String], empty_marker: String)-> Winner:
+static func check_winner(grid: Array[String], empty_marker: String) -> Winner :
 	var filled_count = grid.filter(func(x): return x != empty_marker).size()
 	
 	# At least 3 are needed to declare a winner
@@ -63,7 +63,7 @@ static func arrayOfRange(start: int, end: int) -> Array[int]:
 	
 	return arr;
 
-static func all_equals(arr: Array) -> bool:
+static func all_equals(arr: Array) -> bool: 
 	if arr.is_empty():
 		return true;
 		

@@ -97,7 +97,7 @@ func start_vs_self():
 		)
 
 		player.on_move.connect(callable)
-		player.player_move(_cells);
+		player.player_move(_cells, _slots);
 		
 		await waiting;
 		

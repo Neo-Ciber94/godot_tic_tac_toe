@@ -1,47 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://b04esyl8u473x"]
+[gd_scene load_steps=5 format=3 uid="uid://b04esyl8u473x"]
 
 [ext_resource type="Script" path="res://ui/game.gd" id="1_oghdo"]
 [ext_resource type="Texture2D" uid="uid://cbm8yyfsvqone" path="res://art/fonts/background.png" id="2_1sebn"]
 [ext_resource type="PackedScene" uid="uid://1gokhe2unguc" path="res://ui/cell.tscn" id="3_a0qbr"]
-[ext_resource type="FontFile" uid="uid://dy04l2c31hyma" path="res://art/fonts/Silkscreen-Regular.ttf" id="4_kacpf"]
 [ext_resource type="PackedScene" uid="uid://c5x01dexo3f2f" path="res://ui/dialog.tscn" id="5_ibqo8"]
-
-[sub_resource type="Animation" id="Animation_epslx"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(1, 1)]
-}
-
-[sub_resource type="Animation" id="Animation_ni2l7"]
-resource_name = "scale_pulse"
-loop_mode = 2
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.533333, 1),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [Vector2(1, 1), Vector2(1.2, 1.2), Vector2(1, 1)]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_5rwvu"]
-_data = {
-"RESET": SubResource("Animation_epslx"),
-"scale_pulse": SubResource("Animation_ni2l7")
-}
 
 [node name="Game" type="Control"]
 layout_mode = 3
@@ -151,27 +113,3 @@ layout_mode = 2
 
 [node name="Cell9" parent="Board/GridContainer" instance=ExtResource("3_a0qbr")]
 layout_mode = 2
-
-[node name="Winner" type="Label" parent="."]
-visible = false
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -184.0
-offset_top = -82.0
-offset_right = 184.0
-grow_horizontal = 2
-grow_vertical = 0
-pivot_offset = Vector2(184, 81)
-theme_override_colors/font_color = Color(0.99, 0.0495, 0.6765, 1)
-theme_override_fonts/font = ExtResource("4_kacpf")
-theme_override_font_sizes/font_size = 64
-text = "YOU WON!"
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Winner"]
-libraries = {
-"": SubResource("AnimationLibrary_5rwvu")
-}
