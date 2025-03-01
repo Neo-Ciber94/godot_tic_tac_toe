@@ -5,7 +5,7 @@ class_name Game;
 @onready var board = $Board;
 @onready var dialog: Dialog = $Dialog;
 
-enum Versus {
+enum Mode {
 	LOCAL,
 	CPU,
 	ONLINE
@@ -15,14 +15,14 @@ const EMPTY = "~";
 const MARK_X = "x";
 const MARK_O = "o";
 
-const COLOR_UNSET = Color(0, 0, 0, 0.5);
+const COLOR_EMPTY = Color(0, 0, 0, 0.5);
 const COLOR_P1 = Color(1, 0, 0);
 const COLOR_P2 = Color(0, 0, 1);
 
 var _cells : Array[Cell] = [];
 var _board: Array[String] = [];
 var _winner: Winner = Winner.None();
-var _versus = Versus.LOCAL;
+var _versus = Mode.LOCAL;
 
 signal waiting;
 signal on_game_over;
@@ -58,7 +58,7 @@ func setup_board():
 		
 		_board.push_back(EMPTY)
 		_cells.push_back(cell);
-		cell.draw_mark(EMPTY, COLOR_UNSET);
+		cell.draw_mark(EMPTY, COLOR_EMPTY);
 		
 		cell.on_hover.connect(func(this_cell, is_over): 
 			on_cell_hover(this_cell, is_over, idx)	
@@ -74,15 +74,15 @@ func on_cell_hover(cell: Cell, is_over: bool, index: int):
 		color.a = 0.5;
 		cell.draw_mark(mark, color)
 	else:
-		cell.draw_mark(EMPTY, COLOR_UNSET)
+		cell.draw_mark(EMPTY, COLOR_EMPTY)
 
 func setup_players():
 	match _versus:
-		Versus.LOCAL:
+		Mode.LOCAL:
 			start_vs_local()
-		Versus.CPU:
+		Mode.CPU:
 			start_vs_cpu()
-		Versus.ONLINE:
+		Mode.ONLINE:
 			start_vs_online();
 	
 func start_vs_local():
