@@ -57,7 +57,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Line2D" type="Line2D" parent="Board/Grid"]
-position = Vector2(124, 117)
+position = Vector2(146, 116)
 points = PackedVector2Array(21, -106, 17, 404)
 default_color = Color(0, 0, 0, 1)
 
@@ -69,13 +69,13 @@ default_color = Color(0, 0, 0, 1)
 [node name="Line2D3" type="Line2D" parent="Board/Grid"]
 position = Vector2(348, 143)
 rotation = 1.5708
-points = PackedVector2Array(27, -161, 25, 377)
+points = PackedVector2Array(22.9994, -152, 27.0013, 350)
 default_color = Color(0, 0, 0, 1)
 
 [node name="Line2D4" type="Line2D" parent="Board/Grid"]
 position = Vector2(346, 311)
 rotation = 1.5708
-points = PackedVector2Array(26, -165, 23, 377)
+points = PackedVector2Array(24.9994, -154, 27.0013, 344)
 default_color = Color(0, 0, 0, 1)
 
 [node name="GridContainer" type="GridContainer" parent="Board"]

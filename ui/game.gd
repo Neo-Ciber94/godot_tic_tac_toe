@@ -22,7 +22,7 @@ const COLOR_P2 = Color(0, 0, 1);
 var _cells : Array[Cell] = [];
 var _board: Array[String] = [];
 var _winner: Winner = Winner.None();
-var _versus = Mode.CPU;
+var _mode = Mode.CPU;
 
 signal waiting;
 signal on_game_over;
@@ -78,7 +78,7 @@ func on_cell_hover(cell: Cell, is_over: bool, index: int):
 		cell.draw_mark(EMPTY, COLOR_EMPTY)
 
 func setup_players():
-	match _versus:
+	match _mode:
 		Mode.LOCAL:
 			print("start vs local")
 			_players[MARK_X] = HumanPlayer.new()
@@ -113,7 +113,6 @@ func start_playing():
 				
 			has_played.value = true;
 			
-			await get_tree().process_frame
 			print("player '", current_player.value, "' move to ", idx);
 			set_value(current_player.value, idx);
 			print("value set");
@@ -127,13 +126,13 @@ func start_playing():
 		print("waiting for: ", current_player.value)
 		await waiting;
 		print("waiting done for player: ", current_player.value)
-		#await get_tree().create_timer(1).timeout 
+
 		print("== ", _board.slice(0, 3))
 		print("== ", _board.slice(3, 6))
 		print("== ", _board.slice(6, 9))
 		
-		#player.on_move.disconnect(callable)
-		
+		player.on_move.disconnect(callable)
+				
 		if _winner.is_finished():
 			break;
 		else:
@@ -142,11 +141,12 @@ func start_playing():
 	print("game its over")
 	
 	# Show the winner dialog
+	await get_tree().create_timer(1.5).timeout;
 	board.hide()
 	dialog.show();
 	
 	if _winner.is_tie():
-		dialog.change_text("Its a tie", Color.BLACK);
+		dialog.change_text("It's a tie", Color.BLACK);
 	else:
 		var msg = get_player() + "\n have won!"
 		dialog.change_text(msg, get_player_color())
@@ -171,7 +171,7 @@ func set_value(value: String, index: int):
 	if has_value(index):
 		return;
 		
-	_cells[index].draw_mark(value, get_player_color())
+	_cells[index].draw_mark(value, get_player_color(), true)
 	_board[index] = value;
 	
 	var winner = Utils.check_winner(_board, EMPTY);
