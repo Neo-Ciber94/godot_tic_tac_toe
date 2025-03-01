@@ -106,15 +106,8 @@ func start_vs_cpu():
 func start_vs_online():
 	print("start vs online")
 	
-func start_playing():	
-	var is_finished = { value = false }
-	is_finished.value = false;
-	
-	on_game_over.connect(func():
-		is_finished.value = true;
-	)
-	
-	while(not is_finished.value):
+func start_playing():		
+	while(true):
 		var has_played = { value = false };
 		var player: Player = _players[current_player.value];
 		print("current player: ", current_player.value)
@@ -145,7 +138,9 @@ func start_playing():
 		
 		#player.on_move.disconnect(callable)
 		
-		if not _winner.is_finished():
+		if _winner.is_finished():
+			break;
+		else:
 			switch_player()
 	
 	print("game its over")
