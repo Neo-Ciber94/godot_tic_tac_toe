@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://b04esyl8u473x"]
+[gd_scene load_steps=9 format=3 uid="uid://b04esyl8u473x"]
 
-[ext_resource type="Script" path="res://scripts/game.gd" id="1_oghdo"]
-[ext_resource type="Texture2D" uid="uid://cbm8yyfsvqone" path="res://art/background.png" id="2_1sebn"]
-[ext_resource type="PackedScene" uid="uid://1gokhe2unguc" path="res://scenes/cell.tscn" id="3_a0qbr"]
-[ext_resource type="FontFile" uid="uid://dy04l2c31hyma" path="res://art/Silkscreen-Regular.ttf" id="4_kacpf"]
+[ext_resource type="Script" path="res://ui/game.gd" id="1_oghdo"]
+[ext_resource type="Texture2D" uid="uid://cbm8yyfsvqone" path="res://art/fonts/background.png" id="2_1sebn"]
+[ext_resource type="PackedScene" uid="uid://1gokhe2unguc" path="res://ui/cell.tscn" id="3_a0qbr"]
+[ext_resource type="FontFile" uid="uid://dy04l2c31hyma" path="res://art/fonts/Silkscreen-Regular.ttf" id="4_kacpf"]
+[ext_resource type="PackedScene" uid="uid://c5x01dexo3f2f" path="res://ui/dialog.tscn" id="5_ibqo8"]
 
 [sub_resource type="Animation" id="Animation_epslx"]
 length = 0.001
@@ -63,7 +64,15 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_1sebn")
 
-[node name="Container" type="Control" parent="."]
+[node name="Dialog" parent="." instance=ExtResource("5_ibqo8")]
+visible = false
+layout_mode = 1
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+
+[node name="Board" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -77,7 +86,7 @@ offset_bottom = 250.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Grid" type="Control" parent="Container"]
+[node name="Grid" type="Control" parent="Board"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -85,29 +94,29 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Line2D" type="Line2D" parent="Container/Grid"]
+[node name="Line2D" type="Line2D" parent="Board/Grid"]
 position = Vector2(124, 117)
 points = PackedVector2Array(21, -106, 17, 404)
 default_color = Color(0, 0, 0, 1)
 
-[node name="Line2D2" type="Line2D" parent="Container/Grid"]
+[node name="Line2D2" type="Line2D" parent="Board/Grid"]
 position = Vector2(312, 122)
 points = PackedVector2Array(26, -121, 25, 399)
 default_color = Color(0, 0, 0, 1)
 
-[node name="Line2D3" type="Line2D" parent="Container/Grid"]
+[node name="Line2D3" type="Line2D" parent="Board/Grid"]
 position = Vector2(348, 143)
 rotation = 1.5708
 points = PackedVector2Array(27, -161, 25, 377)
 default_color = Color(0, 0, 0, 1)
 
-[node name="Line2D4" type="Line2D" parent="Container/Grid"]
+[node name="Line2D4" type="Line2D" parent="Board/Grid"]
 position = Vector2(346, 311)
 rotation = 1.5708
 points = PackedVector2Array(26, -165, 23, 377)
 default_color = Color(0, 0, 0, 1)
 
-[node name="GridContainer" type="GridContainer" parent="Container"]
+[node name="GridContainer" type="GridContainer" parent="Board"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -116,31 +125,31 @@ grow_horizontal = 2
 grow_vertical = 2
 columns = 3
 
-[node name="Cell" parent="Container/GridContainer" instance=ExtResource("3_a0qbr")]
+[node name="Cell" parent="Board/GridContainer" instance=ExtResource("3_a0qbr")]
 layout_mode = 2
 
-[node name="Cell2" parent="Container/GridContainer" instance=ExtResource("3_a0qbr")]
+[node name="Cell2" parent="Board/GridContainer" instance=ExtResource("3_a0qbr")]
 layout_mode = 2
 
-[node name="Cell3" parent="Container/GridContainer" instance=ExtResource("3_a0qbr")]
+[node name="Cell3" parent="Board/GridContainer" instance=ExtResource("3_a0qbr")]
 layout_mode = 2
 
-[node name="Cell4" parent="Container/GridContainer" instance=ExtResource("3_a0qbr")]
+[node name="Cell4" parent="Board/GridContainer" instance=ExtResource("3_a0qbr")]
 layout_mode = 2
 
-[node name="Cell5" parent="Container/GridContainer" instance=ExtResource("3_a0qbr")]
+[node name="Cell5" parent="Board/GridContainer" instance=ExtResource("3_a0qbr")]
 layout_mode = 2
 
-[node name="Cell6" parent="Container/GridContainer" instance=ExtResource("3_a0qbr")]
+[node name="Cell6" parent="Board/GridContainer" instance=ExtResource("3_a0qbr")]
 layout_mode = 2
 
-[node name="Cell7" parent="Container/GridContainer" instance=ExtResource("3_a0qbr")]
+[node name="Cell7" parent="Board/GridContainer" instance=ExtResource("3_a0qbr")]
 layout_mode = 2
 
-[node name="Cell8" parent="Container/GridContainer" instance=ExtResource("3_a0qbr")]
+[node name="Cell8" parent="Board/GridContainer" instance=ExtResource("3_a0qbr")]
 layout_mode = 2
 
-[node name="Cell9" parent="Container/GridContainer" instance=ExtResource("3_a0qbr")]
+[node name="Cell9" parent="Board/GridContainer" instance=ExtResource("3_a0qbr")]
 layout_mode = 2
 
 [node name="Winner" type="Label" parent="."]

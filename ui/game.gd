@@ -1,6 +1,8 @@
 extends Node
 
-@onready var grid = $Container/GridContainer
+@onready var grid = $Board/GridContainer
+@onready var board = $Board;
+@onready var dialog: Dialog = $Dialog;
 
 enum Versus {
 	SELF,
@@ -25,15 +27,15 @@ signal waiting;
 signal on_game_over;
 	
 var _players = {}
-
-var current_player = {
-	value = MARK_X
-}
+var current_player = {}
 	
 func _ready() -> void:
 	start_game();
 
 func start_game():
+	dialog.hide();
+	board.show();
+	
 	setup_board()
 	setup_players()
 		
@@ -41,10 +43,13 @@ func setup_board():
 	_cells = [];
 	_slots = [];
 	
+	grid.show();
+	dialog.hide();
+	
 	for child in grid.get_children():
 			child.queue_free()
 			
-	var cell_scene = preload("res://scenes/cell.tscn");
+	var cell_scene = preload("res://ui/cell.tscn");
 			
 	for idx in 9:
 		var cell = cell_scene.instantiate();
@@ -67,6 +72,7 @@ func setup_players():
 func start_vs_self():
 	_players[MARK_X] = HumanPlayer.new()
 	_players[MARK_O] = HumanPlayer.new()
+	current_player = { value = MARK_X }
 	
 	var is_finished = { value = false }
 	is_finished.value = false;
@@ -96,9 +102,30 @@ func start_vs_self():
 		await waiting;
 		
 		player.on_move.disconnect(callable)
-		switch_player()
+		
+		if not _winner.is_finished():
+			switch_player()
 	
 	print("game its over")
+	
+	# Show the winner dialog
+	board.hide()
+	dialog.show();
+	
+	if _winner.is_tie():
+		dialog.change_text("Its a tie", Color.BLACK);
+	else:
+		var msg = get_player_mark() + " have won!"
+		dialog.change_text(msg, get_player_color())
+		
+	# Wait to click for restart
+	await dialog.on_click;
+	reset_board()
+	start_game()
+
+func reset_board():
+	_players = {}
+	_winner = Winner.None()
 	
 func start_vs_cpu():
 	print("start vs cpu")
