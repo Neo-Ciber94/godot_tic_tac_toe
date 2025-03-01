@@ -1,16 +1,17 @@
 extends Node
+class_name Game;
 
 @onready var grid = $Board/GridContainer
 @onready var board = $Board;
 @onready var dialog: Dialog = $Dialog;
 
 enum Versus {
-	SELF,
+	LOCAL,
 	CPU,
 	ONLINE
 }
 
-const PLACEHOLDER = "~";
+const EMPTY = "~";
 const MARK_X = "x";
 const MARK_O = "o";
 
@@ -19,9 +20,9 @@ const COLOR_P1 = Color(1, 0, 0);
 const COLOR_P2 = Color(0, 0, 1);
 
 var _cells : Array[Cell] = [];
-var _slots: Array[String] = [];
+var _board: Array[String] = [];
 var _winner: Winner = Winner.None();
-var _versus = Versus.SELF;
+var _versus = Versus.LOCAL;
 
 signal waiting;
 signal on_game_over;
@@ -41,7 +42,7 @@ func start_game():
 		
 func setup_board():
 	_cells = [];
-	_slots = [];
+	_board = [];
 	
 	grid.show();
 	dialog.hide();
@@ -55,53 +56,94 @@ func setup_board():
 		var cell = cell_scene.instantiate();
 		grid.add_child(cell);
 		
-		_slots.push_back(PLACEHOLDER)
+		_board.push_back(EMPTY)
 		_cells.push_back(cell);
-		cell.draw_mark(PLACEHOLDER, COLOR_UNSET);
-		_connect_to_signals(cell, idx);
-	
+		cell.draw_mark(EMPTY, COLOR_UNSET);
+		
+		cell.on_hover.connect(func(this_cell, is_over): 
+			on_cell_hover(this_cell, is_over, idx)	
+		)
+
+func on_cell_hover(cell: Cell, is_over: bool, index: int):
+	if has_value(index) || is_game_over():
+		return;
+			
+	if is_over:
+		var mark = get_player()
+		var color = get_player_color();
+		color.a = 0.5;
+		cell.draw_mark(mark, color)
+	else:
+		cell.draw_mark(EMPTY, COLOR_UNSET)
+
 func setup_players():
 	match _versus:
-		Versus.SELF:
-			start_vs_self()
+		Versus.LOCAL:
+			start_vs_local()
 		Versus.CPU:
 			start_vs_cpu()
 		Versus.ONLINE:
 			start_vs_online();
 	
-func start_vs_self():
+func start_vs_local():
+	print("start vs self")
+	
 	_players[MARK_X] = HumanPlayer.new()
 	_players[MARK_O] = HumanPlayer.new()
 	current_player = { value = MARK_X }
 	
+	start_playing();
+	
+func start_vs_cpu():
+	print("start vs cpu")
+	
+	_players[MARK_X] = HumanPlayer.new()
+	_players[MARK_O] = CpuPlayer.new()
+	current_player = { value = MARK_X }
+	
+	start_playing();
+	
+func start_vs_online():
+	print("start vs online")
+	
+func start_playing():	
 	var is_finished = { value = false }
 	is_finished.value = false;
 	
 	on_game_over.connect(func():
 		is_finished.value = true;
 	)
-
+	
 	while(not is_finished.value):
 		var has_played = { value = false };
 		var player: Player = _players[current_player.value];
 		print("current player: ", current_player.value)
-		
+
 		var callable = Callable(func(idx): 
 			if has_played.value: 
 				return;
 				
 			has_played.value = true;
 
+			print("player '", current_player.value, "' move to ", idx);
 			set_value(current_player.value, idx);
+			print("value set");
 			waiting.emit()	
+			print("done?")
 		)
 
 		player.on_move.connect(callable)
-		player.player_move(_cells, _slots);
+		player.next_move(_cells.duplicate(), _board.duplicate());
 		
+		print("waiting for: ", current_player.value)
 		await waiting;
+		print("waiting done for player: ", current_player.value)
+		#await get_tree().create_timer(1).timeout 
+		print("== ", _board.slice(0, 3))
+		print("== ", _board.slice(3, 6))
+		print("== ", _board.slice(6, 9))
 		
-		player.on_move.disconnect(callable)
+		#player.on_move.disconnect(callable)
 		
 		if not _winner.is_finished():
 			switch_player()
@@ -115,7 +157,7 @@ func start_vs_self():
 	if _winner.is_tie():
 		dialog.change_text("Its a tie", Color.BLACK);
 	else:
-		var msg = get_player_mark() + " have won!"
+		var msg = get_player() + "\n have won!"
 		dialog.change_text(msg, get_player_color())
 		
 	# Wait to click for restart
@@ -127,23 +169,20 @@ func reset_board():
 	_players = {}
 	_winner = Winner.None()
 	
-func start_vs_cpu():
-	print("start vs cpu")
-	
-func start_vs_online():
-	print("start vs online")
-	
 func get_value(index: int):
-	return _slots[index]
+	return _board[index]
 
 func has_value(index: int):
-	return get_value(index) != PLACEHOLDER;
+	return get_value(index) != EMPTY;
 	
 func set_value(value: String, index: int):
+	if has_value(index):
+		return;
+		
 	_cells[index].draw_mark(value, get_player_color())
-	_slots[index] = value;
+	_board[index] = value;
 	
-	var winner = Utils.check_winner(_slots, PLACEHOLDER);
+	var winner = Utils.check_winner(_board, EMPTY);
 	
 	if winner.is_finished():
 		print("finished: ", winner)
@@ -153,7 +192,7 @@ func set_value(value: String, index: int):
 func is_game_over():
 	return _winner.is_finished()
 
-func get_player_mark():
+func get_player():
 	return current_player.value;
 
 func get_player_color():
@@ -161,20 +200,3 @@ func get_player_color():
 	
 func switch_player():
 	current_player.value = MARK_O if current_player.value == MARK_X else MARK_X;
-
-func _connect_to_signals(cell: Cell, index: int):
-	cell.on_hover.connect(func(this_cell, is_over): on_cell_hover(this_cell, is_over, index))
-
-func on_cell_hover(cell: Cell, is_over: bool, index: int):
-	if has_value(index) || is_game_over():
-		return;
-	
-	#print("hover: ", index);
-			
-	if is_over:
-		var mark = get_player_mark()
-		var color = get_player_color();
-		color.a = 0.5;
-		cell.draw_mark(mark, color)
-	else:
-		cell.draw_mark(PLACEHOLDER, COLOR_UNSET)
