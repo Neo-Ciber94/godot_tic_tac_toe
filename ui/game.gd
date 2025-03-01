@@ -22,7 +22,7 @@ const COLOR_P2 = Color(0, 0, 1);
 var _cells : Array[Cell] = [];
 var _board: Array[String] = [];
 var _winner: Winner = Winner.None();
-var _versus = Mode.LOCAL;
+var _versus = Mode.CPU;
 
 signal waiting;
 signal on_game_over;
@@ -39,6 +39,7 @@ func start_game():
 	
 	setup_board()
 	setup_players()
+	start_playing();
 		
 func setup_board():
 	_cells = [];
@@ -79,32 +80,26 @@ func on_cell_hover(cell: Cell, is_over: bool, index: int):
 func setup_players():
 	match _versus:
 		Mode.LOCAL:
-			start_vs_local()
+			print("start vs local")
+			_players[MARK_X] = HumanPlayer.new()
+			_players[MARK_O] = HumanPlayer.new()
 		Mode.CPU:
-			start_vs_cpu()
+			print("start vs cpu")
+			_players[MARK_X] = HumanPlayer.new()
+			_players[MARK_O] = CpuPlayer.new()
 		Mode.ONLINE:
-			start_vs_online();
-	
-func start_vs_local():
-	print("start vs self")
-	
-	_players[MARK_X] = HumanPlayer.new()
-	_players[MARK_O] = HumanPlayer.new()
+			print("start vs online")
+			
+	add_players_to_scene();
 	current_player = { value = MARK_X }
+
+func add_players_to_scene():
+	add_child(_players[MARK_X]);
+	add_child(_players[MARK_O]);
 	
-	start_playing();
-	
-func start_vs_cpu():
-	print("start vs cpu")
-	
-	_players[MARK_X] = HumanPlayer.new()
-	_players[MARK_O] = CpuPlayer.new()
-	current_player = { value = MARK_X }
-	
-	start_playing();
-	
-func start_vs_online():
-	print("start vs online")
+func remove_players_from_scene():
+	remove_child(_players[MARK_X])
+	remove_child(_players[MARK_O])
 	
 func start_playing():		
 	while(true):
@@ -117,7 +112,8 @@ func start_playing():
 				return;
 				
 			has_played.value = true;
-
+			
+			await get_tree().process_frame
 			print("player '", current_player.value, "' move to ", idx);
 			set_value(current_player.value, idx);
 			print("value set");
@@ -157,6 +153,7 @@ func start_playing():
 		
 	# Wait to click for restart
 	await dialog.on_click;
+	remove_players_from_scene();
 	reset_board()
 	start_game()
 
