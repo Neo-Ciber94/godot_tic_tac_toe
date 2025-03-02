@@ -7,6 +7,7 @@ class_name Game;
 @onready var board_grid = $Board/Grid
 @onready var board_anim: AnimationPlayer = $Board/Grid/AnimationPlayer;
 
+	
 enum Mode {
 	LOCAL,
 	CPU,
@@ -104,7 +105,6 @@ func setup_players():
 			
 	add_players_to_scene();
 
-
 func add_players_to_scene():
 	add_child(_players[MARK_X]);
 	add_child(_players[MARK_O]);
@@ -145,6 +145,7 @@ func start_playing():
 			continue;
 	
 		await set_value(current_player, index);
+		refresh_ui();
 		self.print_board()
 
 		if _winner.is_finished():
@@ -243,12 +244,30 @@ func get_player():
 	return current_player;
 
 func get_player_color():
-	return COLOR_P1 if current_player == MARK_X else COLOR_P2;
+	return get_color(current_player)
 	
 func switch_player():
 	current_player = MARK_O if current_player == MARK_X else MARK_X;
+
+func refresh_ui():
+	for idx in _board.size():
+		var value = _board[idx];
+		var cell = _cells[idx];
+		var color = get_color(value)
+		cell.draw_mark(value,color)
+		
+	await waiting;
 
 func print_board():
 	print("=== ", _board.slice(0, 3))
 	print("=== ", _board.slice(3, 6))
 	print("=== ", _board.slice(6, 9))
+	
+static func get_color(value: String):
+	match value:
+		MARK_X:
+			return COLOR_P1;
+		MARK_O:
+			return COLOR_P2;
+		_:
+			return Color(0, 0, 0, 0.5);

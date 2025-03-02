@@ -43,5 +43,26 @@ func _get_next_random(board: Array[String]) -> int:
 	
 	return indices.pick_random()
 
+const WIN_POSITIONS : Array = [
+		# verticals
+		[0, 1, 2],
+		[3, 4, 5],
+		[6, 7, 8],
+
+		# horizontals
+		[0, 3, 6],
+		[1, 4, 7],
+		[2, 5, 8],
+		
+		# diagonals
+		[0, 4, 8],
+		[2, 4, 6]
+	];
+	
+func _get_play():
+	pass
+
 func _minimax():
+	
+	
 	pass
