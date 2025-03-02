@@ -26,6 +26,14 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_1sebn")
 
+[node name="Dialog" parent="." instance=ExtResource("5_ibqo8")]
+visible = false
+layout_mode = 1
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+
 [node name="Board" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 8
@@ -105,7 +113,3 @@ layout_mode = 2
 
 [node name="Cell9" parent="Board/GridContainer" instance=ExtResource("3_a0qbr")]
 layout_mode = 2
-
-[node name="Dialog" parent="." instance=ExtResource("5_ibqo8")]
-visible = false
-layout_mode = 1

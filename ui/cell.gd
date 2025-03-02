@@ -34,6 +34,7 @@ func draw_mark(mark: String, color: Color, animate = false):
 		tween.tween_property(label, "modulate", Color(color, 1), duration);
 		tween.parallel().tween_property(label, "scale", Vector2(1.2, 1.2), duration);
 		tween.tween_property(label, "scale", Vector2(1, 1), duration);
+		await tween.finished;
 
 func get_mark():
 	return label.text;

@@ -3,6 +3,7 @@ class_name Game;
 
 @onready var grid = $Board/GridContainer
 @onready var board = $Board;
+@onready var board_grid = $Board/Grid
 @onready var dialog: Dialog = $Dialog;
 
 enum Mode {
@@ -65,15 +66,18 @@ func setup_board():
 			on_cell_hover(this_cell, is_over, idx)	
 		)
 
+func reset_board():
+	_players = {}
+	_winner = Winner.None()
+	board_grid.modulate.a = 1.0;
+
 func on_cell_hover(cell: Cell, is_over: bool, index: int):
-	if has_value(index) || is_game_over():
+	if has_value(index) || is_game_over() || !can_hover():
 		return;
 			
 	if is_over:
 		var mark = get_player()
-		var color = get_player_color();
-		color.a = 0.5;
-		cell.draw_mark(mark, color)
+		cell.draw_mark(mark, Color(get_player_color(), 0.5))
 	else:
 		cell.draw_mark(EMPTY, COLOR_EMPTY)
 
@@ -111,6 +115,10 @@ func start_playing():
 			if has_played.value: 
 				return;
 				
+			if is_game_over():
+				waiting.emit()
+				return;
+				
 			has_played.value = true;
 			
 			print("player '", current_player.value, "' move to ", idx);
@@ -141,26 +149,54 @@ func start_playing():
 	print("game its over")
 	
 	# Show the winner dialog
-	await get_tree().create_timer(1.5).timeout;
-	board.hide()
-	dialog.show();
+	await hide_ui();
 	
 	if _winner.is_tie():
 		dialog.change_text("It's a tie", Color.BLACK);
 	else:
-		var msg = get_player() + "\n have won!"
-		dialog.change_text(msg, get_player_color())
+		var color = COLOR_P1 if _winner.get_value() == MARK_X else COLOR_P2;
+		dialog.change_text("winner!", color)
 		
+	dialog.show();
+
 	# Wait to click for restart
 	await dialog.on_click;
 	remove_players_from_scene();
 	reset_board()
 	start_game()
-
-func reset_board():
-	_players = {}
-	_winner = Winner.None()
 	
+func hide_ui():	
+	var indices = _winner.get_indices()
+	var winner_cells: Array[Cell] = [];
+	var other_cells : Array[Cell] = [];
+	
+	for idx in _board.size():
+		var is_winner_idx = indices.has(idx);
+		var cell = _cells[idx]
+		
+		if is_winner_idx:
+			winner_cells.push_back(cell);
+		else:
+			other_cells.push_back(cell)
+	
+	var tween = get_tree().create_tween()
+	tween.parallel().tween_property(board_grid, "modulate:a", 0.0, 0.5);
+	
+	for cell in other_cells:
+		tween.tween_property(cell, "modulate:a", 0.0, 0.1);
+	
+	var screen_center = Vector2(get_viewport().size / 2)
+	
+	for cell in winner_cells:
+		var center_position = screen_center - cell.size / 2;
+		tween.parallel().tween_property(cell, "global_position", center_position, 0.5).set_trans(Tween.TRANS_SINE)
+		
+	for cell in winner_cells:
+		tween.parallel().tween_property(cell, "position:y", 70, 0.5)
+		
+	await tween.finished;
+
+
 func get_value(index: int):
 	return _board[index]
 
@@ -171,8 +207,8 @@ func set_value(value: String, index: int):
 	if has_value(index):
 		return;
 		
-	_cells[index].draw_mark(value, get_player_color(), true)
 	_board[index] = value;
+	await _cells[index].draw_mark(value, get_player_color(), true)
 	
 	var winner = Utils.check_winner(_board, EMPTY);
 	
@@ -180,6 +216,9 @@ func set_value(value: String, index: int):
 		print("finished: ", winner)
 		_winner = winner;
 		on_game_over.emit()
+
+func can_hover():
+	return _players[current_player.value] is HumanPlayer;
 
 func is_game_over():
 	return _winner.is_finished()
