@@ -30,7 +30,9 @@ const COLOR_P2 = Color(0, 0, 1);
 var _cells : Array[Cell] = [];
 var _board: Array[String] = [];
 var _winner: Winner = Winner.None();
-var _mode = Mode.CPU;
+
+@export var _mode = Mode.CPU;
+@export var cpu_style = CpuPlayer.PlayStyle.RANDOM;
 
 signal waiting;
 signal on_game_over;
@@ -99,7 +101,7 @@ func setup_players():
 		Mode.CPU:
 			print("start vs cpu")
 			_players[MARK_X] = HumanPlayer.new()
-			_players[MARK_O] = CpuPlayer.new(player_values[1], CpuPlayer.PlayStyle.IMPOSSIBLE)
+			_players[MARK_O] = CpuPlayer.new(player_values[1], cpu_style)
 		Mode.ONLINE:
 			print("start vs online")
 			
