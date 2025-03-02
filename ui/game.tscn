@@ -1,8 +1,8 @@
 [gd_scene load_steps=8 format=3 uid="uid://b04esyl8u473x"]
 
 [ext_resource type="Script" path="res://ui/game.gd" id="1_oghdo"]
-[ext_resource type="Texture2D" uid="uid://cbm8yyfsvqone" path="res://art/fonts/background.png" id="2_1sebn"]
 [ext_resource type="PackedScene" uid="uid://1gokhe2unguc" path="res://ui/cell.tscn" id="3_a0qbr"]
+[ext_resource type="PackedScene" uid="uid://dhig53gq04o6f" path="res://ui/bg.tscn" id="3_f5y2r"]
 [ext_resource type="PackedScene" uid="uid://c5x01dexo3f2f" path="res://ui/dialog.tscn" id="5_ibqo8"]
 
 [sub_resource type="Animation" id="Animation_tm2vy"]
@@ -218,17 +218,8 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_oghdo")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" parent="." instance=ExtResource("3_f5y2r")]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -108.0
-offset_right = 144.0
-offset_bottom = 216.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("2_1sebn")
 
 [node name="Board" type="Control" parent="."]
 layout_mode = 1
