@@ -2,21 +2,21 @@ extends Player;
 
 class_name CpuPlayer;
 
-enum PlayStyle {
+enum Difficulty {
 	RANDOM,
-	MIN,
-	MAX,
+	EASY,
+	HARD,
 	IMPOSSIBLE
 }
 
-var _play_style: PlayStyle;
+var _difficulty: Difficulty;
 var _value: String;
 
-func _init(value: String, play_style = PlayStyle.RANDOM) -> void:
-	_play_style = play_style;
+func _init(value: String, difficulty = Difficulty.RANDOM) -> void:
+	_difficulty = difficulty;
 	_value = value;
 
-func next_move(cells: Array[Cell], board: Array[String]):
+func next_move(_cells: Array[Cell], board: Array[String]):
 	print("waiting for cpu move")
 	await get_tree().create_timer(0.5).timeout
 	
@@ -25,14 +25,14 @@ func next_move(cells: Array[Cell], board: Array[String]):
 	on_move.emit(index)
 
 func _next_move(board: Array[String]):
-	match _play_style:
-		PlayStyle.RANDOM:
+	match _difficulty:
+		Difficulty.RANDOM:
 			return _get_next_random(board);
-		PlayStyle.MIN:
+		Difficulty.EASY:
 			return _find_next_move(board, false)
-		PlayStyle.MAX:
+		Difficulty.HARD:
 			return _find_next_move(board, true)
-		PlayStyle.IMPOSSIBLE:
+		Difficulty.IMPOSSIBLE:
 			var my_result = _minimax(board, _value, true)
 			var opp_result = _minimax(board, Game.get_opponent(_value), true);
 			

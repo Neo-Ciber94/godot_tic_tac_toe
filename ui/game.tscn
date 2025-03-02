@@ -354,3 +354,14 @@ theme_override_styles/pressed = ExtResource("6_a5lqr")
 theme_override_styles/normal_mirrored = ExtResource("6_a5lqr")
 theme_override_styles/normal = ExtResource("6_a5lqr")
 text = "Exit"
+
+[node name="GameMode" type="Label" parent="."]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = 153.0
+offset_bottom = 31.0
+theme_override_colors/font_color = Color(0, 0, 0, 0.239216)
+theme_override_fonts/font = ExtResource("5_vc4ud")
+theme_override_font_sizes/font_size = 20
+text = "Mode: Local"

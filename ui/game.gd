@@ -7,6 +7,7 @@ class_name Game;
 @onready var board_anim: AnimationPlayer = $Board/Grid/AnimationPlayer;
 @onready var result_message: ResultMessage = $ResultMessage;
 @onready var exit_btn : Button = $ExitButton;
+@onready var game_mode_label: Label = $GameMode;
 	
 enum Mode {
 	LOCAL,
@@ -30,11 +31,11 @@ const COLOR_P2 = Color(0, 0, 1);
 var _cells : Array[Cell] = [];
 var _board: Array[String] = [];
 var _winner: Winner = Winner.None();
-var _is_first = true;
+var _is_first_game = true;
 var _is_playing = false;
 
 @export var _mode = GameConfig.game_mode;
-@export var cpu_style = GameConfig.cpu_level;
+@export var _difficulty = GameConfig.difficulty;
 
 signal waiting;
 signal on_game_over;
@@ -47,6 +48,7 @@ func _ready() -> void:
 	start_game();
 
 func start_game():
+	game_mode_label.text = _get_game_mode_text()
 	result_message.hide();
 		
 	setup_board()
@@ -104,7 +106,7 @@ func setup_players():
 		Mode.CPU:
 			print("start vs cpu")
 			_players[MARK_X] = HumanPlayer.new()
-			_players[MARK_O] = CpuPlayer.new(player_values[1], cpu_style)
+			_players[MARK_O] = CpuPlayer.new(player_values[1], _difficulty)
 		Mode.ONLINE:
 			print("start vs online")
 			
@@ -135,8 +137,8 @@ func make_move(player: Player):
 
 func start_playing():		
 	# We show an initial delay at the first game
-	if _is_first:
-		_is_first = false;
+	if _is_first_game:
+		_is_first_game = false;
 		for child in board_grid.get_children():
 			if child is Line2D:
 				child.modulate.a = 0.0;
@@ -146,7 +148,6 @@ func start_playing():
 	_is_playing = true;
 	
 	while(not _winner.is_finished()):
-		var has_played = { value = false };
 		var player: Player = _players[current_player];
 		print("current player: ", current_player)
 		
@@ -224,9 +225,9 @@ func change_board_visibility(visibility: Visibility):
 	
 	match visibility:
 		Visibility.VISIBLE:
-			board_anim.play("appear", -1, 4)
+			board_anim.play("appear", -1, speed)
 		Visibility.HIDDEN:
-			board_anim.play("appear", -1, -4, true)
+			board_anim.play("appear", -1, -speed, true)
 	
 	await board_anim.animation_finished
 
@@ -283,6 +284,23 @@ func refresh_ui():
 		cell.draw_mark(value,color)
 		
 	await waiting;
+
+func _get_game_mode_text():
+	match _mode:
+		Mode.LOCAL:
+			return "Mode: Local"
+		Mode.CPU:
+			var difficulty = (
+				"Easy" if _difficulty == CpuPlayer.Difficulty.RANDOM
+				else "Easy" if _difficulty == CpuPlayer.Difficulty.EASY
+				else "Hard" if _difficulty == CpuPlayer.Difficulty.HARD
+				else "Impossible" if _difficulty == CpuPlayer.Difficulty.IMPOSSIBLE
+				else "" # unreachable
+			)
+			
+			return "Mode: CPU (%s)" % difficulty;
+		Mode.ONLINE:
+			return "Mode: Online"
 
 func print_board():
 	print("=== ", _board.slice(0, 3))
