@@ -131,6 +131,7 @@ func start_playing():
 			print("done?")
 		)
 
+		print("winner? ", _winner);
 		player.on_move.connect(callable)
 		player.next_move(_cells.duplicate(), _board.duplicate());
 		
@@ -212,7 +213,6 @@ func set_value(value: String, index: int):
 		
 	_board[index] = value;
 	await _cells[index].draw_mark(value, get_player_color(), true)
-	
 	var winner = Utils.check_winner(_board, EMPTY);
 	
 	if winner.is_finished():
