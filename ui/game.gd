@@ -109,7 +109,22 @@ func add_players_to_scene():
 func remove_players_from_scene():
 	remove_child(_players[MARK_X])
 	remove_child(_players[MARK_O])
-		
+
+func make_move(player: Player):
+	var index = { value = -1 }
+	
+	var callable = func(idx):
+		index.value = idx;
+		waiting.emit();
+	
+	player.on_move.connect(callable, Object.CONNECT_ONE_SHOT)
+	player.next_move(_cells.duplicate(), _board.duplicate())
+	
+	if index.value == -1:
+		await waiting;
+	
+	return index.value;
+
 func start_playing():		
 	await change_board_visibility(Visibility.VISIBLE);
 	
@@ -117,35 +132,18 @@ func start_playing():
 		var has_played = { value = false };
 		var player: Player = _players[current_player.value];
 		print("current player: ", current_player.value)
-
-		var callable = Callable(func(idx): 
-			if has_played.value: 
-				return;
-				
-			if is_game_over():
-				waiting.emit()
-				return;
-				
-			has_played.value = true;
-			
-			print("player '", current_player.value, "' move to ", idx);
-			set_value(current_player.value, idx);
-			print("value set");
-			waiting.emit()	
-			print("done?")
-		)
-
-		print("winner? ", _winner);
-		player.on_move.connect(callable)
-		player.next_move(_cells.duplicate(), _board.duplicate());
 		
 		print("waiting for: ", current_player.value)
-		await waiting;
-		print("waiting done for player: ", current_player.value)
-		self.print_board()
+		var index = await make_move(player);
+		print(current_player.value, " move to ", index);
 		
-		player.on_move.disconnect(callable)
-				
+		if has_value(index):
+			print("illegal play")
+			continue;
+	
+		await set_value(current_player.value, index);
+		self.print_board()
+
 		if _winner.is_finished():
 			break;
 		else:
