@@ -99,7 +99,7 @@ func setup_players():
 		Mode.CPU:
 			print("start vs cpu")
 			_players[MARK_X] = HumanPlayer.new()
-			_players[MARK_O] = CpuPlayer.new(player_values[1])
+			_players[MARK_O] = CpuPlayer.new(player_values[1], CpuPlayer.PlayStyle.IMPOSSIBLE)
 		Mode.ONLINE:
 			print("start vs online")
 			
@@ -262,6 +262,10 @@ func print_board():
 	print("=== ", _board.slice(0, 3))
 	print("=== ", _board.slice(3, 6))
 	print("=== ", _board.slice(6, 9))
+	
+	
+static func get_opponent(value: String):
+	return MARK_O if value == MARK_X else MARK_X
 	
 static func get_color(value: String):
 	match value:

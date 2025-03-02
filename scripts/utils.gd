@@ -52,14 +52,6 @@ static func select_indices(values: Array, indices: Array[int]) -> Array:
 	
 	return result;
 
-static func array_range(start: int, end: int) -> Array[int]:
-	var arr : Array[int] = [];
-	
-	for n in range(start, end):
-		arr.push_back(n)
-	
-	return arr;
-
 static func all_equals(arr: Array) -> bool: 
 	if arr.is_empty():
 		return true;
