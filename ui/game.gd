@@ -13,6 +13,11 @@ enum Mode {
 	ONLINE
 }
 
+enum Visibility {
+	VISIBLE,
+	HIDDEN
+}
+
 const EMPTY = " ";
 const MARK_X = "x";
 const MARK_O = "o";
@@ -104,10 +109,9 @@ func add_players_to_scene():
 func remove_players_from_scene():
 	remove_child(_players[MARK_X])
 	remove_child(_players[MARK_O])
-	
+		
 func start_playing():		
-	board_anim.play("appear", -1, 4)
-	await board_anim.animation_finished
+	await change_board_visibility(Visibility.VISIBLE);
 	
 	while(not _winner.is_finished()):
 		var has_played = { value = false };
@@ -138,10 +142,7 @@ func start_playing():
 		print("waiting for: ", current_player.value)
 		await waiting;
 		print("waiting done for player: ", current_player.value)
-
-		print("== ", _board.slice(0, 3))
-		print("== ", _board.slice(3, 6))
-		print("== ", _board.slice(6, 9))
+		self.print_board()
 		
 		player.on_move.disconnect(callable)
 				
@@ -152,7 +153,7 @@ func start_playing():
 	
 	print("game its over")
 	
-	board_anim.play("appear", -1, -4, true)
+	change_board_visibility(Visibility.HIDDEN);
 	await hide_cells();
 	
 	# Show the winner dialog
@@ -200,6 +201,16 @@ func hide_cells():
 		
 	await tween.finished;
 
+func change_board_visibility(visibility: Visibility):
+	var speed = 4.0;
+	
+	match visibility:
+		Visibility.VISIBLE:
+			board_anim.play("appear", -1, 4)
+		Visibility.HIDDEN:
+			board_anim.play("appear", -1, -4, true)
+	
+	await board_anim.animation_finished
 
 func get_value(index: int):
 	return _board[index]
@@ -209,6 +220,7 @@ func has_value(index: int):
 	
 func set_value(value: String, index: int):
 	if has_value(index):
+		print("board index '", index, "' it's already set");
 		return;
 		
 	_board[index] = value;
@@ -234,3 +246,8 @@ func get_player_color():
 	
 func switch_player():
 	current_player.value = MARK_O if current_player.value == MARK_X else MARK_X;
+
+func print_board():
+	print("=== ", _board.slice(0, 3))
+	print("=== ", _board.slice(3, 6))
+	print("=== ", _board.slice(6, 9))
