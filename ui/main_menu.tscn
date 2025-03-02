@@ -1,5 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://dw01ewijj6lj7"]
+[gd_scene load_steps=7 format=3 uid="uid://dw01ewijj6lj7"]
 
+[ext_resource type="Script" path="res://ui/main_menu.gd" id="1_pflmj"]
 [ext_resource type="PackedScene" uid="uid://dhig53gq04o6f" path="res://ui/bg.tscn" id="1_vtlxb"]
 [ext_resource type="FontFile" uid="uid://dy04l2c31hyma" path="res://art/fonts/Silkscreen-Regular.ttf" id="2_anqjw"]
 [ext_resource type="StyleBox" uid="uid://u2kfkut6slb0" path="res://art/styles/button_normal.tres" id="3_7homs"]
@@ -13,6 +14,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_pflmj")
 
 [node name="Background" parent="." instance=ExtResource("1_vtlxb")]
 layout_mode = 1
@@ -42,7 +44,7 @@ text = "[wave][center][color=red]Tic[/color][color=blue]Tac[/color]Toe[/center][
 scroll_active = false
 autowrap_mode = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="Menu" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -57,7 +59,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 10
 
-[node name="PlayLocalButton" type="Button" parent="VBoxContainer"]
+[node name="PlayLocalButton" type="Button" parent="Menu"]
 layout_mode = 2
 theme_override_colors/font_disabled_color = Color(1, 0, 0, 1)
 theme_override_colors/font_hover_pressed_color = Color(1, 0, 0, 1)
@@ -81,7 +83,7 @@ theme_override_styles/normal_mirrored = ExtResource("3_7homs")
 theme_override_styles/normal = ExtResource("3_7homs")
 text = "Play Local"
 
-[node name="PlayCPUButton" type="MenuButton" parent="VBoxContainer"]
+[node name="PlayCPUButton" type="MenuButton" parent="Menu"]
 layout_mode = 2
 theme_override_colors/font_disabled_color = Color(0, 0, 1, 1)
 theme_override_colors/font_hover_pressed_color = Color(0, 0, 1, 1)
@@ -112,7 +114,7 @@ popup/item_1/id = 1
 popup/item_2/text = "Imposible"
 popup/item_2/id = 2
 
-[node name="PlayOnline" type="Button" parent="VBoxContainer"]
+[node name="PlayOnlineButton" type="Button" parent="Menu"]
 layout_mode = 2
 theme_override_colors/font_disabled_color = Color(0.61339, 0.61339, 0.61339, 1)
 theme_override_colors/font_color = Color(0, 0, 0, 1)

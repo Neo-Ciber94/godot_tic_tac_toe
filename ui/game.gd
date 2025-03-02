@@ -6,6 +6,7 @@ class_name Game;
 @onready var board_grid = $Board/Grid
 @onready var board_anim: AnimationPlayer = $Board/Grid/AnimationPlayer;
 @onready var result_message: ResultMessage = $ResultMessage;
+@onready var exit_btn : Button = $ExitButton;
 	
 enum Mode {
 	LOCAL,
@@ -29,9 +30,11 @@ const COLOR_P2 = Color(0, 0, 1);
 var _cells : Array[Cell] = [];
 var _board: Array[String] = [];
 var _winner: Winner = Winner.None();
+var _is_first = true;
+var _is_playing = false;
 
-@export var _mode = Mode.CPU;
-@export var cpu_style = CpuPlayer.PlayStyle.RANDOM;
+@export var _mode = GameConfig.game_mode;
+@export var cpu_style = GameConfig.cpu_level;
 
 signal waiting;
 signal on_game_over;
@@ -40,6 +43,7 @@ var _players = {}
 var current_player = MARK_X
 	
 func _ready() -> void:
+	exit_btn.pressed.connect(_go_to_main_menu)
 	start_game();
 
 func start_game():
@@ -79,7 +83,7 @@ func reset_board():
 	board_grid.modulate.a = 1.0;
 
 func on_cell_hover(cell: Cell, is_over: bool, index: int):
-	if has_value(index) || is_game_over() || !can_hover():
+	if !can_hover(index):
 		return;
 			
 	if is_over:
@@ -130,7 +134,16 @@ func make_move(player: Player):
 	return index.value;
 
 func start_playing():		
+	# We show an initial delay at the first game
+	if _is_first:
+		_is_first = false;
+		for child in board_grid.get_children():
+			if child is Line2D:
+				child.modulate.a = 0.0;
+
 	await change_board_visibility(Visibility.VISIBLE);
+	
+	_is_playing = true;
 	
 	while(not _winner.is_finished()):
 		var has_played = { value = false };
@@ -154,7 +167,9 @@ func start_playing():
 		else:
 			switch_player()
 	
+
 	print("game its over")
+	_is_playing = false;
 	
 	change_board_visibility(Visibility.HIDDEN);
 	await hide_cells();
@@ -235,8 +250,14 @@ func set_value(value: String, index: int):
 		_winner = winner;
 		on_game_over.emit()
 
-func can_hover():
-	return _players[current_player] is HumanPlayer;
+func can_hover(index: int):
+	if _players[current_player] is not HumanPlayer:
+		return false;
+		
+	if has_value(index):
+		return false;
+
+	return _is_playing && !is_game_over()
 
 func is_game_over():
 	return _winner.is_finished()
@@ -249,6 +270,10 @@ func get_player_color():
 	
 func switch_player():
 	current_player = MARK_O if current_player == MARK_X else MARK_X;
+
+func _go_to_main_menu():
+	await change_board_visibility(Visibility.HIDDEN)
+	get_tree().change_scene_to_file("res://ui/main_menu.tscn")
 
 func refresh_ui():
 	for idx in _board.size():
@@ -263,7 +288,6 @@ func print_board():
 	print("=== ", _board.slice(0, 3))
 	print("=== ", _board.slice(3, 6))
 	print("=== ", _board.slice(6, 9))
-	
 	
 static func get_opponent(value: String):
 	return MARK_O if value == MARK_X else MARK_X
