@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dw01ewijj6lj7"]
+[gd_scene load_steps=8 format=3 uid="uid://dw01ewijj6lj7"]
 
 [ext_resource type="Script" path="res://ui/main_menu.gd" id="1_pflmj"]
 [ext_resource type="PackedScene" uid="uid://dhig53gq04o6f" path="res://ui/bg.tscn" id="1_vtlxb"]
@@ -6,6 +6,7 @@
 [ext_resource type="StyleBox" uid="uid://u2kfkut6slb0" path="res://art/styles/button_normal.tres" id="3_7homs"]
 [ext_resource type="StyleBox" uid="uid://c0vg1hr1pgc2r" path="res://art/styles/button_disabled.tres" id="4_kh21q"]
 [ext_resource type="StyleBox" uid="uid://inq4sf0eei6u" path="res://art/styles/button_hover.tres" id="5_48hjw"]
+[ext_resource type="PackedScene" uid="uid://dps2mir7ylw1d" path="res://ui/screen_scaler.tscn" id="7_hsxsj"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -32,6 +33,7 @@ offset_right = 411.0
 offset_bottom = -57.0
 grow_horizontal = 2
 grow_vertical = 2
+pivot_offset = Vector2(410, 64)
 theme_override_colors/default_color = Color(0, 0, 0, 1)
 theme_override_fonts/normal_font = ExtResource("2_anqjw")
 theme_override_font_sizes/bold_italics_font_size = 100
@@ -123,6 +125,7 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_anqjw")
 theme_override_font_sizes/font_size = 50
 theme_override_styles/focus = ExtResource("3_7homs")
+theme_override_styles/disabled_mirrored = ExtResource("4_kh21q")
 theme_override_styles/disabled = ExtResource("4_kh21q")
 theme_override_styles/hover_pressed = ExtResource("3_7homs")
 theme_override_styles/hover = ExtResource("3_7homs")
@@ -130,3 +133,5 @@ theme_override_styles/pressed = ExtResource("3_7homs")
 theme_override_styles/normal = ExtResource("3_7homs")
 disabled = true
 text = "Play Online"
+
+[node name="ScreenScaler" parent="." instance=ExtResource("7_hsxsj")]

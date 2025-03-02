@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://b04esyl8u473x"]
+[gd_scene load_steps=13 format=3 uid="uid://b04esyl8u473x"]
 
 [ext_resource type="Script" path="res://ui/game.gd" id="1_oghdo"]
 [ext_resource type="PackedScene" uid="uid://1gokhe2unguc" path="res://ui/cell.tscn" id="3_a0qbr"]
@@ -8,6 +8,7 @@
 [ext_resource type="StyleBox" uid="uid://u2kfkut6slb0" path="res://art/styles/button_normal.tres" id="6_a5lqr"]
 [ext_resource type="StyleBox" uid="uid://c0vg1hr1pgc2r" path="res://art/styles/button_disabled.tres" id="7_mcrrr"]
 [ext_resource type="StyleBox" uid="uid://inq4sf0eei6u" path="res://art/styles/button_hover.tres" id="8_jqqnv"]
+[ext_resource type="PackedScene" uid="uid://dps2mir7ylw1d" path="res://ui/screen_scaler.tscn" id="9_oxbaa"]
 
 [sub_resource type="Animation" id="Animation_tm2vy"]
 length = 0.001
@@ -365,3 +366,5 @@ theme_override_colors/font_color = Color(0, 0, 0, 0.239216)
 theme_override_fonts/font = ExtResource("5_vc4ud")
 theme_override_font_sizes/font_size = 20
 text = "Mode: Local"
+
+[node name="ScreenScaler" parent="." instance=ExtResource("9_oxbaa")]

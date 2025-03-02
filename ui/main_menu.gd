@@ -22,4 +22,3 @@ func _load_scene(mode: Game.Mode, difficulty: CpuPlayer.Difficulty = CpuPlayer.D
 	GameConfig.game_mode = mode;
 	GameConfig.difficulty = difficulty;
 	get_tree().change_scene_to_file("res://ui/game.tscn")
-	pass

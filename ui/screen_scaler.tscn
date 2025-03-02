@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dps2mir7ylw1d"]
+
+[ext_resource type="Script" path="res://scripts/resize_screen.gd" id="1_h03n7"]
+
+[node name="ScreenScaler" type="Node"]
+script = ExtResource("1_h03n7")
