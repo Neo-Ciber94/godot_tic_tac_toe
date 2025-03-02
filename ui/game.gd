@@ -2,9 +2,10 @@ extends Node
 class_name Game;
 
 @onready var grid = $Board/GridContainer
+@onready var dialog: Dialog = $Dialog;
 @onready var board = $Board;
 @onready var board_grid = $Board/Grid
-@onready var dialog: Dialog = $Dialog;
+@onready var board_anim: AnimationPlayer = $Board/Grid/AnimationPlayer;
 
 enum Mode {
 	LOCAL,
@@ -12,7 +13,7 @@ enum Mode {
 	ONLINE
 }
 
-const EMPTY = "~";
+const EMPTY = " ";
 const MARK_X = "x";
 const MARK_O = "o";
 
@@ -36,10 +37,9 @@ func _ready() -> void:
 
 func start_game():
 	dialog.hide();
-	board.show();
-	
+		
 	setup_board()
-	setup_players()
+	setup_players()	
 	start_playing();
 		
 func setup_board():
@@ -106,6 +106,9 @@ func remove_players_from_scene():
 	remove_child(_players[MARK_O])
 	
 func start_playing():		
+	board_anim.play("appear", -1, 4)
+	await board_anim.animation_finished
+	
 	while(not _winner.is_finished()):
 		var has_played = { value = false };
 		var player: Player = _players[current_player.value];
@@ -148,9 +151,10 @@ func start_playing():
 	
 	print("game its over")
 	
-	# Show the winner dialog
-	await hide_ui();
+	board_anim.play("appear", -1, -4, true)
+	await hide_cells();
 	
+	# Show the winner dialog
 	if _winner.is_tie():
 		dialog.change_text("It's a tie", Color.BLACK);
 	else:
@@ -165,7 +169,7 @@ func start_playing():
 	reset_board()
 	start_game()
 	
-func hide_ui():	
+func hide_cells():	
 	var indices = _winner.get_indices()
 	var winner_cells: Array[Cell] = [];
 	var other_cells : Array[Cell] = [];
@@ -180,19 +184,18 @@ func hide_ui():
 			other_cells.push_back(cell)
 	
 	var tween = get_tree().create_tween()
-	tween.parallel().tween_property(board_grid, "modulate:a", 0.0, 0.5);
 	
 	for cell in other_cells:
-		tween.tween_property(cell, "modulate:a", 0.0, 0.1);
+		tween.tween_property(cell, "modulate:a", 0.0, 0.05);
 	
 	var screen_center = Vector2(get_viewport().size / 2)
 	
 	for cell in winner_cells:
 		var center_position = screen_center - cell.size / 2;
-		tween.parallel().tween_property(cell, "global_position", center_position, 0.5).set_trans(Tween.TRANS_SINE)
+		tween.parallel().tween_property(cell, "global_position", center_position, 0.3).set_trans(Tween.TRANS_SINE)
 		
 	for cell in winner_cells:
-		tween.parallel().tween_property(cell, "position:y", 70, 0.5)
+		tween.parallel().tween_property(cell, "position:y", 70, 0.3)
 		
 	await tween.finished;
 
