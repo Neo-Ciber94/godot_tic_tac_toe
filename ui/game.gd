@@ -106,7 +106,7 @@ func remove_players_from_scene():
 	remove_child(_players[MARK_O])
 	
 func start_playing():		
-	while(true):
+	while(not _winner.is_finished()):
 		var has_played = { value = false };
 		var player: Player = _players[current_player.value];
 		print("current player: ", current_player.value)
