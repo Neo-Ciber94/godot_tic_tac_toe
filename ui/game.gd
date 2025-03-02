@@ -35,7 +35,7 @@ signal waiting;
 signal on_game_over;
 	
 var _players = {}
-var current_player = {}
+var current_player = MARK_X
 	
 func _ready() -> void:
 	start_game();
@@ -82,11 +82,14 @@ func on_cell_hover(cell: Cell, is_over: bool, index: int):
 			
 	if is_over:
 		var mark = get_player()
-		cell.draw_mark(mark, Color(get_player_color(), 0.5))
+		cell.draw_mark(mark, Color(get_player_color(), 0.2))
 	else:
 		cell.draw_mark(EMPTY, COLOR_EMPTY)
 
 func setup_players():
+	var player_values = [MARK_X, MARK_O];
+	current_player = player_values[0]
+		
 	match _mode:
 		Mode.LOCAL:
 			print("start vs local")
@@ -95,12 +98,12 @@ func setup_players():
 		Mode.CPU:
 			print("start vs cpu")
 			_players[MARK_X] = HumanPlayer.new()
-			_players[MARK_O] = CpuPlayer.new()
+			_players[MARK_O] = CpuPlayer.new(player_values[1])
 		Mode.ONLINE:
 			print("start vs online")
 			
 	add_players_to_scene();
-	current_player = { value = MARK_X }
+
 
 func add_players_to_scene():
 	add_child(_players[MARK_X]);
@@ -130,18 +133,18 @@ func start_playing():
 	
 	while(not _winner.is_finished()):
 		var has_played = { value = false };
-		var player: Player = _players[current_player.value];
-		print("current player: ", current_player.value)
+		var player: Player = _players[current_player];
+		print("current player: ", current_player)
 		
-		print("waiting for: ", current_player.value)
+		print("waiting for: ", current_player)
 		var index = await make_move(player);
-		print(current_player.value, " move to ", index);
+		print(current_player, " move to ", index);
 		
 		if has_value(index):
 			print("illegal play")
 			continue;
 	
-		await set_value(current_player.value, index);
+		await set_value(current_player, index);
 		self.print_board()
 
 		if _winner.is_finished():
@@ -231,19 +234,19 @@ func set_value(value: String, index: int):
 		on_game_over.emit()
 
 func can_hover():
-	return _players[current_player.value] is HumanPlayer;
+	return _players[current_player] is HumanPlayer;
 
 func is_game_over():
 	return _winner.is_finished()
 
 func get_player():
-	return current_player.value;
+	return current_player;
 
 func get_player_color():
-	return COLOR_P1 if current_player.value == MARK_X else COLOR_P2;
+	return COLOR_P1 if current_player == MARK_X else COLOR_P2;
 	
 func switch_player():
-	current_player.value = MARK_O if current_player.value == MARK_X else MARK_X;
+	current_player = MARK_O if current_player == MARK_X else MARK_X;
 
 func print_board():
 	print("=== ", _board.slice(0, 3))
