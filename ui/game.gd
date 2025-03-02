@@ -2,11 +2,10 @@ extends Node
 class_name Game;
 
 @onready var grid = $Board/GridContainer
-@onready var dialog: Dialog = $Dialog;
 @onready var board = $Board;
 @onready var board_grid = $Board/Grid
 @onready var board_anim: AnimationPlayer = $Board/Grid/AnimationPlayer;
-
+@onready var result_message: ResultMessage = $ResultMessage;
 	
 enum Mode {
 	LOCAL,
@@ -44,7 +43,7 @@ func _ready() -> void:
 	start_game();
 
 func start_game():
-	dialog.hide();
+	result_message.hide();
 		
 	setup_board()
 	setup_players()	
@@ -55,7 +54,7 @@ func setup_board():
 	_board = [];
 	
 	grid.show();
-	dialog.hide();
+	result_message.hide();
 	
 	for child in grid.get_children():
 			child.queue_free()
@@ -160,17 +159,17 @@ func start_playing():
 	change_board_visibility(Visibility.HIDDEN);
 	await hide_cells();
 	
-	# Show the winner dialog
+	# Show the winner result_message
 	if _winner.is_tie():
-		dialog.change_text("It's a tie", Color.BLACK);
+		result_message.change_text("It's a tie", Color.BLACK);
 	else:
 		var color = COLOR_P1 if _winner.get_value() == MARK_X else COLOR_P2;
-		dialog.change_text("winner!", color)
+		result_message.change_text("winner!", color)
 		
-	dialog.show();
+	result_message.show();
 
 	# Wait to click for restart
-	await dialog.on_click;
+	await result_message.on_click;
 	remove_players_from_scene();
 	reset_board()
 	start_game()

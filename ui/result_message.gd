@@ -1,5 +1,5 @@
 extends CenterContainer;
-class_name Dialog;
+class_name ResultMessage;
 
 @onready var label = $Label;
 

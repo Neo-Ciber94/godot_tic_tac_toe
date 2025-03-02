@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://ui/game.gd" id="1_oghdo"]
 [ext_resource type="PackedScene" uid="uid://1gokhe2unguc" path="res://ui/cell.tscn" id="3_a0qbr"]
 [ext_resource type="PackedScene" uid="uid://dhig53gq04o6f" path="res://ui/bg.tscn" id="3_f5y2r"]
-[ext_resource type="PackedScene" uid="uid://c5x01dexo3f2f" path="res://ui/dialog.tscn" id="5_ibqo8"]
+[ext_resource type="PackedScene" uid="uid://c5x01dexo3f2f" path="res://ui/result_message.tscn" id="5_ibqo8"]
 
 [sub_resource type="Animation" id="Animation_tm2vy"]
 length = 0.001
@@ -306,6 +306,6 @@ layout_mode = 2
 [node name="Cell9" parent="Board/GridContainer" instance=ExtResource("3_a0qbr")]
 layout_mode = 2
 
-[node name="Dialog" parent="." instance=ExtResource("5_ibqo8")]
+[node name="ResultMessage" parent="." instance=ExtResource("5_ibqo8")]
 visible = false
 layout_mode = 1
