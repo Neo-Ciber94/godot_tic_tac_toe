@@ -133,7 +133,7 @@ func setup_players():
 		Mode.ONLINE:
 			print("start vs online")
 			
-			if ServerIndicator.is_server():
+			if GameConfig.is_server:
 				_online_start_server()
 			else:
 				_online_join_game()		
@@ -431,7 +431,7 @@ func _online_start_game(p1_peer_id: int, p2_peer_id: int, player: String):
 	var p2 = _online_players[p2_peer_id];
 	on_online_game_start.emit(p1, p2, player)
 
-@rpc("any_peer", "reliable")
+@rpc("any_peer", "call_local", "reliable")
 func _online_make_move(idx: int):
 	var peer_id = multiplayer.get_remote_sender_id()
 	
