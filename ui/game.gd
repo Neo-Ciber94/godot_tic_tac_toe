@@ -364,27 +364,29 @@ func _online_player_connected(player_id: int):
 	_online_register_player.rpc_id(player_id)
 
 func _online_player_disconnected(player_id: int):
-	print("_online_player_connected: ", player_id)
-	_online_register_player.rpc_id(player_id)
+	print("_online_player_disconnected: ", player_id)
+	pass
 	
 func _online_on_connected_ok():
 	var peer_id = multiplayer.get_unique_id()
-	_online_add_player(peer_id);
+	_online_add_player(peer_id);	
+	
+@rpc("call_local", "reliable")
+func _online_start_server_game():
+	assert(_online_players_queue.size() >= 2)
+
+	var p1: OnlinePlayer = _online_players_queue.pop_back()
+	var p2: OnlinePlayer = _online_players_queue.pop_back()
+	var player = MARK_X if randf() > 0.5 else MARK_O;
+	
+	_online_start_game.rpc_id(p1.peer_id, p1.peer_id, p2.peer_id, player);
+	_online_start_game.rpc_id(p2.peer_id, p1.peer_id, p2.peer_id, get_opponent(player));
 	
 @rpc("any_peer", "reliable")
 func _online_register_player():
 	var peer_id = multiplayer.get_remote_sender_id()
 	print("_online_register_player: ", peer_id)
 	_online_add_player(peer_id)
-	
-	# Check if can start game
-	if _online_players_queue.size() >= 2:
-		var p1: OnlinePlayer = _online_players_queue.pop_back()
-		var p2: OnlinePlayer = _online_players_queue.pop_back()
-		var player = MARK_X if randf() > 0.5 else MARK_O;
-		
-		_online_start_game.rpc_id(p1.peer_id, p1.peer_id, p2.peer_id, player);
-		_online_start_game.rpc_id(p2.peer_id, p1.peer_id, p2.peer_id, get_opponent(player));
 		
 @rpc("any_peer", "reliable")
 func _online_remove_player(peer_id: int):
@@ -409,7 +411,13 @@ func _online_add_player(peer_id: int):
 
 	_online_players_queue.push_back(player)
 	_online_players[peer_id] = player;
-	print("online_players", { peer_id = multiplayer.get_unique_id() }, _online_players)
+	print("online_players", { peer_id = multiplayer.get_unique_id() }, _online_players, _online_players_queue)
+	
+	if GameConfig.is_server:
+		# check if can start game
+		if _online_players_queue.size() >= 2:
+			print("Start game")
+			_online_start_server_game.rpc();
 
 @rpc("any_peer", "reliable")
 func _online_start_game(p1_peer_id: int, p2_peer_id: int, player: String):
