@@ -37,7 +37,6 @@ var _board: Array[String] = [];
 var _winner: Winner = Winner.None();
 var _is_first_game = true;
 var _is_playing = false;
-var _is_server = GameConfig.is_server;
 
 @export var _mode = GameConfig.game_mode;
 @export var _difficulty = GameConfig.difficulty;
@@ -134,7 +133,7 @@ func setup_players():
 		Mode.ONLINE:
 			print("start vs online")
 			
-			if _is_server:
+			if ServerIndicator.is_server():
 				_online_start_server()
 			else:
 				_online_join_game()		
@@ -285,8 +284,8 @@ func can_hover(index: int):
 	if !_players.has(current_player):
 		return false;
 		
-	if _players[current_player] is not HumanPlayer:
-		return false;
+	#if _players[current_player] is not HumanPlayer:
+		#return false;
 		
 	if has_value(index):
 		return false;
@@ -403,7 +402,11 @@ func _online_remove_player(peer_id: int):
 		_online_players_queue.remove_at(idx)
 
 func _online_add_player(peer_id: int):
-	var player = OnlinePlayer.new(peer_id);
+	var player = OnlinePlayer.new(peer_id, 
+		func(idx):
+			_online_make_move.rpc(idx)
+	);
+
 	_online_players_queue.push_back(player)
 	_online_players[peer_id] = player;
 	print("online_players", { peer_id = multiplayer.get_unique_id() }, _online_players)
@@ -419,6 +422,20 @@ func _online_start_game(p1_peer_id: int, p2_peer_id: int, player: String):
 	var p1 = _online_players[p1_peer_id];
 	var p2 = _online_players[p2_peer_id];
 	on_online_game_start.emit(p1, p2, player)
+
+@rpc("any_peer", "reliable")
+func _online_make_move(idx: int):
+	var peer_id = multiplayer.get_remote_sender_id()
+	
+	for p in _players.values():
+		if p.peer_id == peer_id:
+			print("online player moved ", {
+				peer_id = peer_id,
+				idx = idx
+			});
+			
+			var player: OnlinePlayer = p;
+			player.on_move.emit(idx);
 
 func print_board():
 	print("=== ", _board.slice(0, 3))

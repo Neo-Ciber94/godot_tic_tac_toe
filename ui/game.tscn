@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://b04esyl8u473x"]
+[gd_scene load_steps=14 format=3 uid="uid://b04esyl8u473x"]
 
 [ext_resource type="Script" path="res://ui/game.gd" id="1_oghdo"]
 [ext_resource type="PackedScene" uid="uid://1gokhe2unguc" path="res://ui/cell.tscn" id="3_a0qbr"]
@@ -9,6 +9,7 @@
 [ext_resource type="StyleBox" uid="uid://c0vg1hr1pgc2r" path="res://art/styles/button_disabled.tres" id="7_mcrrr"]
 [ext_resource type="StyleBox" uid="uid://inq4sf0eei6u" path="res://art/styles/button_hover.tres" id="8_jqqnv"]
 [ext_resource type="PackedScene" uid="uid://dps2mir7ylw1d" path="res://ui/screen_scaler.tscn" id="9_oxbaa"]
+[ext_resource type="PackedScene" uid="uid://00niqossu4ex" path="res://server_indicator.tscn" id="10_1p5xv"]
 
 [sub_resource type="Animation" id="Animation_tm2vy"]
 length = 0.001
@@ -368,3 +369,11 @@ theme_override_font_sizes/font_size = 20
 text = "Mode: Local"
 
 [node name="ScreenScaler" parent="." instance=ExtResource("9_oxbaa")]
+
+[node name="ServerIndicator" parent="." instance=ExtResource("10_1p5xv")]
+visible = true
+layout_mode = 1
+offset_left = -180.0
+offset_top = -39.0
+offset_right = 0.0
+offset_bottom = 0.0
