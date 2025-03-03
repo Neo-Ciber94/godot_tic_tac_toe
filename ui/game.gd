@@ -142,9 +142,9 @@ func setup_players():
 			var args = await on_online_game_start;
 			print("online game started: ", args);
 			
-			_players[MARK_X] = args[0];
-			_players[MARK_O] = args[1];
 			current_player = args[2];
+			_players[current_player] = args[0];
+			_players[get_opponent(current_player)] = args[1];
 			
 	add_players_to_scene();
 
@@ -197,7 +197,6 @@ func start_playing():
 		else:
 			switch_player()
 	
-
 	print("game its over")
 	_is_playing = false;
 	
@@ -433,19 +432,21 @@ func _online_start_game(p1_peer_id: int, p2_peer_id: int, player: String):
 
 @rpc("any_peer", "call_local", "reliable")
 func _online_make_move(idx: int):
-	var peer_id = multiplayer.get_remote_sender_id()
-	
-	for p in _players.values():
-		if p.peer_id == peer_id:
+	var remote_peer_id = multiplayer.get_remote_sender_id()
+
+	for player in _players.values():
+		if player.peer_id == remote_peer_id:
 			print("online player moved ", {
-				peer_id = peer_id,
-				idx = idx
+				remote_peer_id = remote_peer_id,
+				own_peer_id = multiplayer.multiplayer_peer.get_unique_id(),
+				idx = idx,
 			});
 			
-			var player: OnlinePlayer = p;
-			player.on_move.emit(idx);
+			var online_player: OnlinePlayer = player;
+			online_player.on_move.emit(idx);
 
 func print_board():
+	print("=== ", multiplayer.multiplayer_peer.get_unique_id())
 	print("=== ", _board.slice(0, 3))
 	print("=== ", _board.slice(3, 6))
 	print("=== ", _board.slice(6, 9))
