@@ -1,6 +1,6 @@
 [gd_scene load_steps=14 format=3 uid="uid://b04esyl8u473x"]
 
-[ext_resource type="Script" path="res://ui/game.gd" id="1_oghdo"]
+[ext_resource type="Script" uid="uid://btbqrdcccknp6" path="res://ui/game.gd" id="1_oghdo"]
 [ext_resource type="PackedScene" uid="uid://1gokhe2unguc" path="res://ui/cell.tscn" id="3_a0qbr"]
 [ext_resource type="PackedScene" uid="uid://dhig53gq04o6f" path="res://ui/bg.tscn" id="3_f5y2r"]
 [ext_resource type="PackedScene" uid="uid://c5x01dexo3f2f" path="res://ui/result_message.tscn" id="5_ibqo8"]
@@ -211,8 +211,8 @@ tracks/7/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_p8nv7"]
 _data = {
-"RESET": SubResource("Animation_tm2vy"),
-"appear": SubResource("Animation_r80u1")
+&"RESET": SubResource("Animation_tm2vy"),
+&"appear": SubResource("Animation_r80u1")
 }
 
 [node name="Game" type="Control"]
@@ -273,7 +273,7 @@ default_color = Color(0, 0, 0, 1)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Board/Grid"]
 libraries = {
-"": SubResource("AnimationLibrary_p8nv7")
+&"": SubResource("AnimationLibrary_p8nv7")
 }
 
 [node name="GridContainer" type="GridContainer" parent="Board"]
@@ -338,10 +338,10 @@ grow_horizontal = 0
 theme_override_colors/font_disabled_color = Color(0, 0, 0, 1)
 theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
 theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("5_vc4ud")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/focus = ExtResource("6_a5lqr")

@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://00niqossu4ex"]
 
-[ext_resource type="Script" path="res://ui/server_indicator.gd" id="1_h0eju"]
+[ext_resource type="Script" uid="uid://36s7sv6hw5om" path="res://ui/server_indicator.gd" id="1_h0eju"]
 [ext_resource type="FontFile" uid="uid://dy04l2c31hyma" path="res://art/fonts/Silkscreen-Regular.ttf" id="1_h0msb"]
 
 [node name="ServerIndicator" type="Label"]

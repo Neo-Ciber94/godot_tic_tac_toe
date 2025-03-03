@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://dw01ewijj6lj7"]
 
-[ext_resource type="Script" path="res://ui/main_menu.gd" id="1_pflmj"]
+[ext_resource type="Script" uid="uid://dwc7u0xomwdr4" path="res://ui/main_menu.gd" id="1_pflmj"]
 [ext_resource type="PackedScene" uid="uid://dhig53gq04o6f" path="res://ui/bg.tscn" id="1_vtlxb"]
 [ext_resource type="FontFile" uid="uid://dy04l2c31hyma" path="res://art/fonts/Silkscreen-Regular.ttf" id="2_anqjw"]
 [ext_resource type="StyleBox" uid="uid://u2kfkut6slb0" path="res://art/styles/button_normal.tres" id="3_7homs"]
@@ -67,10 +67,10 @@ layout_mode = 2
 theme_override_colors/font_disabled_color = Color(1, 0, 0, 1)
 theme_override_colors/font_hover_pressed_color = Color(1, 0, 0, 1)
 theme_override_colors/font_hover_color = Color(1, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(1, 0, 0, 1)
-theme_override_colors/font_focus_color = Color(1, 0, 0, 1)
-theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(1, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(1, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_anqjw")
 theme_override_font_sizes/font_size = 50
 theme_override_styles/focus = ExtResource("3_7homs")
@@ -91,10 +91,10 @@ layout_mode = 2
 theme_override_colors/font_disabled_color = Color(0, 0, 1, 1)
 theme_override_colors/font_hover_pressed_color = Color(0, 0, 1, 1)
 theme_override_colors/font_hover_color = Color(0, 0, 1, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 1, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 1, 1)
-theme_override_colors/font_color = Color(0, 0, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 0, 1, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 1, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 1, 1)
 theme_override_fonts/font = ExtResource("2_anqjw")
 theme_override_font_sizes/font_size = 50
 theme_override_styles/focus = ExtResource("3_7homs")
@@ -112,6 +112,7 @@ text = "Play vs CPU"
 flat = false
 item_count = 4
 popup/item_0/text = "Random"
+popup/item_0/id = 0
 popup/item_1/text = "Easy"
 popup/item_1/id = 1
 popup/item_2/text = "Hard"

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://c5x01dexo3f2f"]
 
 [ext_resource type="FontFile" uid="uid://dy04l2c31hyma" path="res://art/fonts/Silkscreen-Regular.ttf" id="1_x6svd"]
-[ext_resource type="Script" path="res://ui/result_message.gd" id="2_hjo00"]
+[ext_resource type="Script" uid="uid://da8l0bgfhmq32" path="res://ui/result_message.gd" id="2_hjo00"]
 
 [node name="ResultMessage" type="CenterContainer"]
 anchors_preset = 8
