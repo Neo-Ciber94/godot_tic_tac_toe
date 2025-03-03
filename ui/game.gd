@@ -9,6 +9,10 @@ class_name Game;
 @onready var exit_btn : Button = $ExitButton;
 @onready var game_mode_label: Label = $GameMode;
 	
+const SERVER_PORT = 7000
+const SERVER_IP = "127.0.0.1" # IPv4 localhost
+const SERVER_MAX_CONNECTIONS = 20
+
 enum Mode {
 	LOCAL,
 	CPU,
@@ -33,18 +37,31 @@ var _board: Array[String] = [];
 var _winner: Winner = Winner.None();
 var _is_first_game = true;
 var _is_playing = false;
+var _is_server = GameConfig.is_server;
 
 @export var _mode = GameConfig.game_mode;
 @export var _difficulty = GameConfig.difficulty;
 
 signal waiting;
 signal on_game_over;
-	
+signal on_online_game_start(p1: OnlinePlayer, p2: OnlinePlayer, initial_player: String);
+
+var _online_players_queue: Array[OnlinePlayer] = []
+var _online_players = {}
+
 var _players = {}
 var current_player = MARK_X
 	
 func _ready() -> void:
+	# online
+	multiplayer.peer_connected.connect(_online_player_connected)
+	multiplayer.peer_disconnected.connect(_online_player_disconnected)
+	multiplayer.connected_to_server.connect(_online_on_connected_ok)
+	
+	# exit game
 	exit_btn.pressed.connect(_go_to_main_menu)
+	
+	# start game
 	start_game();
 
 func start_game():
@@ -52,7 +69,7 @@ func start_game():
 	result_message.hide();
 		
 	setup_board()
-	setup_players()	
+	await setup_players()	
 	start_playing();
 		
 func setup_board():
@@ -78,6 +95,13 @@ func setup_board():
 		cell.on_hover.connect(func(this_cell, is_over): 
 			on_cell_hover(this_cell, is_over, idx)	
 		)
+		
+		# We show an initial delay at the first game
+	if _is_first_game:
+		_is_first_game = false;
+		for child in board_grid.get_children():
+			if child is Line2D:
+				child.modulate.a = 0.0;
 
 func reset_board():
 	_players = {}
@@ -110,6 +134,19 @@ func setup_players():
 		Mode.ONLINE:
 			print("start vs online")
 			
+			if _is_server:
+				_online_start_server()
+			else:
+				_online_join_game()		
+				
+			print("waiting for start online game...");
+			var args = await on_online_game_start;
+			print("online game started: ", args);
+			
+			_players[MARK_X] = args[0];
+			_players[MARK_O] = args[1];
+			current_player = args[2];
+			
 	add_players_to_scene();
 
 func add_players_to_scene():
@@ -136,13 +173,6 @@ func make_move(player: Player):
 	return index.value;
 
 func start_playing():		
-	# We show an initial delay at the first game
-	if _is_first_game:
-		_is_first_game = false;
-		for child in board_grid.get_children():
-			if child is Line2D:
-				child.modulate.a = 0.0;
-
 	await change_board_visibility(Visibility.VISIBLE);
 	
 	_is_playing = true;
@@ -252,6 +282,9 @@ func set_value(value: String, index: int):
 		on_game_over.emit()
 
 func can_hover(index: int):
+	if !_players.has(current_player):
+		return false;
+		
 	if _players[current_player] is not HumanPlayer:
 		return false;
 		
@@ -301,6 +334,91 @@ func _get_game_mode_text():
 			return "Mode: CPU (%s)" % difficulty;
 		Mode.ONLINE:
 			return "Mode: Online"
+
+func _online_start_server():
+	var peer = ENetMultiplayerPeer.new()
+	var error = peer.create_server(SERVER_PORT, SERVER_MAX_CONNECTIONS)
+	
+	if error:
+		print("failed to start server");
+		return;
+		
+	# server it's always 1
+	print("Server started...")
+	var peer_id = peer.get_unique_id();
+	multiplayer.multiplayer_peer = peer
+	_online_add_player(peer_id)
+
+func _online_join_game():
+	var peer = ENetMultiplayerPeer.new()
+	var error = peer.create_client(SERVER_IP, SERVER_PORT)
+	
+	if error:
+		print("failed to connect to server: ", error);
+		return;
+		
+	print("Client connected...")
+	multiplayer.multiplayer_peer = peer
+
+func _online_player_connected(player_id: int):
+	print("_online_player_connected: ", player_id)
+	_online_register_player.rpc_id(player_id)
+
+func _online_player_disconnected(player_id: int):
+	print("_online_player_connected: ", player_id)
+	_online_register_player.rpc_id(player_id)
+	
+func _online_on_connected_ok():
+	var peer_id = multiplayer.get_unique_id()
+	_online_add_player(peer_id);
+	
+@rpc("any_peer", "reliable")
+func _online_register_player():
+	var peer_id = multiplayer.get_remote_sender_id()
+	print("_online_register_player: ", peer_id)
+	_online_add_player(peer_id)
+	
+	# Check if can start game
+	if _online_players_queue.size() >= 2:
+		var p1: OnlinePlayer = _online_players_queue.pop_back()
+		var p2: OnlinePlayer = _online_players_queue.pop_back()
+		var player = MARK_X if randf() > 0.5 else MARK_O;
+		
+		_online_start_game.rpc_id(p1.peer_id, p1.peer_id, p2.peer_id, player);
+		_online_start_game.rpc_id(p2.peer_id, p1.peer_id, p2.peer_id, get_opponent(player));
+		
+@rpc("any_peer", "reliable")
+func _online_remove_player(peer_id: int):
+	_online_players.erase(peer_id)
+	
+	var idx = -1;
+	for i in _online_players_queue.size():
+		var p = _online_players_queue[i];
+		
+		if p.peer_id == peer_id:
+			idx = i;
+			break
+			
+	if idx >= 0:
+		_online_players_queue.remove_at(idx)
+
+func _online_add_player(peer_id: int):
+	var player = OnlinePlayer.new(peer_id);
+	_online_players_queue.push_back(player)
+	_online_players[peer_id] = player;
+	print("online_players", { peer_id = multiplayer.get_unique_id() }, _online_players)
+
+@rpc("any_peer", "reliable")
+func _online_start_game(p1_peer_id: int, p2_peer_id: int, player: String):
+	print("_online_start_game", {
+		p1_peer_id = p1_peer_id,
+		p2_peer_id = p2_peer_id,
+		player = player
+	})
+	
+	var p1 = _online_players[p1_peer_id];
+	var p2 = _online_players[p2_peer_id];
+	on_online_game_start.emit(p1, p2, player)
 
 func print_board():
 	print("=== ", _board.slice(0, 3))
