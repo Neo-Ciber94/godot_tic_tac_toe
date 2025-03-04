@@ -42,8 +42,8 @@ signal on_waiting_move();
 signal on_game_over();
 
 var _players = {}
-var my_player: String;
-var current_player: String;
+var _my_player: String;
+var _current_player: String;
 	
 func _ready() -> void:
 	# online
@@ -108,22 +108,22 @@ func on_cell_hover(cell: Cell, is_over: bool, index: int):
 	else:
 		cell.draw_mark(EMPTY, COLOR_EMPTY)
 
-func setup_players():
-	var player_values = [MARK_X, MARK_O];
-	current_player = player_values[0]
-		
+func setup_players():			
 	match _mode:
 		Mode.LOCAL:
-			print("start vs local")
+			print("start vs local")			
 			_players[MARK_X] = HumanPlayer.new()
 			_players[MARK_O] = HumanPlayer.new()
 		Mode.CPU:
 			print("start vs cpu")
+			var turn_players: Array[String] = [MARK_X, MARK_O]
+			_my_player = MARK_X;
+			_current_player =  turn_players.pick_random()
+			
 			_players[MARK_X] = HumanPlayer.new()
-			_players[MARK_O] = CpuPlayer.new(player_values[1], _difficulty)
+			_players[MARK_O] = CpuPlayer.new(MARK_O, _difficulty)
 		Mode.ONLINE:
 			print("start vs online")
-			
 			
 	add_players_to_scene();
 
@@ -156,18 +156,18 @@ func start_playing():
 	_is_playing = true;
 	
 	while(not _winner.is_finished()):
-		var player: Player = _players[current_player];
-		print("current player: ", current_player)
+		var player: Player = _players[_current_player];
+		print("current player: ", _current_player)
 		
-		print("waiting for: ", current_player)
+		print("waiting for: ", _current_player)
 		var index = await make_move(player);
-		print(current_player, " move to ", index);
+		print(_current_player, " move to ", index);
 		
 		if has_value(index):
 			print("illegal play")
 			continue;
 	
-		await set_value(current_player, index);
+		await set_value(_current_player, index);
 		refresh_ui();
 		self.print_board()
 
@@ -259,11 +259,11 @@ func set_value(value: String, index: int):
 		on_game_over.emit()
 
 func can_hover(index: int):
-	if !_players.has(current_player):
+	if !_players.has(_current_player):
 		return false;
 		
-	#if _players[current_player] is not HumanPlayer:
-		#return false;
+	if _my_player != _current_player:
+		return false;
 		
 	if has_value(index):
 		return false;
@@ -274,13 +274,16 @@ func is_game_over():
 	return _winner.is_finished()
 
 func get_player():
-	return current_player;
+	return _current_player;
 
 func get_player_color():
-	return get_color(current_player)
+	return get_color(_current_player)
 	
 func switch_player():
-	current_player = MARK_O if current_player == MARK_X else MARK_X;
+	_current_player = MARK_O if _current_player == MARK_X else MARK_X;
+	
+	if _mode == Mode.LOCAL:
+		_my_player = _current_player;
 
 func _go_to_main_menu():
 	await change_board_visibility(Visibility.HIDDEN)

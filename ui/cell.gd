@@ -18,6 +18,9 @@ func _ready():
 	)
 
 func _gui_input(event):
+	if event is InputEventMouseMotion:
+		on_hover.emit(self, true)
+		
 	if event is InputEventMouseButton and event.pressed:
 		on_click.emit(self)
 				
