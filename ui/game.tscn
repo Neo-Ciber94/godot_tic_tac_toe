@@ -9,7 +9,7 @@
 [ext_resource type="StyleBox" uid="uid://c0vg1hr1pgc2r" path="res://art/styles/button_disabled.tres" id="7_mcrrr"]
 [ext_resource type="StyleBox" uid="uid://inq4sf0eei6u" path="res://art/styles/button_hover.tres" id="8_jqqnv"]
 [ext_resource type="PackedScene" uid="uid://dps2mir7ylw1d" path="res://ui/screen_scaler.tscn" id="9_oxbaa"]
-[ext_resource type="PackedScene" uid="uid://00niqossu4ex" path="res://server_indicator.tscn" id="10_1p5xv"]
+[ext_resource type="PackedScene" uid="uid://00niqossu4ex" path="res://scripts/server_indicator.tscn" id="10_1p5xv"]
 
 [sub_resource type="Animation" id="Animation_tm2vy"]
 length = 0.001
