@@ -39,13 +39,13 @@ func _bind_listeners():
 	multiplayer.connection_failed.connect(_on_connection_failed)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
 	
-func create_server():
+func create_server() -> int:
 	var peer = ENetMultiplayerPeer.new();
 	var err = peer.create_server(SERVER_PORT, SERVER_MAX_CLIENTS);
 	
 	if err:
 		print("failed to start server");
-		return;
+		return 0;
 		
 	print("server started");
 	multiplayer.multiplayer_peer = peer;
@@ -57,13 +57,13 @@ func create_server():
 		
 	return peer_id;
 	
-func create_client():
+func create_client() -> int:
 	var peer = ENetMultiplayerPeer.new();
 	var err = peer.create_client(SERVER_HOST, SERVER_PORT);
 	
 	if err:
 		print("failed to connect to server");
-		return;
+		return 0;
 		
 	print("client connected to server");
 	multiplayer.multiplayer_peer = peer;

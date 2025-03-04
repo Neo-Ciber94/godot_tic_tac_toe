@@ -40,7 +40,9 @@ var _is_playing = false;
 
 signal on_waiting_move();
 signal on_game_over();
+signal on_online_match_ready()
 
+var _my_peer_id: int;
 var _players = {}
 var _my_player: String;
 var _current_player: String;
@@ -116,7 +118,7 @@ func setup_players():
 			_players[MARK_O] = HumanPlayer.new()
 		Mode.CPU:
 			print("start vs cpu")
-			var turn_players: Array[String] = [MARK_X, MARK_O]
+			const turn_players: Array[String] = [MARK_X, MARK_O]
 			_my_player = MARK_X;
 			_current_player =  turn_players.pick_random()
 			
@@ -124,8 +126,43 @@ func setup_players():
 			_players[MARK_O] = CpuPlayer.new(MARK_O, _difficulty)
 		Mode.ONLINE:
 			print("start vs online")
+			_my_peer_id = _start_server_or_connect();
+			print("waiting for players...")
 			
+			var match_players = await lobby.on_match_players_ready;
+			_setup_multiplayer_peers(match_players);
+			
+			if not GameConfig.is_server:
+				await on_online_match_ready;
+				
+			print("ready to start...", { _my_peer_id = _my_peer_id })
+			
+	# Append the players to the scene
 	add_players_to_scene();
+
+func _start_server_or_connect() -> int:
+	if GameConfig.is_server:
+		return lobby.create_server()
+	else:
+		return lobby.create_client()
+
+func _setup_multiplayer_peers(match_players):
+	var turn_players: Array[String] = [MARK_X, MARK_O];
+	turn_players.shuffle();
+	
+	var cur_player =  turn_players.pick_random()
+
+	for idx in match_players.size():
+		var player = turn_players[idx];
+		var peer_id = match_players[idx].peer_id;
+		
+		_on_peer_player_assign.rpc({
+			peer_id = peer_id,
+			player = player,
+			cur_player = cur_player
+		})
+		
+	_on_match_ready.rpc()
 
 func add_players_to_scene():
 	add_child(_players[MARK_X]);
@@ -259,8 +296,8 @@ func set_value(value: String, index: int):
 		on_game_over.emit()
 
 func can_hover(index: int):
-	if !_players.has(_current_player):
-		return false;
+	#if !_players.has(_current_player):
+		#return false;
 		
 	if _my_player != _current_player:
 		return false;
@@ -320,6 +357,44 @@ func print_board():
 	print("=== ", _board.slice(0, 3))
 	print("=== ", _board.slice(3, 6))
 	print("=== ", _board.slice(6, 9))
+	
+@rpc("any_peer", "call_local", "reliable")
+func _on_peer_player_move(remote_peer_id: int, idx: int):
+	print("_on_peer_player_move: ", {
+		_my_peer_id = _my_peer_id,
+		remote_peer_id = remote_peer_id,
+		idx = idx
+	});
+	
+	for player in _players.values():
+		var online_player: OnlinePlayer = player;
+		
+		if online_player.peer_id == remote_peer_id:
+			online_player.on_move.emit(idx)
+			
+			
+@rpc("authority", "call_local", "reliable")	
+func _on_peer_player_assign(player_info):
+	print("_on_peer_player_assign: ", {
+		_my_peer_id = _my_peer_id,
+		player_info = player_info
+	});
+
+	var peer_id = player_info.peer_id;
+	var player = player_info.player;
+	var cur_player = player_info.cur_player;
+	
+	var player_move_rpc = Callable(func(idx):
+		_on_peer_player_move.rpc(peer_id, idx)
+	)
+				
+	_players[player] = OnlinePlayer.new(peer_id, player_move_rpc);
+	_current_player = cur_player;
+		
+@rpc("authority", "call_local", "reliable")	
+func _on_match_ready():
+	on_online_match_ready.emit()
+	print("_on_match_ready: ", _players)
 	
 static func get_opponent(value: String):
 	return MARK_O if value == MARK_X else MARK_X
