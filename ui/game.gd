@@ -8,10 +8,7 @@ class_name Game;
 @onready var result_message: ResultMessage = $ResultMessage;
 @onready var exit_btn : Button = $ExitButton;
 @onready var game_mode_label: Label = $GameMode;
-	
-const SERVER_PORT = 7000
-const SERVER_IP = "127.0.0.1" # IPv4 localhost
-const SERVER_MAX_CONNECTIONS = 20
+@onready var lobby = $MultiplayerLobby;
 
 enum Mode {
 	LOCAL,
@@ -41,21 +38,15 @@ var _is_playing = false;
 @export var _mode = GameConfig.game_mode;
 @export var _difficulty = GameConfig.difficulty;
 
-signal waiting;
-signal on_game_over;
-signal on_online_game_start(p1: OnlinePlayer, p2: OnlinePlayer, initial_player: String);
-
-var _online_players_queue: Array[OnlinePlayer] = []
-var _online_players = {}
+signal on_waiting_move();
+signal on_game_over();
 
 var _players = {}
-var current_player = MARK_X
+var my_player: String;
+var current_player: String;
 	
 func _ready() -> void:
 	# online
-	multiplayer.peer_connected.connect(_online_player_connected)
-	multiplayer.peer_disconnected.connect(_online_player_disconnected)
-	multiplayer.connected_to_server.connect(_online_on_connected_ok)
 	
 	# exit game
 	exit_btn.pressed.connect(_go_to_main_menu)
@@ -133,18 +124,6 @@ func setup_players():
 		Mode.ONLINE:
 			print("start vs online")
 			
-			if GameConfig.is_server:
-				_online_start_server()
-			else:
-				_online_join_game()		
-				
-			print("waiting for start online game...");
-			var args = await on_online_game_start;
-			print("online game started: ", args);
-			
-			current_player = args[2];
-			_players[current_player] = args[0];
-			_players[get_opponent(current_player)] = args[1];
 			
 	add_players_to_scene();
 
@@ -161,13 +140,13 @@ func make_move(player: Player):
 	
 	var callable = func(idx):
 		index.value = idx;
-		waiting.emit();
+		on_waiting_move.emit();
 	
 	player.on_move.connect(callable, Object.CONNECT_ONE_SHOT)
 	player.next_move(_cells.duplicate(), _board.duplicate())
 	
 	if index.value == -1:
-		await waiting;
+		await on_waiting_move;
 	
 	return index.value;
 
@@ -314,7 +293,7 @@ func refresh_ui():
 		var color = get_color(value)
 		cell.draw_mark(value,color)
 		
-	await waiting;
+	await on_waiting_move;
 
 func _get_game_mode_text():
 	match _mode:
@@ -332,118 +311,6 @@ func _get_game_mode_text():
 			return "Mode: CPU (%s)" % difficulty;
 		Mode.ONLINE:
 			return "Mode: Online"
-
-func _online_start_server():
-	var peer = ENetMultiplayerPeer.new()
-	var error = peer.create_server(SERVER_PORT, SERVER_MAX_CONNECTIONS)
-	
-	if error:
-		print("failed to start server");
-		return;
-		
-	# server it's always 1
-	print("Server started...")
-	var peer_id = peer.get_unique_id();
-	multiplayer.multiplayer_peer = peer
-	_online_add_player(peer_id)
-
-func _online_join_game():
-	var peer = ENetMultiplayerPeer.new()
-	var error = peer.create_client(SERVER_IP, SERVER_PORT)
-	
-	if error:
-		print("failed to connect to server: ", error);
-		return;
-		
-	print("Client connected...")
-	multiplayer.multiplayer_peer = peer
-
-func _online_player_connected(player_id: int):
-	print("_online_player_connected: ", player_id)
-	_online_register_player.rpc_id(player_id)
-
-func _online_player_disconnected(player_id: int):
-	print("_online_player_disconnected: ", player_id)
-	pass
-	
-func _online_on_connected_ok():
-	var peer_id = multiplayer.get_unique_id()
-	_online_add_player(peer_id);	
-	
-@rpc("call_local", "reliable")
-func _online_start_server_game():
-	assert(_online_players_queue.size() >= 2)
-
-	var p1: OnlinePlayer = _online_players_queue.pop_back()
-	var p2: OnlinePlayer = _online_players_queue.pop_back()
-	var player = MARK_X if randf() > 0.5 else MARK_O;
-	
-	_online_start_game.rpc_id(p1.peer_id, p1.peer_id, p2.peer_id, player);
-	_online_start_game.rpc_id(p2.peer_id, p1.peer_id, p2.peer_id, get_opponent(player));
-	
-@rpc("any_peer", "reliable")
-func _online_register_player():
-	var peer_id = multiplayer.get_remote_sender_id()
-	print("_online_register_player: ", peer_id)
-	_online_add_player(peer_id)
-		
-@rpc("any_peer", "reliable")
-func _online_remove_player(peer_id: int):
-	_online_players.erase(peer_id)
-	
-	var idx = -1;
-	for i in _online_players_queue.size():
-		var p = _online_players_queue[i];
-		
-		if p.peer_id == peer_id:
-			idx = i;
-			break
-			
-	if idx >= 0:
-		_online_players_queue.remove_at(idx)
-
-func _online_add_player(peer_id: int):
-	var player = OnlinePlayer.new(peer_id, 
-		func(idx):
-			_online_make_move.rpc(idx)
-	);
-
-	_online_players_queue.push_back(player)
-	_online_players[peer_id] = player;
-	print("online_players", { peer_id = multiplayer.get_unique_id() }, _online_players, _online_players_queue)
-	
-	if GameConfig.is_server:
-		# check if can start game
-		if _online_players_queue.size() >= 2:
-			print("Start game")
-			_online_start_server_game.rpc();
-
-@rpc("any_peer", "reliable")
-func _online_start_game(p1_peer_id: int, p2_peer_id: int, player: String):
-	print("_online_start_game", {
-		p1_peer_id = p1_peer_id,
-		p2_peer_id = p2_peer_id,
-		player = player
-	})
-	
-	var p1 = _online_players[p1_peer_id];
-	var p2 = _online_players[p2_peer_id];
-	on_online_game_start.emit(p1, p2, player)
-
-@rpc("any_peer", "call_local", "reliable")
-func _online_make_move(idx: int):
-	var remote_peer_id = multiplayer.get_remote_sender_id()
-
-	for player in _players.values():
-		if player.peer_id == remote_peer_id:
-			print("online player moved ", {
-				remote_peer_id = remote_peer_id,
-				own_peer_id = multiplayer.multiplayer_peer.get_unique_id(),
-				idx = idx,
-			});
-			
-			var online_player: OnlinePlayer = player;
-			online_player.on_move.emit(idx);
 
 func print_board():
 	print("=== ", multiplayer.multiplayer_peer.get_unique_id())

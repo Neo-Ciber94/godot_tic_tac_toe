@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://b04esyl8u473x"]
+[gd_scene load_steps=15 format=3 uid="uid://b04esyl8u473x"]
 
 [ext_resource type="Script" uid="uid://btbqrdcccknp6" path="res://ui/game.gd" id="1_oghdo"]
 [ext_resource type="PackedScene" uid="uid://1gokhe2unguc" path="res://ui/cell.tscn" id="3_a0qbr"]
@@ -10,6 +10,7 @@
 [ext_resource type="StyleBox" uid="uid://inq4sf0eei6u" path="res://art/styles/button_hover.tres" id="8_jqqnv"]
 [ext_resource type="PackedScene" uid="uid://dps2mir7ylw1d" path="res://ui/screen_scaler.tscn" id="9_oxbaa"]
 [ext_resource type="PackedScene" uid="uid://00niqossu4ex" path="res://scripts/server_indicator.tscn" id="10_1p5xv"]
+[ext_resource type="PackedScene" uid="uid://dht4r1mgp3w5t" path="res://ui/multiplayer_lobby.tscn" id="11_ombk5"]
 
 [sub_resource type="Animation" id="Animation_tm2vy"]
 length = 0.001
@@ -377,3 +378,6 @@ offset_left = -180.0
 offset_top = -39.0
 offset_right = 0.0
 offset_bottom = 0.0
+
+[node name="MultiplayerLobby" parent="." instance=ExtResource("11_ombk5")]
+is_server_player = true
