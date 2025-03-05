@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://bsnfsnusy3s2j"]
 
-[ext_resource type="PackedScene" uid="uid://1gokhe2unguc" path="res://ui/cell.tscn" id="1_144cl"]
-[ext_resource type="Script" uid="uid://bfqif180j7vei" path="res://ui/board.gd" id="1_h5e33"]
+[ext_resource type="PackedScene" uid="uid://1gokhe2unguc" path="res://ui/board/slot.tscn" id="1_144cl"]
+[ext_resource type="Script" uid="uid://bfqif180j7vei" path="res://ui/board/board.gd" id="1_h5e33"]
 
 [sub_resource type="Animation" id="Animation_tm2vy"]
 length = 0.001
@@ -258,7 +258,7 @@ libraries = {
 &"": SubResource("AnimationLibrary_p8nv7")
 }
 
-[node name="Slots" type="GridContainer" parent="."]
+[node name="Container" type="GridContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -267,29 +267,29 @@ grow_horizontal = 2
 grow_vertical = 2
 columns = 3
 
-[node name="Slot1" parent="Slots" instance=ExtResource("1_144cl")]
+[node name="Slot1" parent="Container" instance=ExtResource("1_144cl")]
 layout_mode = 2
 
-[node name="Slot2" parent="Slots" instance=ExtResource("1_144cl")]
+[node name="Slot2" parent="Container" instance=ExtResource("1_144cl")]
 layout_mode = 2
 
-[node name="Slot3" parent="Slots" instance=ExtResource("1_144cl")]
+[node name="Slot3" parent="Container" instance=ExtResource("1_144cl")]
 layout_mode = 2
 
-[node name="Slot4" parent="Slots" instance=ExtResource("1_144cl")]
+[node name="Slot4" parent="Container" instance=ExtResource("1_144cl")]
 layout_mode = 2
 
-[node name="Slot5" parent="Slots" instance=ExtResource("1_144cl")]
+[node name="Slot5" parent="Container" instance=ExtResource("1_144cl")]
 layout_mode = 2
 
-[node name="Slot6" parent="Slots" instance=ExtResource("1_144cl")]
+[node name="Slot6" parent="Container" instance=ExtResource("1_144cl")]
 layout_mode = 2
 
-[node name="Slot7" parent="Slots" instance=ExtResource("1_144cl")]
+[node name="Slot7" parent="Container" instance=ExtResource("1_144cl")]
 layout_mode = 2
 
-[node name="Slot8" parent="Slots" instance=ExtResource("1_144cl")]
+[node name="Slot8" parent="Container" instance=ExtResource("1_144cl")]
 layout_mode = 2
 
-[node name="Slot9" parent="Slots" instance=ExtResource("1_144cl")]
+[node name="Slot9" parent="Container" instance=ExtResource("1_144cl")]
 layout_mode = 2

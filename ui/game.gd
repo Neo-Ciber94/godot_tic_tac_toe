@@ -107,7 +107,7 @@ func _setup_board():
 			if child is Line2D:
 				child.modulate.a = 0.0;
 
-func _on_cell_hover(cell: Cell, is_over: bool, index: int):
+func _on_cell_hover(cell: Slot, is_over: bool, index: int):
 	if !can_hover(index):
 		return;
 			
@@ -264,47 +264,6 @@ func _finalize_game():
 	else:
 		start_game()
 		
-func hide_cells():	
-	var indices = _winner.get_indices()
-	var winner_cells: Array[Cell] = [];
-	var other_cells : Array[Cell] = [];
-	
-	for idx in _board.size():
-		var is_winner_idx = indices.has(idx);
-		var cell = _cells[idx]
-		
-		if is_winner_idx:
-			winner_cells.push_back(cell);
-		else:
-			other_cells.push_back(cell)
-	
-	var tween = get_tree().create_tween()
-	
-	for cell in other_cells:
-		tween.tween_property(cell, "modulate:a", 0.0, 0.05);
-	
-	var screen_center = Vector2(get_viewport().size / 2)
-	
-	for cell in winner_cells:
-		var center_position = screen_center - cell.size / 2;
-		tween.parallel().tween_property(cell, "global_position", center_position, 0.3).set_trans(Tween.TRANS_SINE)
-		
-	for cell in winner_cells:
-		tween.parallel().tween_property(cell, "position:y", 70, 0.3)
-		
-	await tween.finished;
-
-func change_board_visibility(visibility: Visibility):
-	var speed = 4.0;
-	
-	match visibility:
-		Visibility.VISIBLE:
-			board_anim.play("appear", -1, speed)
-		Visibility.HIDDEN:
-			board_anim.play("appear", -1, -speed, true)
-	
-	await board_anim.animation_finished
-
 func get_value(index: int):
 	return _board[index]
 

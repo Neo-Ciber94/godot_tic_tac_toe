@@ -1,9 +1,9 @@
 [gd_scene load_steps=3 format=3 uid="uid://1gokhe2unguc"]
 
-[ext_resource type="Script" uid="uid://gr2o31xsdkgg" path="res://ui/cell.gd" id="1_l1qra"]
+[ext_resource type="Script" uid="uid://gr2o31xsdkgg" path="res://ui/board/slot.gd" id="1_l1qra"]
 [ext_resource type="FontFile" uid="uid://dy04l2c31hyma" path="res://art/fonts/Silkscreen-Regular.ttf" id="2_bfx8d"]
 
-[node name="Cell" type="Control"]
+[node name="Slot" type="Control"]
 layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5

@@ -1,14 +1,13 @@
 extends Control
 
-class_name Cell;
+class_name Slot;
 
-var label: Label;
-signal on_click(Cell);
-signal on_hover(Cell, bool);
+@onready var label: Label = $Label;
+
+signal on_click(Slot);
+signal on_hover(Slot, bool);
 
 func _ready():
-	label = get_node("Label");
-
 	mouse_entered.connect(func(): 
 		on_hover.emit(self, true)
 	)
@@ -24,8 +23,8 @@ func _gui_input(event):
 	if event is InputEventMouseButton and event.pressed:
 		on_click.emit(self)
 				
-func draw_mark(mark: String, color: Color, animate = false):
-	label.text = mark;
+func draw_value(value: String, color: Color, animate = false):
+	label.text = value;
 	label.add_theme_color_override("font_color", color);
 	
 	if animate:
@@ -39,5 +38,5 @@ func draw_mark(mark: String, color: Color, animate = false):
 		tween.tween_property(label, "scale", Vector2(1, 1), duration);
 		await tween.finished;
 
-func get_mark():
+func get_value():
 	return label.text;

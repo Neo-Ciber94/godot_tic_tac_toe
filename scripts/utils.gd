@@ -80,3 +80,7 @@ static func find_dictionary_entry(dictionary: Dictionary, pred: Callable) -> Ent
 			return entry;
 
 	return null;
+
+static func remove_all_signal_connections(s: Signal):
+	for conn in s.get_connections():
+		s.disconnect(conn.callable)
