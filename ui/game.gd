@@ -99,8 +99,7 @@ func on_cell_hover(cell: Cell, is_over: bool, index: int):
 		return;
 			
 	if is_over:
-		var mark = get_player()
-		cell.draw_mark(mark, Color(get_player_color(), 0.2))
+		cell.draw_mark(_current_player, Color(get_player_color(), 0.2))
 	else:
 		cell.draw_mark(EMPTY, COLOR_EMPTY)
 
@@ -320,9 +319,6 @@ func can_hover(index: int):
 
 func is_game_over():
 	return _winner.is_finished()
-
-func get_player():
-	return _current_player;
 
 func get_player_color():
 	return get_color(_current_player)
