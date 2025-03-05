@@ -64,13 +64,19 @@ static func all_equals(arr: Array) -> bool:
 		
 	return true;
 
+class Entry:
+	var key;
+	var value;
 
-static func find_dictionary_entry(dictionary: Dictionary, pred: Callable):
+static func find_dictionary_entry(dictionary: Dictionary, pred: Callable) -> Entry: 
 	for key in dictionary:
 		var value = dictionary.get(key);
 		var result = pred.call(key, value);
 		
 		if result:
-			return [key, value];
+			var entry = Entry.new()
+			entry.key = key;
+			entry.value = value;
+			return entry;
 
 	return null;

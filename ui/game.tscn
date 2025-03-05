@@ -17,7 +17,7 @@ length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Line2D:position")
+tracks/0/path = NodePath("Line2D1:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -29,7 +29,7 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("Line2D:modulate")
+tracks/1/path = NodePath("Line2D1:modulate")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -116,7 +116,7 @@ resource_name = "appear"
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Line2D:position")
+tracks/0/path = NodePath("Line2D1:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -128,7 +128,7 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("Line2D:modulate")
+tracks/1/path = NodePath("Line2D1:modulate")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -250,7 +250,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Line2D" type="Line2D" parent="Board/Grid"]
+[node name="Line2D1" type="Line2D" parent="Board/Grid"]
 position = Vector2(146, 416)
 points = PackedVector2Array(21, -106, 17, 404)
 default_color = Color(0, 0, 0, 1)
@@ -277,7 +277,7 @@ libraries = {
 &"": SubResource("AnimationLibrary_p8nv7")
 }
 
-[node name="GridContainer" type="GridContainer" parent="Board"]
+[node name="CellsContainer" type="GridContainer" parent="Board"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -286,39 +286,39 @@ grow_horizontal = 2
 grow_vertical = 2
 columns = 3
 
-[node name="Cell" parent="Board/GridContainer" instance=ExtResource("3_a0qbr")]
+[node name="Cell" parent="Board/CellsContainer" instance=ExtResource("3_a0qbr")]
 visible = false
 layout_mode = 2
 
-[node name="Cell2" parent="Board/GridContainer" instance=ExtResource("3_a0qbr")]
+[node name="Cell2" parent="Board/CellsContainer" instance=ExtResource("3_a0qbr")]
 visible = false
 layout_mode = 2
 
-[node name="Cell3" parent="Board/GridContainer" instance=ExtResource("3_a0qbr")]
+[node name="Cell3" parent="Board/CellsContainer" instance=ExtResource("3_a0qbr")]
 visible = false
 layout_mode = 2
 
-[node name="Cell4" parent="Board/GridContainer" instance=ExtResource("3_a0qbr")]
+[node name="Cell4" parent="Board/CellsContainer" instance=ExtResource("3_a0qbr")]
 visible = false
 layout_mode = 2
 
-[node name="Cell5" parent="Board/GridContainer" instance=ExtResource("3_a0qbr")]
+[node name="Cell5" parent="Board/CellsContainer" instance=ExtResource("3_a0qbr")]
 visible = false
 layout_mode = 2
 
-[node name="Cell6" parent="Board/GridContainer" instance=ExtResource("3_a0qbr")]
+[node name="Cell6" parent="Board/CellsContainer" instance=ExtResource("3_a0qbr")]
 visible = false
 layout_mode = 2
 
-[node name="Cell7" parent="Board/GridContainer" instance=ExtResource("3_a0qbr")]
+[node name="Cell7" parent="Board/CellsContainer" instance=ExtResource("3_a0qbr")]
 visible = false
 layout_mode = 2
 
-[node name="Cell8" parent="Board/GridContainer" instance=ExtResource("3_a0qbr")]
+[node name="Cell8" parent="Board/CellsContainer" instance=ExtResource("3_a0qbr")]
 visible = false
 layout_mode = 2
 
-[node name="Cell9" parent="Board/GridContainer" instance=ExtResource("3_a0qbr")]
+[node name="Cell9" parent="Board/CellsContainer" instance=ExtResource("3_a0qbr")]
 visible = false
 layout_mode = 2
 

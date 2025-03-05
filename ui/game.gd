@@ -1,8 +1,7 @@
 extends Node
 class_name Game;
 
-@onready var grid = $Board/GridContainer
-@onready var board = $Board;
+@onready var container = $Board/CellsContainer
 @onready var board_grid = $Board/Grid
 @onready var board_anim: AnimationPlayer = $Board/Grid/AnimationPlayer;
 @onready var result_message: ResultMessage = $ResultMessage;
@@ -41,16 +40,15 @@ var _is_playing = false;
 signal on_waiting_move();
 signal on_game_over();
 signal on_online_match_ready()
+signal on_start_game();
 
-var _my_peer_id: int;
-var _players = {}
-var _my_player: String;
+var _players: Dictionary[String, Player] = {}
 var _current_player: String;
+var _my_player: String;
+var _my_peer_id: int;
 	
-func _ready() -> void:
-	# online
-	
-	# exit game
+func _ready() -> void:	
+	on_start_game.connect(start_game)
 	exit_btn.pressed.connect(_go_to_main_menu)
 	
 	# start game
@@ -68,17 +66,17 @@ func setup_board():
 	_cells = [];
 	_board = [];
 	
-	grid.show();
+	container.show();
 	result_message.hide();
 	
-	for child in grid.get_children():
+	for child in container.get_children():
 			child.queue_free()
 			
 	var cell_scene = preload("res://ui/cell.tscn");
 			
 	for idx in 9:
 		var cell = cell_scene.instantiate();
-		grid.add_child(cell);
+		container.add_child(cell);
 		
 		_board.push_back(EMPTY)
 		_cells.push_back(cell);
@@ -96,7 +94,6 @@ func setup_board():
 				child.modulate.a = 0.0;
 
 func reset_board():
-	_players = {}
 	_winner = Winner.None()
 	board_grid.modulate.a = 1.0;
 
@@ -111,16 +108,22 @@ func on_cell_hover(cell: Cell, is_over: bool, index: int):
 		cell.draw_mark(EMPTY, COLOR_EMPTY)
 
 func setup_players():			
+	if !_players.is_empty():
+		add_players_to_scene();
+		return;
+	
 	match _mode:
 		Mode.LOCAL:
 			print("start vs local")			
+			_current_player = MARK_X;
+			_my_player = _current_player;
 			_players[MARK_X] = HumanPlayer.new()
 			_players[MARK_O] = HumanPlayer.new()
 		Mode.CPU:
 			print("start vs cpu")
 			const turn_players: Array[String] = [MARK_X, MARK_O]
-			_my_player = MARK_X;
 			_current_player =  turn_players.pick_random()
+			_my_player = MARK_X;
 			
 			_players[MARK_X] = HumanPlayer.new()
 			_players[MARK_O] = CpuPlayer.new(MARK_O, _difficulty)
@@ -198,8 +201,9 @@ func start_playing():
 	
 	_is_playing = true;
 	
+	print(_players, typeof(_players))
 	while(not _winner.is_finished()):
-		var player: Player = _players[_current_player];
+		var player = _players[_current_player];
 		print("current player: ", _current_player)
 		
 		print("waiting for: ", _current_player)
@@ -236,9 +240,15 @@ func start_playing():
 
 	# Wait to click for restart
 	await result_message.on_click;
+	
 	remove_players_from_scene();
 	reset_board()
-	start_game()
+	
+	if _mode == Mode.ONLINE:
+		if GameConfig.is_server:
+			_on_start_online_game.rpc()
+	else:
+		start_game()
 	
 func hide_cells():	
 	var indices = _winner.get_indices()
@@ -399,8 +409,8 @@ func _on_peer_request_move(idx: int):
 		print("peer player not found: ", remote_peer_id);
 		return;
 		
-	var peer_player_value = entry[0];
-	var peer_online_player : OnlinePlayer = entry[1]; 
+	var peer_player_value = entry.key;
+	var peer_online_player = entry.value as OnlinePlayer; 
 
 	# Check if the player can make the move	
 	if peer_online_player.peer_id == remote_peer_id && _current_player == peer_player_value:
@@ -431,6 +441,11 @@ func _on_peer_player_assign(player_info):
 func _on_match_ready():
 	on_online_match_ready.emit()
 	print("_on_match_ready: ", _players)
+
+@rpc("authority", "call_local", "reliable")		
+func _on_start_online_game():
+	print("_on_start_online_game: ", { _my_peer_id = _my_peer_id })
+	on_start_game.emit()
 	
 static func get_opponent(value: String):
 	return MARK_O if value == MARK_X else MARK_X
