@@ -15,3 +15,6 @@ func next_move(cells: Array[Cell], board: Array[String]):
 		cell.on_click.connect(func(_args):
 			move_rpc.call(idx)	
 		)
+
+func _to_string() -> String:
+	return "OnlinePlayer(%s)" % peer_id

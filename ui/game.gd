@@ -55,15 +55,28 @@ func _ready() -> void:
 	start_game();
 
 func start_game():
-	_winner = Winner.None()
 	game_mode_label.text = _get_game_mode_text()
+	
+	_reset_state();
+	_setup_board()
+	await _setup_players()	
+	_start_playing();
+	
+func _reset_state():
+	_winner = Winner.None()
 	result_message.hide();
-		
-	setup_board()
-	await setup_players()	
-	start_playing();
-		
-func setup_board():
+	_remove_players_from_scene();
+	
+	for player in _players.values() as Array[Player]:
+		var connections = player.on_move.get_connections()
+		for conn in connections:
+			player.on_move.disconnect(conn.callable)
+			
+
+	for conn in on_waiting_move.get_connections():
+		on_waiting_move.disconnect(conn.callable)
+	
+func _setup_board():
 	_cells = [];
 	_board = [];
 	
@@ -84,7 +97,7 @@ func setup_board():
 		cell.draw_mark(EMPTY, COLOR_EMPTY);
 		
 		cell.on_hover.connect(func(this_cell, is_over): 
-			on_cell_hover(this_cell, is_over, idx)	
+			_on_cell_hover(this_cell, is_over, idx)	
 		)
 		
 		# We show an initial delay at the first game
@@ -94,7 +107,7 @@ func setup_board():
 			if child is Line2D:
 				child.modulate.a = 0.0;
 
-func on_cell_hover(cell: Cell, is_over: bool, index: int):
+func _on_cell_hover(cell: Cell, is_over: bool, index: int):
 	if !can_hover(index):
 		return;
 			
@@ -103,9 +116,9 @@ func on_cell_hover(cell: Cell, is_over: bool, index: int):
 	else:
 		cell.draw_mark(EMPTY, COLOR_EMPTY)
 
-func setup_players():			
+func _setup_players():			
 	if !_players.is_empty():
-		add_players_to_scene();
+		_add_players_to_scene();
 		return;
 	
 	match _mode:
@@ -138,7 +151,7 @@ func setup_players():
 			print("ready to start...", { _my_peer_id = _my_peer_id })
 			
 	# Append the players to the scene
-	add_players_to_scene();
+	_add_players_to_scene();
 
 func _start_server_or_connect() -> int:
 	if GameConfig.is_server:
@@ -169,11 +182,14 @@ func _setup_multiplayer_peers(match_players):
 		
 	_on_match_ready.rpc()
 
-func add_players_to_scene():
+func _add_players_to_scene():
 	add_child(_players[MARK_X]);
 	add_child(_players[MARK_O]);
 	
-func remove_players_from_scene():
+func _remove_players_from_scene():
+	if _players.is_empty():
+		return;
+
 	remove_child(_players[MARK_X])
 	remove_child(_players[MARK_O])
 
@@ -188,11 +204,13 @@ func make_move(player: Player):
 	player.next_move(_cells.duplicate(), _board.duplicate())
 	
 	if index.value == -1:
+		print("waiting for play: ", player);
 		await on_waiting_move;
+		print("wait done: ", player)
 	
 	return index.value;
 
-func start_playing():		
+func _start_playing():		
 	await change_board_visibility(Visibility.VISIBLE);
 	
 	_is_playing = true;
@@ -220,7 +238,9 @@ func start_playing():
 	
 	print("game its over")
 	_is_playing = false;
+	_finalize_game();
 	
+func _finalize_game():
 	change_board_visibility(Visibility.HIDDEN);
 	await hide_cells();
 	
@@ -236,14 +256,14 @@ func start_playing():
 	# Wait to click for restart
 	await result_message.on_click;
 	
-	remove_players_from_scene();
+	_remove_players_from_scene();
 	board_grid.modulate.a = 1.0;
 	
 	if _mode == Mode.ONLINE:
 		_on_start_online_game.rpc()	
 	else:
 		start_game()
-	
+		
 func hide_cells():	
 	var indices = _winner.get_indices()
 	var winner_cells: Array[Cell] = [];
