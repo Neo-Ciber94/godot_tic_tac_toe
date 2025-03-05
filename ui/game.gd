@@ -55,6 +55,7 @@ func _ready() -> void:
 	start_game();
 
 func start_game():
+	_winner = Winner.None()
 	game_mode_label.text = _get_game_mode_text()
 	result_message.hide();
 		
@@ -92,10 +93,6 @@ func setup_board():
 		for child in board_grid.get_children():
 			if child is Line2D:
 				child.modulate.a = 0.0;
-
-func reset_board():
-	_winner = Winner.None()
-	board_grid.modulate.a = 1.0;
 
 func on_cell_hover(cell: Cell, is_over: bool, index: int):
 	if !can_hover(index):
@@ -201,7 +198,6 @@ func start_playing():
 	
 	_is_playing = true;
 	
-	print(_players, typeof(_players))
 	while(not _winner.is_finished()):
 		var player = _players[_current_player];
 		print("current player: ", _current_player)
@@ -211,7 +207,7 @@ func start_playing():
 		print(_current_player, " move to ", index);
 		
 		if has_value(index):
-			print("illegal play")
+			print("illegal play: ", index)
 			continue;
 	
 		await set_value(_current_player, index);
@@ -242,11 +238,10 @@ func start_playing():
 	await result_message.on_click;
 	
 	remove_players_from_scene();
-	reset_board()
+	board_grid.modulate.a = 1.0;
 	
 	if _mode == Mode.ONLINE:
-		if GameConfig.is_server:
-			_on_start_online_game.rpc()
+		_on_start_online_game.rpc()	
 	else:
 		start_game()
 	
@@ -442,7 +437,7 @@ func _on_match_ready():
 	on_online_match_ready.emit()
 	print("_on_match_ready: ", _players)
 
-@rpc("authority", "call_local", "reliable")		
+@rpc("any_peer", "call_local", "reliable")		
 func _on_start_online_game():
 	print("_on_start_online_game: ", { _my_peer_id = _my_peer_id })
 	on_start_game.emit()
