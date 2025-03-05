@@ -130,9 +130,10 @@ func setup_players():
 			print("waiting for players...")
 			
 			var match_players = await lobby.on_match_players_ready;
-			_setup_multiplayer_peers(match_players);
 			
-			if not GameConfig.is_server:
+			if GameConfig.is_server:
+				_setup_multiplayer_peers(match_players);
+			else:
 				await on_online_match_ready;
 				
 			print("ready to start...", { _my_peer_id = _my_peer_id })
@@ -151,15 +152,20 @@ func _setup_multiplayer_peers(match_players):
 	turn_players.shuffle();
 	
 	var cur_player =  turn_players.pick_random()
+	
+	var online_players = {}
+	online_players.set(turn_players[0], match_players[0].peer_id)
+	online_players.set(turn_players[1], match_players[1].peer_id)
 
 	for idx in match_players.size():
-		var player = turn_players[idx];
+		var my_player = turn_players[idx];
 		var peer_id = match_players[idx].peer_id;
 		
-		_on_peer_player_assign.rpc({
+		_on_peer_player_assign.rpc_id(peer_id, {
 			peer_id = peer_id,
-			player = player,
-			cur_player = cur_player
+			my_player = my_player,
+			cur_player = cur_player,
+			online_players = online_players
 		})
 		
 	_on_match_ready.rpc()
@@ -358,21 +364,49 @@ func print_board():
 	print("=== ", _board.slice(3, 6))
 	print("=== ", _board.slice(6, 9))
 	
-@rpc("any_peer", "call_local", "reliable")
-func _on_peer_player_move(remote_peer_id: int, idx: int):
+@rpc("authority", "call_local", "reliable")
+func _on_peer_player_move(idx: int):
 	print("_on_peer_player_move: ", {
 		_my_peer_id = _my_peer_id,
-		remote_peer_id = remote_peer_id,
-		idx = idx
+		idx = idx,
+		_my_player = _my_player,
+		_current_player = _current_player,
 	});
 	
 	for player in _players.values():
 		var online_player: OnlinePlayer = player;
+		online_player.on_move.emit(idx)		
 		
-		if online_player.peer_id == remote_peer_id:
-			online_player.on_move.emit(idx)
-			
-			
+@rpc("any_peer", "call_local", "reliable")	
+func _on_peer_request_move(idx: int):
+	# Only the server can validate moves and relay moves
+	if not GameConfig.is_server:
+		return;
+		
+	print("_on_peer_request_move: ", {
+		_my_peer_id = _my_peer_id,
+		idx = idx,
+		_my_player = _my_player,
+		_current_player = _current_player,
+	});
+	
+	# get the player with the given sender id
+	var remote_peer_id = multiplayer.get_remote_sender_id();
+	var entry = Utils.find_dictionary_entry(_players, func(k,v): return v.peer_id == remote_peer_id)
+	print("entry: ", entry)
+	
+	if entry == null:
+		print("peer player not found: ", remote_peer_id);
+		return;
+		
+	var peer_player_value = entry[0];
+	var peer_online_player : OnlinePlayer = entry[1]; 
+
+	# Check if the player can make the move	
+	if peer_online_player.peer_id == remote_peer_id && _current_player == peer_player_value:
+		# relay to all clients
+		_on_peer_player_move.rpc(idx);
+
 @rpc("authority", "call_local", "reliable")	
 func _on_peer_player_assign(player_info):
 	print("_on_peer_player_assign: ", {
@@ -381,15 +415,17 @@ func _on_peer_player_assign(player_info):
 	});
 
 	var peer_id = player_info.peer_id;
-	var player = player_info.player;
-	var cur_player = player_info.cur_player;
+	_my_peer_id = peer_id;
+	_my_player = player_info.my_player;
+	_current_player = player_info.cur_player;
 	
-	var player_move_rpc = Callable(func(idx):
-		_on_peer_player_move.rpc(peer_id, idx)
-	)
-				
-	_players[player] = OnlinePlayer.new(peer_id, player_move_rpc);
-	_current_player = cur_player;
+	for player in player_info.online_players:
+		var player_peer_id = player_info.online_players.get(player)
+		var player_move_rpc = Callable(func(idx):
+			_on_peer_request_move.rpc(idx)
+		)
+		
+		_players[player] = OnlinePlayer.new(player_peer_id, player_move_rpc)
 		
 @rpc("authority", "call_local", "reliable")	
 func _on_match_ready():
