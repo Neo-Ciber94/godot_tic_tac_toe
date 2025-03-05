@@ -229,7 +229,7 @@ func start_playing():
 	if _winner.is_tie():
 		result_message.change_text("It's a tie", Color.BLACK);
 	else:
-		var color = COLOR_P1 if _winner.get_value() == MARK_X else COLOR_P2;
+		var color = Game.get_color(_winner.get_value());
 		result_message.change_text("winner!", color)
 		
 	result_message.show();
@@ -362,6 +362,15 @@ func _get_game_mode_text():
 			return "Mode: CPU (%s)" % difficulty;
 		Mode.ONLINE:
 			return "Mode: Online"
+
+func get_peer_ids() -> Array[int]:
+	var peer_ids : Array[int] = [];
+	
+	for player in _players.values():
+		if player is OnlinePlayer:
+			peer_ids.push_back(player.peer_id)
+	
+	return peer_ids;
 
 func print_board():
 	print("=== ", multiplayer.multiplayer_peer.get_unique_id())
