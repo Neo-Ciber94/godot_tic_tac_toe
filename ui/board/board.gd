@@ -14,17 +14,14 @@ var _slots: Array[Slot] = [];
 func _ready():
 	prepare_board()
 
-func prepare_board():
-	print("prepare_board")
-	#Utils.remove_all_signal_connections(on_click);
-	#Utils.remove_all_signal_connections(on_hover);
-	
+func prepare_board():	
 	_slots = [];
 	
 	for child in _container.get_children():
 		child.queue_free()
 		
 	var slot_scene = preload("res://ui/board/slot.tscn");
+	
 	for idx in range(9):
 		var new_slot: Slot = slot_scene.instantiate()		
 		_container.add_child(new_slot);
@@ -33,9 +30,6 @@ func prepare_board():
 		new_slot.on_click.connect(func(this): on_click.emit(this, idx));
 		new_slot.on_hover.connect(func(this, is_over): on_hover.emit(this, idx, is_over))
 	
-	
-	print(_slots)
-
 func set_slot_value(idx: int, value: String, color: Color, animate: bool = true):
 	var slot = _slots[idx];
 	slot.set_value(value, color, animate)
@@ -55,6 +49,11 @@ func show_board(visible: bool):
 		_anim.play("appear", -1, -speed, true)
 	
 	await _anim.animation_finished
+
+func hide_lines():
+	for child in _grid.get_children():
+		if child is Line2D:
+			child.modulate.a = 0;
 
 func hide_slots(slots_indices: Array[int] = []):	
 	var winner_slots: Array[Slot] = [];

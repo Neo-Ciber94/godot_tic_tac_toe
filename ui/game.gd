@@ -86,12 +86,10 @@ func _setup_board():
 		_values.push_back(EMPTY)
 
 	# We show an initial delay at the first game
-	#if _is_first_game:
-		#_is_first_game = false;
-		#for child in board_grid.get_children():
-			#if child is Line2D:
-				#child.modulate.a = 0.0;
-
+	if _is_first_game:
+		_is_first_game = false;
+		board.hide_lines()
+		
 func _on_cell_hover(slot: Slot, index: int, is_over: bool):
 	if !can_hover(index):
 		return;
@@ -230,8 +228,6 @@ func _finalize_game():
 
 	# Wait to click for restart
 	await result_message.on_click;
-	
-	#board_grid.modulate.a = 1.0;
 	
 	if _mode == Mode.ONLINE:
 		_on_start_online_game.rpc()	
