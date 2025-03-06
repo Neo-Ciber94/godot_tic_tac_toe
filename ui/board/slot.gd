@@ -8,13 +8,8 @@ signal on_click(Slot);
 signal on_hover(Slot, bool);
 
 func _ready():
-	mouse_entered.connect(func(): 
-		on_hover.emit(self, true)
-	)
-	
-	mouse_exited.connect(func(): 
-		on_hover.emit(self, false)
-	)
+	mouse_entered.connect(func(): on_hover.emit(self, true))
+	mouse_exited.connect(func(): on_hover.emit(self, false))
 
 func _gui_input(event):
 	if event is InputEventMouseMotion:
@@ -23,7 +18,7 @@ func _gui_input(event):
 	if event is InputEventMouseButton and event.pressed:
 		on_click.emit(self)
 				
-func draw_value(value: String, color: Color, animate = false):
+func set_value(value: String, color: Color, animate: bool = false):
 	label.text = value;
 	label.add_theme_color_override("font_color", color);
 	

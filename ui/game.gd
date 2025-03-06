@@ -1,9 +1,7 @@
 extends Node
 class_name Game;
 
-@onready var container = $Board/CellsContainer
-@onready var board_grid = $Board/Grid
-@onready var board_anim: AnimationPlayer = $Board/Grid/AnimationPlayer;
+@onready var board : Board = $Board;
 @onready var result_message: ResultMessage = $ResultMessage;
 @onready var exit_btn : Button = $ExitButton;
 @onready var game_mode_label: Label = $GameMode;
@@ -28,8 +26,7 @@ const COLOR_EMPTY = Color(0, 0, 0, 0.5);
 const COLOR_P1 = Color(1, 0, 0);
 const COLOR_P2 = Color(0, 0, 1);
 
-var _cells : Array[Cell] = [];
-var _board: Array[String] = [];
+var _values: Array[String] = [];
 var _winner: Winner = Winner.None();
 var _is_first_game = true;
 var _is_playing = false;
@@ -50,75 +47,62 @@ var _my_peer_id: int;
 func _ready() -> void:	
 	on_start_game.connect(start_game)
 	exit_btn.pressed.connect(_go_to_main_menu)
+	game_mode_label.text = _get_game_mode_text()
 	
 	# start game
 	start_game();
 
-func start_game():
-	game_mode_label.text = _get_game_mode_text()
-	
+func start_game():	
 	_reset_state();
 	_setup_board()
 	await _setup_players()	
+	
 	_start_playing();
 	
 func _reset_state():
 	_winner = Winner.None()
 	result_message.hide();
-	_remove_players_from_scene();
 	
 	for player in _players.values() as Array[Player]:
 		var connections = player.on_move.get_connections()
 		for conn in connections:
 			player.on_move.disconnect(conn.callable)
 			
-
 	for conn in on_waiting_move.get_connections():
 		on_waiting_move.disconnect(conn.callable)
 	
 func _setup_board():
-	_cells = [];
-	_board = [];
-	
-	container.show();
+	_values = [];
+	board.show();
 	result_message.hide();
 	
-	for child in container.get_children():
-			child.queue_free()
-			
-	var cell_scene = preload("res://ui/cell.tscn");
-			
-	for idx in 9:
-		var cell = cell_scene.instantiate();
-		container.add_child(cell);
-		
-		_board.push_back(EMPTY)
-		_cells.push_back(cell);
-		cell.draw_mark(EMPTY, COLOR_EMPTY);
-		
-		cell.on_hover.connect(func(this_cell, is_over): 
-			_on_cell_hover(this_cell, is_over, idx)	
-		)
-		
-		# We show an initial delay at the first game
-	if _is_first_game:
-		_is_first_game = false;
-		for child in board_grid.get_children():
-			if child is Line2D:
-				child.modulate.a = 0.0;
+	board.prepare_board();
+	board.fill_slots(EMPTY, COLOR_EMPTY);
+	
+	if !board.on_hover.is_connected(_on_cell_hover):
+		board.on_hover.connect(_on_cell_hover)
+	
+	for idx in range(9):		
+		_values.push_back(EMPTY)
 
-func _on_cell_hover(cell: Slot, is_over: bool, index: int):
+	# We show an initial delay at the first game
+	#if _is_first_game:
+		#_is_first_game = false;
+		#for child in board_grid.get_children():
+			#if child is Line2D:
+				#child.modulate.a = 0.0;
+
+func _on_cell_hover(slot: Slot, index: int, is_over: bool):
 	if !can_hover(index):
 		return;
-			
+		
 	if is_over:
-		cell.draw_mark(_current_player, Color(get_player_color(), 0.2))
+		slot.set_value(_current_player, Color(get_player_color(), 0.2))
 	else:
-		cell.draw_mark(EMPTY, COLOR_EMPTY)
+		slot.set_value(EMPTY, COLOR_EMPTY)
 
 func _setup_players():			
 	if !_players.is_empty():
-		_add_players_to_scene();
 		return;
 	
 	match _mode:
@@ -151,7 +135,8 @@ func _setup_players():
 			print("ready to start...", { _my_peer_id = _my_peer_id })
 			
 	# Append the players to the scene
-	_add_players_to_scene();
+	add_child(_players[MARK_X]);
+	add_child(_players[MARK_O]);
 
 func _start_server_or_connect() -> int:
 	if GameConfig.is_server:
@@ -181,18 +166,7 @@ func _setup_multiplayer_peers(match_players):
 		})
 		
 	_on_match_ready.rpc()
-
-func _add_players_to_scene():
-	add_child(_players[MARK_X]);
-	add_child(_players[MARK_O]);
 	
-func _remove_players_from_scene():
-	if _players.is_empty():
-		return;
-
-	remove_child(_players[MARK_X])
-	remove_child(_players[MARK_O])
-
 func make_move(player: Player):
 	var index = { value = -1 }
 	
@@ -201,7 +175,7 @@ func make_move(player: Player):
 		on_waiting_move.emit();
 	
 	player.on_move.connect(callable, Object.CONNECT_ONE_SHOT)
-	player.next_move(_cells.duplicate(), _board.duplicate())
+	player.next_move(board, _values.duplicate())
 	
 	if index.value == -1:
 		print("waiting for play: ", player);
@@ -211,7 +185,7 @@ func make_move(player: Player):
 	return index.value;
 
 func _start_playing():		
-	await change_board_visibility(Visibility.VISIBLE);
+	await board.show_board(true)
 	
 	_is_playing = true;
 	
@@ -228,7 +202,7 @@ func _start_playing():
 			continue;
 	
 		await set_value(_current_player, index);
-		refresh_ui();
+		#refresh_ui();
 		self.print_board()
 
 		if _winner.is_finished():
@@ -241,8 +215,9 @@ func _start_playing():
 	_finalize_game();
 	
 func _finalize_game():
-	change_board_visibility(Visibility.HIDDEN);
-	await hide_cells();
+	var indices = _winner.get_indices()
+	board.show_board(false)
+	await board.hide_slots(indices);
 	
 	# Show the winner result_message
 	if _winner.is_tie():
@@ -256,8 +231,7 @@ func _finalize_game():
 	# Wait to click for restart
 	await result_message.on_click;
 	
-	_remove_players_from_scene();
-	board_grid.modulate.a = 1.0;
+	#board_grid.modulate.a = 1.0;
 	
 	if _mode == Mode.ONLINE:
 		_on_start_online_game.rpc()	
@@ -265,7 +239,7 @@ func _finalize_game():
 		start_game()
 		
 func get_value(index: int):
-	return _board[index]
+	return _values[index]
 
 func has_value(index: int):
 	return get_value(index) != EMPTY;
@@ -275,9 +249,9 @@ func set_value(value: String, index: int):
 		print("board index '", index, "' it's already set");
 		return;
 		
-	_board[index] = value;
-	await _cells[index].draw_mark(value, get_player_color(), true)
-	var winner = Utils.check_winner(_board, EMPTY);
+	_values[index] = value;
+	await board.set_slot_value(index, value, get_player_color())
+	var winner = Utils.check_winner(_values, EMPTY);
 	
 	if winner.is_finished():
 		print("finished: ", winner)
@@ -300,24 +274,23 @@ func is_game_over():
 	return _winner.is_finished()
 
 func get_player_color():
-	return get_color(_current_player)
+	return Game.get_color(_current_player)
 	
 func switch_player():
-	_current_player = MARK_O if _current_player == MARK_X else MARK_X;
+	_current_player = Game.get_opponent(_current_player)
 	
 	if _mode == Mode.LOCAL:
 		_my_player = _current_player;
 
 func _go_to_main_menu():
-	await change_board_visibility(Visibility.HIDDEN)
+	await board.show_board(false)
 	get_tree().change_scene_to_file("res://ui/main_menu.tscn")
 
 func refresh_ui():
-	for idx in _board.size():
-		var value = _board[idx];
-		var cell = _cells[idx];
-		var color = get_color(value)
-		cell.draw_mark(value,color)
+	for idx in _values.size():
+		var value = _values[idx];
+		var color = Game.get_color(value)
+		board.set_slot_value(idx, value, color)
 		
 	await on_waiting_move;
 
@@ -349,9 +322,9 @@ func get_peer_ids() -> Array[int]:
 
 func print_board():
 	print("=== ", multiplayer.multiplayer_peer.get_unique_id())
-	print("=== ", _board.slice(0, 3))
-	print("=== ", _board.slice(3, 6))
-	print("=== ", _board.slice(6, 9))
+	print("=== ", _values.slice(0, 3))
+	print("=== ", _values.slice(3, 6))
+	print("=== ", _values.slice(6, 9))
 	
 @rpc("authority", "call_local", "reliable")
 func _on_peer_player_move(idx: int):

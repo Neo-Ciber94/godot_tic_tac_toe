@@ -16,11 +16,11 @@ func _init(value: String, difficulty = Difficulty.RANDOM) -> void:
 	_difficulty = difficulty;
 	_value = value;
 
-func next_move(_cells: Array[Cell], board: Array[String]):
+func next_move(_board: Board, state: Array[String]):
 	print("waiting for cpu move")
 	await get_tree().create_timer(0.5).timeout
 	
-	var index = _next_move(board);
+	var index = _next_move(state);
 	print("cpu move to: ", index)
 	on_move.emit(index)
 
