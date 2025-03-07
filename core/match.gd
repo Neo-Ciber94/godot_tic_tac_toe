@@ -10,6 +10,8 @@ var _current_player: String;
 
 signal on_player_move(player: Player, value: String, index: int);
 signal on_game_over(winner: Winner);
+signal on_game_start(players: Dictionary[String, Player], current_player: String);
+signal on_switch_turns(player: Player, value: String);
 signal on_waiting();
 
 func _ready():
@@ -35,6 +37,8 @@ func add_players(players: Dictionary[String, Player]) -> void:
 	
 func start_match() -> void:
 	assert(_players.size() == 2, "expected 2 players to start the match");
+	
+	on_game_start.emit(_players, _current_player);
 	
 	while(true):
 		var player = _players[_current_player];
@@ -94,6 +98,7 @@ func _declare_winner(winner: Winner) -> void:
 
 func _switch_players() -> void:
 	_current_player = _get_opponent(_current_player);
+	on_switch_turns.emit(_players[_current_player], _current_player)
 	
 func _get_opponent(value: String) -> String:
 	assert(_players.has(value));

@@ -19,6 +19,7 @@ enum LocalGameMode {
 
 var _players : Dictionary[String, Player] = {}
 var _game_match: Match;
+var _my_player: String;
 
 func _ready():
 	_game_over_message.hide();
@@ -60,6 +61,7 @@ func _start_match():
 	
 	_game_match.on_player_move.connect(_on_player_move)
 	_game_match.on_game_over.connect(_on_game_over)
+	_my_player = _game_match.get_current_player();
 	
 	await _board.show_board(true)
 	
@@ -98,6 +100,9 @@ func _on_game_over(winner: Winner):
 func _on_hover(slot: Slot, index: int, is_over: bool):
 	if _game_match.has_value(index):
 		return;
+		
+	if _my_player != _game_match.get_current_player():
+		return;
 	
 	if is_over:
 		var current_player = _game_match.get_current_player();
@@ -105,3 +110,23 @@ func _on_hover(slot: Slot, index: int, is_over: bool):
 		slot.set_value(current_player, Color(color, 0.5), false)
 	else:
 		slot.set_value(Match.EMPTY, Color.TRANSPARENT, false)
+
+func _on_game_Start(players: Dictionary[String, Player], current_player: String):
+	match mode:
+		# on pvp any player its the current player
+		LocalGameMode.LOCAL:
+			_my_player = current_player;
+		
+		# on pvc the human player its the current player
+		LocalGameMode.CPU:
+			for player_value in _players:
+				var player = _players.get(player_value);
+				
+				if player is HumanPlayer:
+					_my_player = player_value;
+					return;
+
+		
+func _on_switch_player(player: Player, value: String):
+	if player is HumanPlayer:
+		_my_player = value;
