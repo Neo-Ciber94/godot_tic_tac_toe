@@ -108,15 +108,15 @@ func _setup_players():
 			print("start vs local")			
 			_current_player = MARK_X;
 			_my_player = _current_player;
-			_players[MARK_X] = HumanPlayer.new()
-			_players[MARK_O] = HumanPlayer.new()
+			_players[MARK_X] = HumanPlayer.new(board)
+			_players[MARK_O] = HumanPlayer.new(board)
 		Mode.CPU:
 			print("start vs cpu")
 			const turn_players: Array[String] = [MARK_X, MARK_O]
 			_current_player =  turn_players.pick_random()
 			_my_player = MARK_X;
 			
-			_players[MARK_X] = HumanPlayer.new()
+			_players[MARK_X] = HumanPlayer.new(board)
 			_players[MARK_O] = CpuPlayer.new(MARK_O, _difficulty)
 		Mode.ONLINE:
 			print("start vs online")
@@ -173,7 +173,7 @@ func make_move(player: Player):
 		on_waiting_move.emit();
 	
 	player.on_move.connect(callable, Object.CONNECT_ONE_SHOT)
-	player.next_move(board, _values.duplicate())
+	player.next_move(_values.duplicate())
 	
 	if index.value == -1:
 		print("waiting for play: ", player);
@@ -383,7 +383,7 @@ func _on_peer_player_assign(player_info):
 			_on_peer_request_move.rpc(idx)
 		)
 		
-		_players[player] = OnlinePlayer.new(player_peer_id, player_move_rpc)
+		_players[player] = OnlinePlayer.new(board, player_peer_id, player_move_rpc)
 		
 @rpc("authority", "call_local", "reliable")	
 func _on_match_ready():

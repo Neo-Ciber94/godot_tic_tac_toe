@@ -1,6 +1,5 @@
-extends Player;
-
 class_name CpuPlayer;
+extends Player;
 
 enum Difficulty {
 	RANDOM,
@@ -16,11 +15,11 @@ func _init(value: String, difficulty = Difficulty.RANDOM) -> void:
 	_difficulty = difficulty;
 	_value = value;
 
-func next_move(_board: Board, state: Array[String]):
+func next_move(game_state: Array[String]):
 	print("waiting for cpu move")
 	await get_tree().create_timer(0.5).timeout
 	
-	var index = _next_move(state);
+	var index = _next_move(game_state);
 	print("cpu move to: ", index)
 	on_move.emit(index)
 
@@ -103,3 +102,6 @@ func _find_empty_index(board: Array, indices: Array[int]):
 			return board_idx;
 			
 	return -1;
+
+func _to_string() -> String:
+	return "CpuPlayer(%s, %s)" % [_difficulty, _value]
