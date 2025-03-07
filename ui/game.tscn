@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://b04esyl8u473x"]
+[gd_scene load_steps=13 format=3 uid="uid://b04esyl8u473x"]
 
 [ext_resource type="Script" uid="uid://btbqrdcccknp6" path="res://ui/game.gd" id="1_oghdo"]
 [ext_resource type="PackedScene" uid="uid://dhig53gq04o6f" path="res://ui/bg.tscn" id="3_f5y2r"]
@@ -8,8 +8,9 @@
 [ext_resource type="StyleBox" uid="uid://u2kfkut6slb0" path="res://art/styles/button_normal.tres" id="6_a5lqr"]
 [ext_resource type="StyleBox" uid="uid://c0vg1hr1pgc2r" path="res://art/styles/button_disabled.tres" id="7_mcrrr"]
 [ext_resource type="StyleBox" uid="uid://inq4sf0eei6u" path="res://art/styles/button_hover.tres" id="8_jqqnv"]
+[ext_resource type="PackedScene" uid="uid://bxxdx3ieo2oag" path="res://ui/game_mode_label.tscn" id="9_2a488"]
 [ext_resource type="PackedScene" uid="uid://dps2mir7ylw1d" path="res://ui/screen_scaler.tscn" id="9_oxbaa"]
-[ext_resource type="PackedScene" uid="uid://00niqossu4ex" path="res://scripts/server_indicator.tscn" id="10_1p5xv"]
+[ext_resource type="PackedScene" uid="uid://00niqossu4ex" path="res://ui/server_indicator.tscn" id="10_1p5xv"]
 [ext_resource type="PackedScene" uid="uid://dht4r1mgp3w5t" path="res://ui/multiplayer_lobby.tscn" id="11_ombk5"]
 
 [node name="Game" type="Control"]
@@ -63,16 +64,12 @@ theme_override_styles/normal_mirrored = ExtResource("6_a5lqr")
 theme_override_styles/normal = ExtResource("6_a5lqr")
 text = "Exit"
 
-[node name="GameMode" type="Label" parent="."]
+[node name="GameMode" parent="." instance=ExtResource("9_2a488")]
 layout_mode = 0
-offset_left = 5.0
-offset_top = 5.0
-offset_right = 153.0
-offset_bottom = 31.0
-theme_override_colors/font_color = Color(0, 0, 0, 0.239216)
-theme_override_fonts/font = ExtResource("5_vc4ud")
-theme_override_font_sizes/font_size = 20
-text = "Mode: Local"
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 148.0
+offset_bottom = 26.0
 
 [node name="ScreenScaler" parent="." instance=ExtResource("9_oxbaa")]
 

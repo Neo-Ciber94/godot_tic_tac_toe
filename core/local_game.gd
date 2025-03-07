@@ -13,6 +13,7 @@ enum LocalGameMode {
 
 @onready var _board: Board = $Board;
 @onready var _game_over_message: ResultMessage = $ResultMessage;
+@onready var _game_mode_label: GameModeLabel = $GameModeLabel;
 
 @export var mode: LocalGameMode = LocalGameMode.LOCAL;
 @export var difficulty: CpuPlayer.Difficulty = CpuPlayer.Difficulty.RANDOM;
@@ -28,6 +29,7 @@ func _ready():
 	start_game()
 
 func start_game():	
+	_game_mode_label.update_text(mode as Constants.GameMode, difficulty);
 	_setup_players();
 	_start_match()
 	
@@ -135,7 +137,6 @@ func _on_game_start(players: Dictionary[String, Player], current_player: String)
 					print("_assign: ", { _my_player = _my_player, players = players })
 					return;
 
-		
 func _on_switch_player(player: Player, value: String):
 	if player is HumanPlayer:
 		_my_player = value;

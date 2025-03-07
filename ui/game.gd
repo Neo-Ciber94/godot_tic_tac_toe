@@ -7,12 +7,6 @@ class_name Game;
 @onready var game_mode_label: Label = $GameMode;
 @onready var lobby = $MultiplayerLobby;
 
-enum Mode {
-	LOCAL,
-	CPU,
-	ONLINE
-}
-
 enum Visibility {
 	VISIBLE,
 	HIDDEN
@@ -104,13 +98,13 @@ func _setup_players():
 		return;
 	
 	match _mode:
-		Mode.LOCAL:
+		Constants.GameMode.LOCAL:
 			print("start vs local")			
 			_current_player = MARK_X;
 			_my_player = _current_player;
 			_players[MARK_X] = HumanPlayer.new(board)
 			_players[MARK_O] = HumanPlayer.new(board)
-		Mode.CPU:
+		Constants.GameMode.CPU:
 			print("start vs cpu")
 			const turn_players: Array[String] = [MARK_X, MARK_O]
 			_current_player =  turn_players.pick_random()
@@ -118,7 +112,7 @@ func _setup_players():
 			
 			_players[MARK_X] = HumanPlayer.new(board)
 			_players[MARK_O] = CpuPlayer.new(MARK_O, _difficulty)
-		Mode.ONLINE:
+		Constants.GameMode.ONLINE:
 			print("start vs online")
 			_my_peer_id = _start_server_or_connect();
 			print("waiting for players...")
@@ -229,7 +223,7 @@ func _finalize_game():
 	# Wait to click for restart
 	await result_message.on_click;
 	
-	if _mode == Mode.ONLINE:
+	if _mode == Constants.GameMode.ONLINE:
 		_on_start_online_game.rpc()	
 	else:
 		start_game()
@@ -275,7 +269,7 @@ func get_player_color():
 func switch_player():
 	_current_player = Game.get_opponent(_current_player)
 	
-	if _mode == Mode.LOCAL:
+	if _mode == Constants.GameMode.LOCAL:
 		_my_player = _current_player;
 
 func _go_to_main_menu():
@@ -292,9 +286,9 @@ func refresh_ui():
 
 func _get_game_mode_text():
 	match _mode:
-		Mode.LOCAL:
+		Constants.GameMode.LOCAL:
 			return "Mode: Local"
-		Mode.CPU:
+		Constants.GameMode.CPU:
 			var difficulty = (
 				"Easy" if _difficulty == CpuPlayer.Difficulty.RANDOM
 				else "Easy" if _difficulty == CpuPlayer.Difficulty.EASY
@@ -304,7 +298,7 @@ func _get_game_mode_text():
 			)
 			
 			return "Mode: CPU (%s)" % difficulty;
-		Mode.ONLINE:
+		Constants.GameMode.ONLINE:
 			return "Mode: Online"
 
 func get_peer_ids() -> Array[int]:

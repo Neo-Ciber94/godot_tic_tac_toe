@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://bxxdx3ieo2oag"]
+
+[ext_resource type="FontFile" uid="uid://dy04l2c31hyma" path="res://art/fonts/Silkscreen-Regular.ttf" id="1_s7bxt"]
+[ext_resource type="Script" uid="uid://u6wg3qqxhppt" path="res://ui/game_mode_label.gd" id="2_08tk1"]
+
+[node name="GameModeLabel" type="Label"]
+offset_left = 5.0
+offset_top = 5.0
+offset_right = 153.0
+offset_bottom = 31.0
+theme_override_colors/font_color = Color(0, 0, 0, 0.239216)
+theme_override_fonts/font = ExtResource("1_s7bxt")
+theme_override_font_sizes/font_size = 20
+text = "Mode: Local"
+script = ExtResource("2_08tk1")
