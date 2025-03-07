@@ -31,13 +31,13 @@ func add_players(players: Dictionary[String, Player]) -> void:
 	_players = players;
 	_current_player = _players.keys().pick_random();
 	
-	# to allow the children to access the tree
-	for player in players.values():
+	# add the players to the tree
+	for player in _players.values():
 		add_child(player)
 	
 func start_match() -> void:
 	assert(_players.size() == 2, "expected 2 players to start the match");
-	
+		
 	on_game_start.emit(_players, _current_player);
 	
 	while(true):
