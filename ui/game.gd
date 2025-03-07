@@ -136,7 +136,7 @@ func _start_server_or_connect() -> int:
 	else:
 		return lobby.create_client()
 
-func _setup_multiplayer_peers(match_players):
+func _setup_multiplayer_peers(match_players: Array[PlayerPeer]):
 	var turn_players: Array[String] = [MARK_X, MARK_O];
 	turn_players.shuffle();
 	

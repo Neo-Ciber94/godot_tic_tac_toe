@@ -55,7 +55,7 @@ func _setup_players():
 	
 func _start_match():
 	_board.prepare_board();
-	_board.fill_slots(Match.EMPTY, Color.TRANSPARENT)
+	_board.fill_slots(Constants.EMPTY, Color.TRANSPARENT)
 
 	_game_match = _get_or_create_game_match();
 	_my_player = _game_match.get_current_player();

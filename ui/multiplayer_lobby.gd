@@ -6,15 +6,6 @@ const SERVER_PORT = 7000;
 const SERVER_MAX_CLIENTS = 1000;
 const SERVER_PEER_ID = 1;
 
-class PlayerPeer:
-	var peer_id: int;
-	
-	func _init(peer_id: int):
-		self.peer_id = peer_id;
-		
-	func _to_string():
-		return "PlayerPeer(%s)" % peer_id
-
 @export var is_server_player = false
 @export var match_players_count = 2;
 

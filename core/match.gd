@@ -1,8 +1,5 @@
-extends Node
-
 class_name Match;
-
-const EMPTY := " "
+extends Node
 
 var _board: Array[String] = []
 var _players: Dictionary[String, Player] = {};
@@ -21,7 +18,7 @@ func reset_board() -> void:
 	_board = []
 	
 	for idx in range(9):
-		_board.push_back(EMPTY);
+		_board.push_back(Constants.EMPTY);
 			
 func add_players(players: Dictionary[String, Player]) -> void:
 	var player_values = players.keys();
@@ -49,7 +46,7 @@ func start_match() -> void:
 		
 		_board[index] = _current_player;
 		on_player_move.emit(player, _current_player, index);
-		var winner = Utils.check_winner(_board, EMPTY);
+		var winner = Utils.check_winner(_board, Constants.EMPTY);
 		
 		if winner.is_finished():
 			_declare_winner(winner);
@@ -62,10 +59,10 @@ func get_current_player():
 	return _current_player;
 	
 func has_value(index: int) -> bool:
-	return _board[index] != EMPTY;
+	return _board[index] != Constants.EMPTY;
 		
 func _is_valid_move(index: int) -> bool:	
-	if _board[index] == EMPTY:
+	if _board[index] == Constants.EMPTY:
 		return true;
 	
 	print("invalid move: ", { 
