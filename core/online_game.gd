@@ -11,7 +11,6 @@ const PLAYER_DEFAULTS = {
 @onready var _game_mode_label: GameModeLabel = $GameModeLabel;
 
 var _players : Dictionary[String, Player] = {}
-var _game_match: Match;
 var _my_player: String;
 var _my_peer_id: int;
 var _board_state: Array[String];
@@ -19,6 +18,7 @@ var _current_player: String;
 
 func _ready():
 	_board.hide();
+	_game_over_message.show();
 	_game_over_message.change_text("Waiting for players...");
 	
 	_board.on_hover.connect(_on_hover);
@@ -30,36 +30,6 @@ func _ready():
 	NetworkManagerInstance.on_player_move.connect(_on_player_move)
 	NetworkManagerInstance.on_switch_turns.connect(_on_switch_turns)
 
-func _on_match_ready(my_player: String, game_match: Match):
-	print("_on_start_match: ", {
-		my_player = my_player,
-		game_match = game_match,
-	})
-	
-	# assign
-	_my_player = my_player;
-	_game_match = game_match;
-	_my_peer_id = MultiplayerInstance.get_my_peer_id();
-	
-	for player in game_match.get_players().values():
-		var online_player : OnlinePlayer = player;
-		online_player.set_board(_board);
-		
-	# add to the tree to run the _ready();
-	add_child(game_match);
-	
-	# prepare the board
-	_board.show()
-	_board.prepare_board();
-	_board.fill_slots(Constants.EMPTY, Color.TRANSPARENT)
-	_board.on_hover.connect(_on_hover);
-
-	# bind listeners 
-	game_match.on_player_move.connect(_on_player_move);
-	game_match.on_game_over.connect(_on_game_over)
-	game_match.start_match();
-	await _board.show_board(true);	
-
 func _on_sync_game_state(board_state: Array[String], current_player: String):
 	_board_state = board_state;
 	_current_player = current_player;
@@ -69,6 +39,7 @@ func _on_game_start(players: Dictionary[String, Player], my_player: String, curr
 	_current_player = current_player;
 	_my_player = my_player;
 	
+	_game_over_message.hide();
 	_board.show()
 	_board.prepare_board();
 	_board.fill_slots(Constants.EMPTY, Color.TRANSPARENT)

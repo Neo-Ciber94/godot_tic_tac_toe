@@ -81,14 +81,6 @@ func _server_check_can_start_match():
 	for player_value in players:
 		var server_player: ServerPlayer = players.get(player_value);
 		player_peers_map[player_value] = server_player.peer_id;
-		
-	#for player_value in players:
-		#var server_player: ServerPlayer = players.get(player_value);
-		#_server_match_ready.rpc_id(server_player.peer_id, 
-			#player_value,
-			#game_match.get_current_player(),
-			#player_peers_map
-		#)
 
 func _add_online_match(game_match: Match, peer_1: int, peer_2: int):
 	var online_match = OnlineMatch.new(game_match, [peer_1, peer_2]);
