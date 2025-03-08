@@ -119,7 +119,7 @@ func _on_hover(slot: Slot, index: int, is_over: bool):
 		var color = PLAYER_DEFAULTS[current_player];
 		slot.set_value(current_player, Color(color, 0.5), false)
 	else:
-		slot.set_value(Match.EMPTY, Color.TRANSPARENT, false)
+		slot.set_value(Constants.EMPTY, Color.TRANSPARENT, false)
 
 func _on_game_start(players: Dictionary[String, Player], current_player: String):
 	match mode:

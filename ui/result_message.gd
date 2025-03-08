@@ -5,7 +5,7 @@ class_name ResultMessage;
 
 signal on_click;
 
-func change_text(msg: String, color: Color):
+func change_text(msg: String, color: Color = Color.BLACK):
 	label.text = msg;
 	label.add_theme_color_override("font_color", color)
 

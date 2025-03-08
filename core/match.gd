@@ -26,11 +26,14 @@ func add_players(players: Dictionary[String, Player]) -> void:
 	assert(player_values[0] != player_values[1], "players should be different");
 	
 	_players = players;
-	_current_player = _players.keys().pick_random();
+	set_current_player(_players.keys().pick_random());
 	
 	# add the players to the tree
 	for player in _players.values():
 		add_child(player)
+	
+func set_current_player(value: String):
+	_current_player = value;
 	
 func start_match() -> void:
 	assert(_players.size() == 2, "expected 2 players to start the match");
@@ -55,6 +58,9 @@ func start_match() -> void:
 			print("switch players")
 			_switch_players();
 	
+func get_turn_player() -> Player:
+	return _players[_current_player];
+
 func get_current_player():
 	return _current_player;
 	
@@ -101,3 +107,6 @@ func _get_opponent(value: String) -> String:
 	assert(_players.has(value));
 	var player_values = _players.keys();
 	return player_values[0] if value == player_values[1] else player_values[1];
+
+func _to_string() -> String:
+	return "Match { current_player = %s, players = %s }" % [_current_player, _players]

@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://bsnfsnusy3s2j" path="res://ui/board/board.tscn" id="3_mp2bn"]
 [ext_resource type="PackedScene" uid="uid://bxxdx3ieo2oag" path="res://ui/game_mode_label.tscn" id="4_5ktll"]
 [ext_resource type="PackedScene" uid="uid://c5x01dexo3f2f" path="res://ui/result_message.tscn" id="5_mp2bn"]
-[ext_resource type="PackedScene" uid="uid://dht4r1mgp3w5t" path="res://ui/multiplayer_lobby.tscn" id="6_5ktll"]
+[ext_resource type="PackedScene" uid="uid://00niqossu4ex" path="res://ui/server_indicator.tscn" id="6_5ktll"]
 
 [node name="OnlineGame" type="Node"]
 script = ExtResource("1_3xpx7")
@@ -21,6 +21,4 @@ offset_bottom = 100.0
 [node name="ResultMessage" parent="." instance=ExtResource("5_mp2bn")]
 visible = false
 
-[node name="MultiplayerLobby" parent="." instance=ExtResource("6_5ktll")]
-is_server_player = null
-match_players_count = null
+[node name="ServerIndicator" parent="." instance=ExtResource("6_5ktll")]

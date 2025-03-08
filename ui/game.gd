@@ -377,7 +377,7 @@ func _on_peer_player_assign(player_info):
 			_on_peer_request_move.rpc(idx)
 		)
 		
-		_players[player] = OnlinePlayer.new(board, player_peer_id, player_move_rpc)
+		_players[player] = OnlinePlayer.new(player_peer_id, player_move_rpc)
 		
 @rpc("authority", "call_local", "reliable")	
 func _on_match_ready():

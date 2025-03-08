@@ -1,15 +1,12 @@
+class_name Multiplayer;
 extends Node
-class_name MultiplayerLobby;
 
-const SERVER_HOST = "127.0.0.1";
-const SERVER_PORT = 7000;
-const SERVER_MAX_CLIENTS = 1000;
-const SERVER_PEER_ID = 1;
+const SERVER_ID = 1;
 
-@export var is_server_player = false
-@export var match_players_count = 2;
+@export var host = "127.0.0.1"
+@export var port = 7000;
+@export var max_clients = 1000;
 
-signal on_match_players_ready(players: Array[PlayerPeer]);
 signal on_player_connected(player: PlayerPeer);
 signal on_player_disconnected(player: PlayerPeer);
 
@@ -18,10 +15,8 @@ signal on_connection_failed();
 signal on_server_disconnected();
 
 var _connected_players: Dictionary[int, PlayerPeer] = {}
-var _players_queue: Array[PlayerPeer] = []
 
 func _ready():
-	assert(match_players_count >= 1, "A match requires 1 or more players");
 	_bind_listeners()
 	
 func _bind_listeners():
@@ -36,7 +31,7 @@ func _bind_listeners():
 	
 func create_server() -> int:
 	var peer = ENetMultiplayerPeer.new();
-	var err = peer.create_server(SERVER_PORT, SERVER_MAX_CLIENTS);
+	var err = peer.create_server(port, max_clients);
 	
 	if err:
 		print("failed to start server");
@@ -47,14 +42,14 @@ func create_server() -> int:
 	
 	var peer_id = peer.get_unique_id();
 	
-	if is_server_player:
+	if peer_id != SERVER_ID:
 		_register_player(peer_id);
 		
 	return peer_id;
 	
 func create_client() -> int:
 	var peer = ENetMultiplayerPeer.new();
-	var err = peer.create_client(SERVER_HOST, SERVER_PORT);
+	var err = peer.create_client(host, port);
 	
 	if err:
 		print("failed to connect to server");
@@ -66,46 +61,27 @@ func create_client() -> int:
 	
 	return peer_id;
 
+func get_connected_players() -> Dictionary[int, PlayerPeer]:
+	return _connected_players.duplicate()
+
 func _register_player(peer_id: int):
 	print("_register_player: ", { peer_id = peer_id });
 	var player = PlayerPeer.new(peer_id);
 	_connected_players[peer_id] = player;
-	_players_queue.push_back(player)
 	
 	on_player_connected.emit(player);
-	_check_can_start_match();
 	
 func _remove_player(peer_id: int):
 	print("_remove_player: ", { peer_id = peer_id });
 	var player_to_remove = _connected_players.get(peer_id)
 	_connected_players.erase(peer_id);
 	
-	for idx in _players_queue.size():
-		var player = _players_queue[idx];
-		
-		if player.peer_id == peer_id:
-			_players_queue.remove_at(idx)
-			break;
-	
 	if player_to_remove:
 		on_player_disconnected.emit(player_to_remove)
 
-func _check_can_start_match():
-	var player_count = _players_queue.size();
-	
-	if player_count >= match_players_count:
-		var match_players: Array[PlayerPeer] = [];
-		
-		for _i in match_players_count:
-			var p = _players_queue.pop_front();
-			match_players.push_back(p);
-		
-		print("starting match with players: ", match_players)
-		on_match_players_ready.emit(match_players)
-
 func _on_peer_connected(peer_id: int):
 	print("_on_peer_connected: ", { peer_id = peer_id })
-	if peer_id == SERVER_PEER_ID && !is_server_player:
+	if peer_id == SERVER_ID:
 		return;
 	
 	_register_player(peer_id)
@@ -129,5 +105,4 @@ func _on_server_disconnected():
 	print("_on_server_disconnected")
 	multiplayer.multiplayer_peer = null
 	_connected_players.clear()
-	_players_queue.clear()
 	on_server_disconnected.emit();
