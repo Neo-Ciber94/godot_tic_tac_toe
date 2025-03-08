@@ -35,8 +35,6 @@ func set_slot_value(idx: int, value: String, color: Color, animate: bool = true)
 	slot.set_value(value, color, animate)
 
 func fill_slots(value: String, color: Color):
-	print({ value = value, color = color, slots = _slots })
-	
 	for slot in _slots:
 		slot.set_value(value, color)
 

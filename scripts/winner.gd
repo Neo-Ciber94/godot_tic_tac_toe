@@ -46,3 +46,20 @@ func _to_string() -> String:
 		_:
 			return "Winner(..)"
 	
+func to_json() -> String:
+	return  JSON.stringify({
+		"indices": _indices,
+		"value": _value,
+		"state": _state
+	})
+	
+static func from_json(json: String) -> Winner:
+	var obj = JSON.parse_string(json);
+	var winner = Winner.new();
+	var indices: Array[int] = [];
+	indices.assign(obj.indices);
+	
+	winner._indices = indices;
+	winner._value = obj.value;
+	winner._state = obj.state;
+	return winner;

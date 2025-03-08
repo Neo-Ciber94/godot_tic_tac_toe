@@ -15,6 +15,7 @@ signal on_connection_failed();
 signal on_server_disconnected();
 
 var _connected_players: Dictionary[int, PlayerPeer] = {}
+var _my_peer_id: int; # the peer id for the server/client that started
 
 func _ready():
 	_bind_listeners()
@@ -45,6 +46,7 @@ func create_server() -> int:
 	if peer_id != SERVER_ID:
 		_register_player(peer_id);
 		
+	_my_peer_id = peer_id;
 	return peer_id;
 	
 func create_client() -> int:
@@ -59,6 +61,7 @@ func create_client() -> int:
 	multiplayer.multiplayer_peer = peer;
 	var peer_id = peer.get_unique_id()
 	
+	_my_peer_id = peer_id;
 	return peer_id;
 
 func get_connected_players() -> Dictionary[int, PlayerPeer]:
@@ -106,3 +109,6 @@ func _on_server_disconnected():
 	multiplayer.multiplayer_peer = null
 	_connected_players.clear()
 	on_server_disconnected.emit();
+
+func get_my_peer_id():
+	return _my_peer_id;

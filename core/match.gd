@@ -64,9 +64,15 @@ func get_turn_player() -> Player:
 func get_current_player():
 	return _current_player;
 	
+func get_players() -> Dictionary[String, Player]:
+	return _players.duplicate()
+	
 func has_value(index: int) -> bool:
 	return _board[index] != Constants.EMPTY;
 		
+func get_board_state() -> Array[String]:
+	return _board.duplicate();
+
 func _is_valid_move(index: int) -> bool:	
 	if _board[index] == Constants.EMPTY:
 		return true;
@@ -77,7 +83,7 @@ func _is_valid_move(index: int) -> bool:
 		current_player = _current_player 
 	})
 			
-	return true;
+	return false;
 	
 func _request_next_move(player: Player) -> int:
 	var index = { value = -1 }

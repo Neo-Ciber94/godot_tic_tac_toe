@@ -1,0 +1,24 @@
+[gd_scene load_steps=7 format=3 uid="uid://ca6ri6moqctqh"]
+
+[ext_resource type="Script" uid="uid://b8my1ru6pdin8" path="res://core/online_game.gd" id="1_3xpx7"]
+[ext_resource type="PackedScene" uid="uid://dhig53gq04o6f" path="res://ui/bg.tscn" id="2_xx145"]
+[ext_resource type="PackedScene" uid="uid://bsnfsnusy3s2j" path="res://ui/board/board.tscn" id="3_mp2bn"]
+[ext_resource type="PackedScene" uid="uid://bxxdx3ieo2oag" path="res://ui/game_mode_label.tscn" id="4_5ktll"]
+[ext_resource type="PackedScene" uid="uid://c5x01dexo3f2f" path="res://ui/result_message.tscn" id="5_mp2bn"]
+[ext_resource type="PackedScene" uid="uid://00niqossu4ex" path="res://ui/server_indicator.tscn" id="6_5ktll"]
+
+[node name="OnlineGame" type="Node"]
+script = ExtResource("1_3xpx7")
+
+[node name="Background" parent="." instance=ExtResource("2_xx145")]
+offset_right = 300.0
+offset_bottom = 100.0
+
+[node name="Board" parent="." instance=ExtResource("3_mp2bn")]
+
+[node name="GameModeLabel" parent="." instance=ExtResource("4_5ktll")]
+
+[node name="ResultMessage" parent="." instance=ExtResource("5_mp2bn")]
+visible = false
+
+[node name="ServerIndicator" parent="." instance=ExtResource("6_5ktll")]
