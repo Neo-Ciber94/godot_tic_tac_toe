@@ -26,15 +26,20 @@ func _on_start_match(my_player: String, game_match: Match):
 		game_match = game_match,
 	})
 	
+	# assign
+	_my_player = my_player;
+	_game_match = game_match;
+	
+	# add to the tree to run the _ready();
 	add_child(game_match);
 	
+	# prepare the board
 	_board.show()
 	_board.prepare_board();
 	_board.fill_slots(Constants.EMPTY, Color.TRANSPARENT)
 	_board.on_hover.connect(_on_hover);
-	_my_player = my_player;
 
-	_game_match = game_match;
+	# bind listeners 
 	game_match.on_player_move.connect(_on_player_move);
 	game_match.on_game_over.connect(_on_game_over)
 	await _board.show_board(true);
