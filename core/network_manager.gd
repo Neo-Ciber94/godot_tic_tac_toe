@@ -18,6 +18,7 @@ signal on_game_over(winner: Winner);
 signal on_game_start(players: Dictionary[String, Player], my_player: String, current_player: String);
 signal on_switch_turns(player: Player, value: String);
 signal on_sync_game_state(board_state: Array[String], current_player: String);
+signal on_player_quit();
 
 func _ready():
 	# start the server or client
@@ -42,7 +43,7 @@ func join_game():
 		return;
 		
 	var remote_peer_id = multiplayer.get_remote_sender_id();
-	print("player joining to game: ", { remote_peer_id = remote_peer_id });
+	print("player joined to game: ", { remote_peer_id = remote_peer_id });
 	
 	if not _online_players.has(remote_peer_id):
 		print("player was not connected: ", { remote_peer_id = remote_peer_id });
@@ -52,6 +53,14 @@ func join_game():
 	var player = ServerPlayer.new(player_peer.peer_id);
 	_server_players_queue.push_back(player);
 	_server_check_can_start_match();
+	
+@rpc("any_peer", "call_remote", "reliable")
+func quit_game():
+	if not multiplayer.is_server():
+		return;	
+		
+	# TODO: notify the other client this player quit
+	on_player_quit.emit();
 	
 func _server_check_can_start_match():
 	if _server_players_queue.size() < 2:
