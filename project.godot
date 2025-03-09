@@ -11,8 +11,14 @@ config_version=5
 [application]
 
 config/name="TicTacToe"
+config/description="Play TicTacToe locally, against a CPU or online"
+config/version="0.1"
 run/main_scene="res://ui/scenes/main_menu.tscn"
 config/features=PackedStringArray("4.4", "Forward Plus")
+boot_splash/bg_color=Color(1, 1, 1, 1)
+boot_splash/fullsize=false
+boot_splash/use_filter=false
+boot_splash/image="uid://c432e37ngmd5l"
 config/icon="res://icon.svg"
 
 [autoload]
