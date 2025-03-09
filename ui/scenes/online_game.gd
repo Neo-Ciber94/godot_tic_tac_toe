@@ -8,7 +8,6 @@ const PLAYER_DEFAULTS = {
 
 @onready var _board: Board = $Board;
 @onready var _game_over_message: ResultMessage = $ResultMessage;
-@onready var _game_mode_label: GameModeLabel = $GameModeLabel;
 
 var _players : Dictionary[String, Player] = {}
 var _my_player: String;

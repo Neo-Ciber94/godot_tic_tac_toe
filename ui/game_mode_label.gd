@@ -1,6 +1,9 @@
 class_name GameModeLabel;
 extends Label
 
+func _ready():
+	update_text(Application.game_mode, Application.difficulty)
+
 func update_text(mode: Constants.GameMode, difficulty: CpuPlayer.Difficulty = CpuPlayer.Difficulty.RANDOM):
 	text = _get_text_for_mode(mode, difficulty)
 

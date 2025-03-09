@@ -8,7 +8,6 @@ const PLAYER_DEFAULTS = {
 
 @onready var _board: Board = $Board;
 @onready var _game_over_message: ResultMessage = $ResultMessage;
-@onready var _game_mode_label: GameModeLabel = $GameModeLabel;
 
 @export var mode: Constants.GameMode = Application.game_mode;
 @export var difficulty: CpuPlayer.Difficulty = Application.difficulty;
@@ -24,7 +23,6 @@ func _ready():
 	start_game()
 
 func start_game():	
-	_game_mode_label.update_text(mode, difficulty);
 	_setup_players();
 	_start_match()
 	

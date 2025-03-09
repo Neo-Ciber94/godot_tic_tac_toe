@@ -5,9 +5,9 @@ class OnlineMatch:
 	var game_match: Match;
 	var peer_ids: Array[int];
 	
-	func _init(game_match: Match, peer_ids: Array[int]):
-		self.game_match = game_match;
-		self.peer_ids = peer_ids;
+	func _init(cur_match: Match, player_peer_ids: Array[int]):
+		self.game_match = cur_match;
+		self.peer_ids = player_peer_ids;
 
 var _server_outgoing_matches: Dictionary[int, OnlineMatch] = {}
 var _server_players_queue: Array[ServerPlayer] = [];
