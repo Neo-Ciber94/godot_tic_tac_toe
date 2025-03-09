@@ -47,7 +47,7 @@ func _server_check_can_start_match():
 	if _server_players_queue.size() < 2:
 		return;
 	
-	var values = ["x", "o"];
+	var values = Constants.PLAYER_DEFAULTS.keys();
 	values.shuffle();
 		
 	var p1: ServerPlayer = _server_players_queue.pop_front();

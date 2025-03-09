@@ -8,3 +8,8 @@ enum GameMode {
 	CPU,
 	ONLINE
 }
+
+const PLAYER_DEFAULTS = {
+	x = Color.RED,
+	o = Color.BLUE
+}

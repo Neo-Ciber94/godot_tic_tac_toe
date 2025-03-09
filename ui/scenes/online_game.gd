@@ -1,11 +1,6 @@
 class_name OnlineGame;
 extends Node
 
-const PLAYER_DEFAULTS = {
-	x = Color.RED,
-	o = Color.BLUE
-}
-
 @onready var _board: Board = $Board;
 @onready var _game_over_message: ResultMessage = $ResultMessage;
 
@@ -52,7 +47,7 @@ func _on_player_move(player: Player, value: String, index: int):
 	if not value in _players:
 		return;
 	
-	var color = PLAYER_DEFAULTS[value];
+	var color = Constants.PLAYER_DEFAULTS[value];
 	_board.set_slot_value(index, value, color, true);
 	_board_state[index] = value;
 
@@ -68,7 +63,7 @@ func _on_game_over(winner: Winner):
 	if winner.is_tie():
 		_game_over_message.change_text("It's a tie", Color.BLACK);
 	else:
-		var color = PLAYER_DEFAULTS[winner.get_value()];
+		var color = Constants.PLAYER_DEFAULTS[winner.get_value()];
 		_game_over_message.change_text("winner!", color)
 		
 	_game_over_message.show();
@@ -102,7 +97,7 @@ func _on_hover(slot: Slot, index: int, is_over: bool):
 		return;
 	
 	if is_over:
-		var color = PLAYER_DEFAULTS[_current_player];
+		var color = Constants.PLAYER_DEFAULTS[_current_player];
 		slot.set_value(_current_player, Color(color, 0.5), false)
 	else:
 		slot.set_value(Constants.EMPTY, Color.TRANSPARENT, false)
