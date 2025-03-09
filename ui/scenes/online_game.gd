@@ -14,7 +14,9 @@ var _is_finished = false;
 func _ready():
 	_board.hide();
 	_message_display.show();
-	_message_display.with_size(MessageDisplay.Size.MEDIUM).with_effect(MessageDisplay.Effect.FADE).show_message("Waiting for players...");
+	_message_display.set_message_size(MessageDisplay.Size.MEDIUM)
+	_message_display.set_message_effect(MessageDisplay.Effect.PULSE)
+	_message_display.show_message("Waiting for players...");
 	
 	_board.on_hover.connect(_on_hover);
 	_board.on_click.connect(_on_click);

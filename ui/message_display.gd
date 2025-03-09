@@ -22,66 +22,39 @@ enum Effect {
 	RAINBOW
 }
 
-class MessageBuilder:
-	var msg_display: MessageDisplay;
-	var position: Position = Position.CENTER;
-	var size: Size = Size.LARGE;
-	var effect: Effect = Effect.NONE;
-	
-	func _init(message_display: MessageDisplay):
-		msg_display = message_display;
-		
-	func with_position(new_pos: Position) -> MessageBuilder:
-		self.position = new_pos;
-		return self;
-
-	func with_size(new_size: Size) -> MessageBuilder:
-		self.size = new_size;
-		return self;
-		
-	func with_effect(new_effect: Effect) -> MessageBuilder:
-		self.effect = new_effect;
-		return self;
-		
-	func show_message(msg: String, color: Color = Color.BLACK) -> void:
-		msg_display.show_message(
-			msg,
-			color,
-			position,
-			size,
-			effect
-		)
-	
 signal on_click;
+
+var _position: Position = Position.CENTER;
+var _size: Size = Size.LARGE;
+var _effect : Effect = Effect.NONE;
 
 func _gui_input(event):
 	if event is InputEventMouseButton and event.pressed:
 		on_click.emit()
 		
-
-func with_effect(new_effect: Effect) -> MessageBuilder:
-	return MessageBuilder.new(self).with_effect(new_effect)
+func set_message_position(new_pos: Position):
+	_position = new_pos;
+			
+func set_message_size(new_size: Size):
+	_size = new_size;
 	
-func with_position(new_pos: Position) -> MessageBuilder:
-	return MessageBuilder.new(self).with_position(new_pos)
-	
-func with_size(new_size: Size) -> MessageBuilder:
-	return MessageBuilder.new(self).with_size(new_size)
+func set_message_effect(new_effect: Effect):
+	_effect = new_effect;
 
-func show_message(msg: String, color: Color = Color.BLACK, position: Position = Position.CENTER, size: Size = Size.LARGE, effect = Effect.NONE):
-	match position:
+func show_message(msg: String, color: Color = Color.BLACK):		
+	clear()
+	add_theme_font_size_override("normal_font_size", _size)
+	push_color(color);
+	
+	match _position:
 		Position.CENTER:
 			vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		Position.TOP:
 			vertical_alignment = VERTICAL_ALIGNMENT_TOP
 		Position.BOTTOM:
 			vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
-		
-	clear()
-	add_theme_font_size_override("normal_font_size", size)
-	push_color(color);
-	
-	match effect:
+			
+	match _effect:
 		Effect.NONE:
 			append_text(msg)
 		Effect.SHAKE:
@@ -94,3 +67,10 @@ func show_message(msg: String, color: Color = Color.BLACK, position: Position = 
 			append_text("[fade]" + msg + "[/fade]")
 		Effect.RAINBOW:
 			append_text("[rainbow]" + msg + "[/rainbow]")
+			
+	#_reset_message.call_deferred()
+
+func _reset_message():
+	_position = Position.CENTER;
+	_size = Size.LARGE;
+	_effect = Effect.NONE;
