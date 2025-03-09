@@ -24,14 +24,14 @@ func start_game():
 func _setup_players():
 	match mode:
 		Constants.GameMode.LOCAL:
-			print("starting local match: pvp")			
+			Logger.debug("starting local match: pvp")			
 			var values = Constants.PLAYER_DEFAULTS.keys().duplicate();
 			values.shuffle();
 			
 			_players[values[0]] = HumanPlayer.new(_board);
 			_players[values[1]] = HumanPlayer.new(_board);
 		Constants.GameMode.CPU:
-			print("starting local match: pvc")			
+			Logger.debug("starting local match: pvc")			
 			var values = Constants.PLAYER_DEFAULTS.keys().duplicate();
 			values.shuffle();
 			
@@ -69,7 +69,7 @@ func _get_or_create_game_match() -> Match:
 	return _game_match;
 
 func _on_player_move(player: Player, value: String, index: int):
-	print("_on_player_move: ", { player = player, value = value, index = index })
+	Logger.debug("_on_player_move: ", { player = player, value = value, index = index })
 	
 	if not value in _players:
 		return;
@@ -124,7 +124,7 @@ func _on_game_start(players: Dictionary[String, Player], current_player: String)
 				
 				if player is HumanPlayer:
 					_my_player = player_value;
-					print("_assign: ", { _my_player = _my_player, players = players })
+					Logger.debug("_assign: ", { _my_player = _my_player, players = players })
 					return;
 
 func _on_switch_player(player: Player, value: String):

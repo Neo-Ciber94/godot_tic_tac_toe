@@ -3,7 +3,7 @@ extends Button
 
 signal on_exit();
 
-func _on_ready():
+func _ready():
 	pressed.connect(_on_exit);
 	
 func _on_exit():

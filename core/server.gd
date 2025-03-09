@@ -36,11 +36,11 @@ func _ready():
 		MultiplayerInstance.create_client()
 
 func _on_player_connected(player_peer: PlayerPeer):
-	print("_on_player_connected: ", { player_peer = player_peer })
+	Logger.debug("_on_player_connected: ", { player_peer = player_peer })
 	_online_players[player_peer.peer_id] = player_peer;
 	
 func _on_player_disconnected(player_peer: PlayerPeer):
-	print("_on_player_disconnected: ", { player_peer = player_peer })
+	Logger.debug("_on_player_disconnected: ", { player_peer = player_peer })
 	_online_players.erase(player_peer.peer_id)
 	
 	# remove the match this player was on if any
@@ -57,10 +57,10 @@ func join_game():
 		return;
 		
 	var remote_peer_id = multiplayer.get_remote_sender_id();
-	print("player joined to game: ", { remote_peer_id = remote_peer_id });
+	Logger.debug("player joined to game: ", { remote_peer_id = remote_peer_id });
 	
 	if not _online_players.has(remote_peer_id):
-		print("player was not connected: ", { remote_peer_id = remote_peer_id });
+		Logger.debug("player was not connected: ", { remote_peer_id = remote_peer_id });
 		return;	
 		
 	var player_peer: PlayerPeer = _online_players.get(remote_peer_id);
@@ -82,7 +82,7 @@ func _server_terminate_game_match(online_match: OnlineMatch):
 
 @rpc("authority", "call_remote", "reliable")	
 func _notify_game_match_terminated(reason: TerminationReason):
-	print("_notify_game_match_terminated")
+	Logger.debug("_notify_game_match_terminated")
 	on_game_match_terminated.emit(reason)
 
 func _server_check_can_start_match():
@@ -111,7 +111,7 @@ func _server_check_can_start_match():
 	game_match.on_game_over.connect(func(winner): _server_on_game_over(peer_ids, winner))
 	
 	# start
-	print("starting match: ", { p1 = p1, p2 = p2 });
+	Logger.debug("starting match: ", { p1 = p1, p2 = p2 });
 	_server_sync_game_state(p1.peer_id, p2.peer_id);
 	game_match.start_match()
 	
@@ -127,7 +127,7 @@ func _add_online_match(game_match: Match, peer_1: int, peer_2: int):
 	_server_outgoing_matches.set(peer_2, online_match);
 
 func _server_on_game_start(players: Dictionary[String, Player], current_player: String):
-	print("_server_on_game_start")
+	Logger.debug("_server_on_game_start")
 	var server_players: Dictionary[String, int] = {};
 	
 	for player_value in players:
@@ -140,7 +140,7 @@ func _server_on_game_start(players: Dictionary[String, Player], current_player: 
 	
 @rpc("authority", "call_remote", "reliable")
 func _notify_on_game_start(server_players: Dictionary[String, int], my_player: String, current_player: String):
-	print("_notify_on_game_start: ", { my_peer_id = MultiplayerInstance.get_my_peer_id() })
+	Logger.debug("_notify_on_game_start: ", { my_peer_id = MultiplayerInstance.get_my_peer_id() })
 	var players : Dictionary[String, Player] = {};
 	
 	for player_value in server_players:
@@ -174,7 +174,7 @@ func _notify_switch_turns(player_peer_id: int, value: String):
 	on_switch_turns.emit(ServerPlayer.new(player_peer_id), value);
 
 func _server_on_player_move(player: Player, value: String, index: int):
-	print("_server_on_player_move")
+	Logger.debug("_server_on_player_move")
 	var server_player = player as ServerPlayer;
 	var online_match: OnlineMatch = _server_outgoing_matches.get(server_player.peer_id);
 	
@@ -220,19 +220,19 @@ func request_move(index: int):
 	if not multiplayer.is_server():
 		return;
 
-	print("request_move: ", index);
+	Logger.debug("request_move: ", index);
 	var remote_peer_id = multiplayer.get_remote_sender_id();
 	var online_match: OnlineMatch = _server_outgoing_matches.get(remote_peer_id);
 	
 	if online_match == null:
-		print("online match was not found: ", { remote_peer_id = remote_peer_id });
+		Logger.debug("online match was not found: ", { remote_peer_id = remote_peer_id });
 		return;
 	
 	var game_match = online_match.game_match;	
 	var player: ServerPlayer = game_match.get_turn_player();
 	
 	if player.peer_id != remote_peer_id:
-		print("not your turn: ", {
+		Logger.debug("not your turn: ", {
 			remote_peer_id = remote_peer_id,
 			turn_player = player
 		})
@@ -250,7 +250,7 @@ func restart_match():
 	var game_match = online_match.game_match;
 	
 	if not game_match.is_finished():
-		print("cannot restart game, is not finished");
+		Logger.debug("cannot restart game, is not finished");
 		return;
 		
 	game_match.reset_board();

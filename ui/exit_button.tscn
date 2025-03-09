@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://b3ip1iq14gssr"]
+[gd_scene load_steps=6 format=3 uid="uid://b3ip1iq14gssr"]
 
 [ext_resource type="FontFile" uid="uid://dy04l2c31hyma" path="res://art/fonts/Silkscreen-Regular.ttf" id="1_oaa6a"]
 [ext_resource type="StyleBox" uid="uid://u2kfkut6slb0" path="res://art/styles/button_normal.tres" id="2_o7j4s"]
 [ext_resource type="StyleBox" uid="uid://c0vg1hr1pgc2r" path="res://art/styles/button_disabled.tres" id="3_1y54w"]
 [ext_resource type="StyleBox" uid="uid://inq4sf0eei6u" path="res://art/styles/button_hover.tres" id="4_2ut63"]
+[ext_resource type="Script" uid="uid://b8tkbg60gbvia" path="res://ui/exit_button.gd" id="5_o7j4s"]
 
 [node name="ExitButton" type="Button"]
 anchors_preset = 1
@@ -35,3 +36,4 @@ theme_override_styles/pressed = ExtResource("2_o7j4s")
 theme_override_styles/normal_mirrored = ExtResource("2_o7j4s")
 theme_override_styles/normal = ExtResource("2_o7j4s")
 text = "Exit"
+script = ExtResource("5_o7j4s")

@@ -47,7 +47,7 @@ func start_match() -> void:
 	assert(_players.size() == 2, "expected 2 players to start the match");
 	
 	if _status != MatchStatus.WAITING:
-		print("cannot start a match that its not waiting");
+		Logger.debug("cannot start a match that its not waiting");
 		return;
 		
 	_status = MatchStatus.PLAYING;
@@ -69,7 +69,7 @@ func start_match() -> void:
 			_declare_winner(winner);
 			break;
 		else:
-			print("switch players")
+			Logger.debug("switch players")
 			_switch_players();
 	
 func is_waiting() -> bool:
@@ -97,7 +97,7 @@ func _is_valid_move(index: int) -> bool:
 	if _board[index] == Constants.EMPTY:
 		return true;
 	
-	print("invalid move: ", { 
+	Logger.debug("invalid move: ", { 
 		index = index, 
 		player = _players[_current_player], 
 		current_player = _current_player 
@@ -116,9 +116,9 @@ func _request_next_move(player: Player) -> int:
 	player.next_move(_board.duplicate())
 	
 	if index.value == -1:
-		print("waiting for play: ", { player = player, current_player = _current_player });
+		Logger.debug("waiting for play: ", { player = player, current_player = _current_player });
 		await on_waiting;
-		print("wait done: ", player)
+		Logger.debug("wait done: ", player)
 	
 	return index.value;
 	

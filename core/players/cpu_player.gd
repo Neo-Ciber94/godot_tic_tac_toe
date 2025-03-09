@@ -18,11 +18,11 @@ func _init(my_player: String, opp_player: String, difficulty = Difficulty.RANDOM
 	_opp_player = opp_player;
 
 func next_move(game_state: Array[String]):
-	print("waiting for cpu move")
+	Logger.debug("waiting for cpu move")
 	await get_tree().create_timer(0.5).timeout
 	
 	var index = _next_move(game_state);
-	print("cpu move to: ", index)
+	Logger.debug("cpu move to: ", index)
 	on_move.emit(index)
 
 func _next_move(board: Array[String]):

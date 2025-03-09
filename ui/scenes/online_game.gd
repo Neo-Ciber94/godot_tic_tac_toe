@@ -46,7 +46,7 @@ func _on_game_start(players: Dictionary[String, Player], my_player: String, curr
 	await _board.show_board(true)
 
 func _on_player_move(player: Player, value: String, index: int):
-	print("_on_player_move: ", { player = player, value = value, index = index, _my_peer_id = _my_peer_id })
+	Logger.debug("_on_player_move: ", { player = player, value = value, index = index, _my_peer_id = _my_peer_id })
 	
 	if not value in _players:
 		return;
@@ -97,11 +97,11 @@ func _on_click(_slot: Slot, index: int):
 		return;
 
 	if _my_player != _current_player:
-		print("not your turn")
+		Logger.debug("not your turn")
 		return;
 		
 	if _has_value(index):
-		print("value already set")
+		Logger.debug("value already set")
 		return;
 		
 	ServerInstance.request_move.rpc(index)
