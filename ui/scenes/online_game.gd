@@ -19,6 +19,7 @@ func _ready():
 	_board.on_hover.connect(_on_hover);
 	_board.on_click.connect(_on_click);
 	
+	NetworkManagerInstance.join_game.rpc()
 	NetworkManagerInstance.on_sync_game_state.connect(_on_sync_game_state)
 	NetworkManagerInstance.on_game_start.connect(_on_game_start)
 	NetworkManagerInstance.on_game_over.connect(_on_game_over)
