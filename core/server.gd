@@ -1,8 +1,6 @@
 class_name Server;
 extends Node
 
-const TURN_TIMEOUT_SECONDS = 20;
-
 enum TerminationReason {
 	PLAYER_QUIT,
 	TIMEOUT,
@@ -144,7 +142,7 @@ func _server_check_can_start_match():
 
 func _create_match_timer(any_player_peer_id: int) -> Countdown:
 	var match_timer = Countdown.new();
-	match_timer.duration = TURN_TIMEOUT_SECONDS;
+	match_timer.duration = Application.get_turn_timeout_seconds();
 	
 	match_timer.on_timeout.connect(func(): 
 		_server_on_match_timeout(any_player_peer_id)

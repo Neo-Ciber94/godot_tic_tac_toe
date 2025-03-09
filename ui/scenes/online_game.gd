@@ -94,6 +94,9 @@ func _on_game_match_terminated(current_player: String, reason: Server.Terminatio
 	_message_display.show();
 
 func _on_game_match_turn_timer_update(current_player: String, remaining_seconds: int):
+	if remaining_seconds > Application.show_turn_timeout_on_remaining_seconds:
+		return;
+		
 	var is_my_turn = current_player == _my_player;
 	var mmss = Utils.seconds_to_mmss(remaining_seconds);
 	
