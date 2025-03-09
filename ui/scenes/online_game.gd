@@ -28,6 +28,7 @@ func _ready():
 	ServerInstance.on_player_move.connect(_on_player_move)
 	ServerInstance.on_switch_turns.connect(_on_switch_turns)
 	ServerInstance.on_game_match_terminated.connect(_on_game_match_terminated)
+	ServerInstance.on_game_match_turn_timer_update.connect(_on_game_match_turn_timer_update)
 
 func _on_sync_game_state(board_state: Array[String], current_player: String):
 	_board_state = board_state;
@@ -91,6 +92,21 @@ func _on_game_match_terminated(current_player: String, reason: Server.Terminatio
 	var player_color: Color = Constants.PLAYER_DEFAULTS[current_player];
 	_message_display.set_message_size(MessageDisplay.Size.MEDIUM);
 	_message_display.show_message(msg, player_color);
+	_message_display.show();
+
+func _on_game_match_turn_timer_update(current_player: String, remaining_seconds: int):
+	var is_my_turn = current_player == _my_player;
+	var mmss = Utils.seconds_to_mmss(remaining_seconds);
+	
+	_message_display.set_message_effect(MessageDisplay.Effect.SHAKE);
+	_message_display.set_message_size(MessageDisplay.Size.SMALL);
+	_message_display.set_message_position(MessageDisplay.Position.BOTTOM);
+	
+	if is_my_turn:
+		_message_display.show_message("you have %s left" % mmss)
+	else:
+		_message_display.show_message("waiting opponent: %s" % mmss)
+		
 	_message_display.show();
 
 func _has_value(index: int):

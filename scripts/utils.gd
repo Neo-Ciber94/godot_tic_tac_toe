@@ -1,6 +1,5 @@
-extends RefCounted
-
 class_name Utils;
+extends RefCounted
 
 const WIN_POSITIONS : Array = [
 		# verticals
@@ -64,23 +63,8 @@ static func all_equals(arr: Array) -> bool:
 		
 	return true;
 
-class Entry:
-	var key;
-	var value;
-
-static func find_dictionary_entry(dictionary: Dictionary, pred: Callable) -> Entry: 
-	for key in dictionary:
-		var value = dictionary.get(key);
-		var result = pred.call(key, value);
-		
-		if result:
-			var entry = Entry.new()
-			entry.key = key;
-			entry.value = value;
-			return entry;
-
-	return null;
-
-static func remove_all_signal_connections(s: Signal):
-	for conn in s.get_connections():
-		s.disconnect(conn.callable)
+static func seconds_to_mmss(seconds: int) -> String:
+	var mm = floor(seconds / 60);
+	var ss = seconds % 60;
+	return "%02d:%02d" % [mm, ss]
+	
