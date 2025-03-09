@@ -3,9 +3,9 @@ extends Node
 
 const SERVER_ID = 1;
 
-@export var host = "127.0.0.1"
-@export var port = 7000;
-@export var max_clients = 1000;
+@export var host = Application.server_host;
+@export var port = Application.server_port;
+@export var max_clients = Application.server_max_players;
 
 signal on_player_connected(player: PlayerPeer);
 signal on_player_disconnected(player: PlayerPeer);

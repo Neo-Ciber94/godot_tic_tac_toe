@@ -8,7 +8,7 @@ env:
 
 jobs:
   export-web:
-    name: Web Export
+    name: Web Build
     runs-on: ubuntu-22.04  # Use 22.04 with godot 4
     container:
       image: barichello/godot-ci:4.4
@@ -35,12 +35,15 @@ jobs:
           path: build/web
     
   deploy-web:
+    needs: export-web
+    permissions:
+      pages: write  
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-22.04  # Use 22.04 with godot 4
-    needs: export-web
+    runs-on: ubuntu-latest
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v4 

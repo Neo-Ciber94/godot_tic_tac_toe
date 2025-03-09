@@ -17,3 +17,15 @@ static func get_turn_timeout_seconds() -> int:
 		return default_turn_timeout_seconds;
 		
 	return value;
+
+static var server_host: String:
+	get:
+		return Env.get_string("GODOT_SERVER_HOST", "127.0.0.1");
+	
+static var server_port: int:
+	get:
+		return Env.get_int("GODOT_SERVER_HOST", 7000);
+		
+static var server_max_players: int:
+	get:
+		return Env.get_int("GODOT_SERVER_MAX_PLAYERS", 1000)
