@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://dw01ewijj6lj7"]
+[gd_scene load_steps=9 format=3 uid="uid://dw01ewijj6lj7"]
 
 [ext_resource type="Script" uid="uid://dwc7u0xomwdr4" path="res://ui/scenes/main_menu.gd" id="1_pflmj"]
 [ext_resource type="PackedScene" uid="uid://dhig53gq04o6f" path="res://ui/bg.tscn" id="1_vtlxb"]
@@ -8,7 +8,6 @@
 [ext_resource type="StyleBox" uid="uid://inq4sf0eei6u" path="res://art/styles/button_hover.tres" id="5_48hjw"]
 [ext_resource type="PackedScene" uid="uid://dps2mir7ylw1d" path="res://scripts/resize_screen.tscn" id="7_hsxsj"]
 [ext_resource type="PackedScene" uid="uid://00niqossu4ex" path="res://ui/server_indicator.tscn" id="8_afilx"]
-[ext_resource type="PackedScene" uid="uid://b3ip1iq14gssr" path="res://ui/exit_button.tscn" id="9_xh8ku"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -139,20 +138,8 @@ text = "Play Online"
 [node name="ScreenScaler" parent="." instance=ExtResource("7_hsxsj")]
 
 [node name="ServerIndicator" parent="." instance=ExtResource("8_afilx")]
-visible = true
 layout_mode = 1
 offset_left = -180.0
 offset_top = -39.0
 offset_right = 0.0
 offset_bottom = 0.0
-
-[node name="ExitButton" parent="." instance=ExtResource("9_xh8ku")]
-layout_mode = 0
-anchors_preset = 0
-anchor_left = 0.0
-anchor_right = 0.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 79.0
-offset_bottom = 31.0
-grow_horizontal = 1

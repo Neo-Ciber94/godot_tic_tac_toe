@@ -14,11 +14,6 @@ script = ExtResource("1_3xpx7")
 
 [node name="Background" parent="." instance=ExtResource("2_xx145")]
 
-[node name="ExitButton" parent="Background" instance=ExtResource("3_cxq4h")]
-layout_mode = 0
-anchors_preset = 0
-script = ExtResource("4_nnyyo")
-
 [node name="Board" parent="." instance=ExtResource("3_mp2bn")]
 
 [node name="GameModeLabel" parent="." instance=ExtResource("4_5ktll")]
@@ -27,3 +22,6 @@ script = ExtResource("4_nnyyo")
 visible = false
 
 [node name="ServerIndicator" parent="." instance=ExtResource("6_5ktll")]
+
+[node name="ExitButton" parent="." instance=ExtResource("3_cxq4h")]
+script = ExtResource("4_nnyyo")

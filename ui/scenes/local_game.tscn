@@ -13,13 +13,11 @@ mode = 1
 
 [node name="Background" parent="." instance=ExtResource("2_dwi3w")]
 
-[node name="ExitButton" parent="Background" instance=ExtResource("3_o5r27")]
-layout_mode = 0
-anchors_preset = 0
-
 [node name="Board" parent="." instance=ExtResource("3_qnt06")]
 
 [node name="ResultMessage" parent="." instance=ExtResource("4_qnt06")]
 visible = false
 
 [node name="GameModeLabel" parent="." instance=ExtResource("5_jx47x")]
+
+[node name="ExitButton" parent="." instance=ExtResource("3_o5r27")]
