@@ -27,6 +27,7 @@ signal on_click;
 var _position: Position = Position.CENTER;
 var _size: Size = Size.LARGE;
 var _effect : Effect = Effect.NONE;
+var _is_clickable: bool = true;
 
 func _gui_input(event):
 	if event is InputEventMouseButton and event.pressed:
@@ -40,6 +41,9 @@ func set_message_size(new_size: Size):
 	
 func set_message_effect(new_effect: Effect):
 	_effect = new_effect;
+	
+func set_can_click(is_clickable: bool):
+	_is_clickable = is_clickable;
 
 func show_message(msg: String, color: Color = Color.BLACK):		
 	clear()
@@ -68,9 +72,15 @@ func show_message(msg: String, color: Color = Color.BLACK):
 		Effect.RAINBOW:
 			append_text("[rainbow]" + msg + "[/rainbow]")
 	
-	_reset_message.call_deferred()
+	if _is_clickable:
+		mouse_filter = Control.MOUSE_FILTER_STOP;
+	else:
+		mouse_filter = Control.MOUSE_FILTER_IGNORE;
+		
+	_reset_message()
 
 func _reset_message():
 	_position = Position.CENTER;
 	_size = Size.LARGE;
 	_effect = Effect.NONE;
+	_is_clickable = true;

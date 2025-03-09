@@ -98,14 +98,22 @@ func _on_game_match_turn_timer_update(current_player: String, remaining_seconds:
 	var is_my_turn = current_player == _my_player;
 	var mmss = Utils.seconds_to_mmss(remaining_seconds);
 	
-	_message_display.set_message_effect(MessageDisplay.Effect.SHAKE);
 	_message_display.set_message_size(MessageDisplay.Size.SMALL);
 	_message_display.set_message_position(MessageDisplay.Position.BOTTOM);
+	_message_display.set_can_click(false);
+	
+	if remaining_seconds <= 10:
+		_message_display.set_message_effect(MessageDisplay.Effect.SHAKE);
+	
+	var color = (
+		Color.BLACK if remaining_seconds > 10
+		else Constants.PLAYER_DEFAULTS[current_player]
+	)
 	
 	if is_my_turn:
-		_message_display.show_message("you have %s left" % mmss)
+		_message_display.show_message("you have %s left" % mmss, color)
 	else:
-		_message_display.show_message("waiting opponent: %s" % mmss)
+		_message_display.show_message("waiting opponent: %s" % mmss, color)
 		
 	_message_display.show();
 

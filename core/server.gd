@@ -1,7 +1,7 @@
 class_name Server;
 extends Node
 
-const TURN_TIMEOUT_SECONDS = 60;
+const TURN_TIMEOUT_SECONDS = 20;
 
 enum TerminationReason {
 	PLAYER_QUIT,
@@ -172,7 +172,7 @@ func _server_terminate_game_match(online_match: OnlineMatch, reason: Termination
 	var game_match = online_match.game_match;
 	var current_player = game_match.get_current_player()
 	game_match.queue_free();
-	online_match.match_timer.queue_free()
+	online_match.turn_timer.queue_free()
 	
 	for peer_id in peer_ids:
 		_notify_game_match_terminated.rpc_id(peer_id, current_player, reason)
@@ -180,7 +180,7 @@ func _server_terminate_game_match(online_match: OnlineMatch, reason: Termination
 @rpc("authority", "call_remote", "reliable")	
 func _notify_game_match_terminated(current_player: String, reason: TerminationReason):
 	Logger.debug("_notify_game_match_terminated")
-	on_game_match_terminated.emit(reason)
+	on_game_match_terminated.emit(current_player, reason)
 
 func _server_on_game_start(players: Dictionary[String, Player], current_player: String):
 	Logger.debug("_server_on_game_start")

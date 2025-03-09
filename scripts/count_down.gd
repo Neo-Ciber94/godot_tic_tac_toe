@@ -70,6 +70,7 @@ func _execute():
 		if _seconds_passed >= _duration:
 			_timer.stop();
 			_state = State.FINISHED;
+			on_update.emit(max(0, remaining_seconds))
 			on_timeout.emit();
 			break;
 		
