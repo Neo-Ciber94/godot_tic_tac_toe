@@ -9,7 +9,6 @@
 
 [node name="LocalGame" type="Node"]
 script = ExtResource("1_6ppru")
-mode = 1
 
 [node name="Background" parent="." instance=ExtResource("2_dwi3w")]
 

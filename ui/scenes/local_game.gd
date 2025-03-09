@@ -4,8 +4,8 @@ extends Node
 @onready var _board: Board = $Board;
 @onready var _message_display: MessageDisplay = $MessageDisplay;
 
-@export var mode: Constants.GameMode = Application.game_mode;
-@export var difficulty: CpuPlayer.Difficulty = Application.difficulty;
+var mode: Constants.GameMode = Application.game_mode;
+var difficulty: CpuPlayer.Difficulty = Application.difficulty;
 
 var _players : Dictionary[String, Player] = {}
 var _game_match: Match;
@@ -84,10 +84,10 @@ func _on_game_over(winner: Winner):
 	
 	# Show the winner result_message
 	if winner.is_tie():
-		_message_display.change_text("It's a tie", Color.BLACK);
+		_message_display.show_message("It's a tie");
 	else:
 		var color = Constants.PLAYER_DEFAULTS[winner.get_value()];
-		_message_display.change_text("winner!", color)
+		_message_display.show_message("winner!", color)
 		
 	_message_display.show();
 

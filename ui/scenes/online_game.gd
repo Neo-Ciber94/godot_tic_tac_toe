@@ -65,10 +65,10 @@ func _on_game_over(winner: Winner):
 	
 	# Show the winner result_message
 	if winner.is_tie():
-		_message_display.change_text("It's a tie", Color.BLACK);
+		_message_display.show_message("It's a tie");
 	else:
 		var color = Constants.PLAYER_DEFAULTS[winner.get_value()];
-		_message_display.change_text("winner!", color)
+		_message_display.show_message("winner!", color)
 		
 	_message_display.show();
 
@@ -87,7 +87,7 @@ func _on_game_match_terminated(reason: NetworkManager.GameTerminationReason):
 	
 	_is_finished = true;
 	_board.hide();
-	_message_display.change_text(msg, Color.RED);
+	_message_display.show_message(msg, Color.RED);
 
 func _has_value(index: int):
 	return _board_state[index] != Constants.EMPTY
