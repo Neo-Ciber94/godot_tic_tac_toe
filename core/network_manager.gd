@@ -12,9 +12,6 @@ class OnlineMatch:
 var _server_outgoing_matches: Dictionary[int, OnlineMatch] = {}
 var _server_players_queue: Array[ServerPlayer] = [];
 
-var _my_player: String;
-var _outgoing_player: OnlinePlayer;
-
 signal on_player_move(player: Player, value: String, index: int);
 signal on_game_over(winner: Winner);
 signal on_game_start(players: Dictionary[String, Player], my_player: String, current_player: String);
@@ -175,17 +172,6 @@ func _server_sync_game_state(peer_1: int, peer_2: int):
 @rpc("authority", "call_remote", "reliable")
 func _notify_sync_game_state(board: Array[String], current_player: String):
 	on_sync_game_state.emit(board, current_player)
-
-@rpc("authority", "call_remote", "reliable")
-func _server_make_move(peer_id: int, index: int):
-	print("make_move: ", { peer_id = peer_id, index = index })
-	var online_match: OnlineMatch = _server_outgoing_matches.get(peer_id);
-	var game_match = online_match.game_match;
-	
-	var players = game_match.get_players();
-	for player_value in players:
-		var player: OnlinePlayer = players.get(player_value);
-		player.on_move.emit(index);
 	
 @rpc("any_peer", "call_remote", "reliable")
 func request_move(index: int):

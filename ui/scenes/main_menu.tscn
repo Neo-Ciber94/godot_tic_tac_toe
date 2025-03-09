@@ -1,6 +1,6 @@
-[gd_scene load_steps=9 format=3 uid="uid://dw01ewijj6lj7"]
+[gd_scene load_steps=10 format=3 uid="uid://dw01ewijj6lj7"]
 
-[ext_resource type="Script" uid="uid://dwc7u0xomwdr4" path="res://ui/main_menu.gd" id="1_pflmj"]
+[ext_resource type="Script" uid="uid://dwc7u0xomwdr4" path="res://ui/scenes/main_menu.gd" id="1_pflmj"]
 [ext_resource type="PackedScene" uid="uid://dhig53gq04o6f" path="res://ui/bg.tscn" id="1_vtlxb"]
 [ext_resource type="FontFile" uid="uid://dy04l2c31hyma" path="res://art/fonts/Silkscreen-Regular.ttf" id="2_anqjw"]
 [ext_resource type="StyleBox" uid="uid://u2kfkut6slb0" path="res://art/styles/button_normal.tres" id="3_7homs"]
@@ -8,6 +8,7 @@
 [ext_resource type="StyleBox" uid="uid://inq4sf0eei6u" path="res://art/styles/button_hover.tres" id="5_48hjw"]
 [ext_resource type="PackedScene" uid="uid://dps2mir7ylw1d" path="res://ui/screen_scaler.tscn" id="7_hsxsj"]
 [ext_resource type="PackedScene" uid="uid://00niqossu4ex" path="res://ui/server_indicator.tscn" id="8_afilx"]
+[ext_resource type="PackedScene" uid="uid://b3ip1iq14gssr" path="res://ui/exit_button.tscn" id="9_xh8ku"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -144,3 +145,7 @@ offset_left = -180.0
 offset_top = -39.0
 offset_right = 0.0
 offset_bottom = 0.0
+
+[node name="ExitButton" parent="." instance=ExtResource("9_xh8ku")]
+layout_mode = 0
+anchors_preset = 0
