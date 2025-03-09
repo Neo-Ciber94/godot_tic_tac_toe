@@ -1,8 +1,5 @@
 extends Node;
 
-const SMALL_SCREEN_WIDTH = 800;
-const SMALL_SCREEN_FACTOR = 1.8;
-
 @onready var viewport = get_viewport()
 
 var minimum_size = Vector2(1280, 720)
@@ -20,8 +17,13 @@ func get_scale_factor(window_size: Vector2):
 	if window_size < minimum_size:
 		var factor =  window_size.x / minimum_size.x
 		
-		if window_size.x < SMALL_SCREEN_WIDTH:
-			return factor * SMALL_SCREEN_FACTOR;
+		# mobile phone
+		if window_size.x < 400:
+			return factor * 2;
+			
+		# tablet
+		if window_size.x < 800:
+			return factor * 1.8;
 		
 		return factor;
 	else:
