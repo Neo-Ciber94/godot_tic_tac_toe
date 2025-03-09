@@ -77,19 +77,20 @@ func _on_game_over(winner: Winner):
 	_message_display.hide();
 	ServerInstance.restart_match.rpc();
 	
-func _on_game_match_terminated(reason: Server.TerminationReason):
+func _on_game_match_terminated(current_player: String, reason: Server.TerminationReason):
 	var msg = (
-		"Player Timeout" if reason == Server.TerminationReason.TIMEOUT
-		else "Player Quit" if reason == Server.TerminationReason.PLAYER_QUIT
-		else "Done with you" if reason == Server.TerminationReason.JUST_BECAUSE
-		else "Game was terminated" # unreachable
+		"player timeout" if reason == Server.TerminationReason.TIMEOUT
+		else "player quit" if reason == Server.TerminationReason.PLAYER_QUIT
+		else "done with you" if reason == Server.TerminationReason.JUST_BECAUSE
+		else "game was terminated" # unreachable
 	)
 	
 	_is_finished = true;
 	_board.hide();
 	
+	var player_color: Color = Constants.PLAYER_DEFAULTS[current_player];
 	_message_display.set_message_size(MessageDisplay.Size.MEDIUM);
-	_message_display.show_message(msg, Color.RED);
+	_message_display.show_message(msg, player_color);
 	_message_display.show();
 
 func _has_value(index: int):

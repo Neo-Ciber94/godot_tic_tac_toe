@@ -1,6 +1,8 @@
 class_name Server;
 extends Node
 
+const TURN_TIMEOUT_SECONDS = 60;
+
 enum TerminationReason {
 	PLAYER_QUIT,
 	TIMEOUT,
@@ -10,11 +12,11 @@ enum TerminationReason {
 class OnlineMatch:
 	var game_match: Match;
 	var peer_ids: Array[int];
-	var match_timer: Countdown;
+	var turn_timer: Countdown;
 	
 	func _init(cur_match: Match, timer: Countdown, player_peer_ids: Array[int]):
 		self.game_match = cur_match;
-		self.match_timer = timer;
+		self.turn_timer = timer;
 		self.peer_ids = player_peer_ids;
 
 var _server_outgoing_matches: Dictionary[int, OnlineMatch] = {}
@@ -26,7 +28,7 @@ signal on_game_over(winner: Winner);
 signal on_game_start(players: Dictionary[String, Player], my_player: String, current_player: String);
 signal on_switch_turns(player: Player, value: String);
 signal on_sync_game_state(board_state: Array[String], current_player: String);
-signal on_game_match_terminated(reason: TerminationReason);
+signal on_game_match_terminated(current_player: String, reason: TerminationReason);
 
 func _ready():
 	# start the server or client
@@ -122,6 +124,7 @@ func _server_check_can_start_match():
 
 func _create_match_timer(any_player_peer_id: int) -> Countdown:
 	var match_timer = Countdown.new();
+	match_timer.duration = TURN_TIMEOUT_SECONDS;
 	
 	match_timer.on_timeout.connect(func(): 
 		_server_on_match_timeout(any_player_peer_id)
@@ -148,14 +151,15 @@ func _server_terminate_game_match(online_match: OnlineMatch, reason: Termination
 		_server_outgoing_matches.erase(peer_id);
 		
 	var game_match = online_match.game_match;
+	var current_player = game_match.get_current_player()
 	game_match.queue_free();
 	online_match.match_timer.queue_free()
 	
 	for peer_id in peer_ids:
-		_notify_game_match_terminated.rpc_id(peer_id, reason)
+		_notify_game_match_terminated.rpc_id(peer_id, current_player, reason)
 	
 @rpc("authority", "call_remote", "reliable")	
-func _notify_game_match_terminated(reason: TerminationReason):
+func _notify_game_match_terminated(current_player: String, reason: TerminationReason):
 	Logger.debug("_notify_game_match_terminated")
 	on_game_match_terminated.emit(reason)
 
@@ -199,6 +203,9 @@ func _server_on_switch_turns(player: Player, value: String):
 	if online_match == null:
 		return;
 		
+	# Restart the timer after each turn
+	online_match.turn_timer.restart();
+		
 	for peer_id in online_match.peer_ids:
 		_notify_switch_turns.rpc_id(peer_id, server_player.peer_id, value);
 	
@@ -212,7 +219,7 @@ func _server_on_player_move(player: Player, value: String, index: int):
 	var online_match: OnlineMatch = _server_outgoing_matches.get(server_player.peer_id);
 	
 	if online_match == null:
-		return;
+		return;	
 		
 	for peer_id in online_match.peer_ids:
 		_notify_player_move.rpc_id(peer_id, server_player.peer_id, value, index);
