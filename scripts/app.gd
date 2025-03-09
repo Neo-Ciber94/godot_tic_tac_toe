@@ -6,10 +6,6 @@ static var difficulty: CpuPlayer.Difficulty = CpuPlayer.Difficulty.RANDOM;
 		
 static func is_server() -> bool:
 	return OS.get_cmdline_args().has("--server");
-	
-static var show_turn_timeout_on_remaining_seconds: int:
-	get:
-		return 30;
 
 static func get_turn_timeout_seconds() -> int:
 	const default_turn_timeout_seconds = 60;
