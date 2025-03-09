@@ -12,7 +12,7 @@ signal on_hover(slot: Slot, index: int, is_over: bool);
 var _slots: Array[Slot] = [];
 
 func _ready():
-	hide_lines(); # to ensure do not flash when the animation its triggered
+	hide_lines(); # ensure the initial state of the lines its with opacity 0
 	prepare_board()
 
 func prepare_board():	
