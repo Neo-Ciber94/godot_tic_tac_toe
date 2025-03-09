@@ -15,6 +15,7 @@ var _my_player: String;
 var _my_peer_id: int;
 var _board_state: Array[String];
 var _current_player: String;
+var _is_finished = false;
 
 func _ready():
 	_board.hide();
@@ -38,11 +39,13 @@ func _on_game_start(players: Dictionary[String, Player], my_player: String, curr
 	_players = players;
 	_current_player = current_player;
 	_my_player = my_player;
+	_is_finished = false;
 	
 	_game_over_message.hide();
 	_board.show()
 	_board.prepare_board();
 	_board.fill_slots(Constants.EMPTY, Color.TRANSPARENT)
+	await _board.show_board(true)
 
 func _on_player_move(player: Player, value: String, index: int):
 	print("_on_player_move: ", { player = player, value = value, index = index, _my_peer_id = _my_peer_id })
@@ -74,7 +77,8 @@ func _on_game_over(winner: Winner):
 	# Wait to click for restart
 	await _game_over_message.on_click;
 	_game_over_message.hide();
-	#_game_match.reset_board();
+	NetworkManagerInstance.restart_match.rpc();
+
 
 func _has_value(index: int):
 	return _board_state[index] != Constants.EMPTY

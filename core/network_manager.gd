@@ -193,21 +193,39 @@ func request_move(index: int):
 		return;
 
 	print("request_move: ", index);
-	var remove_peer_id = multiplayer.get_remote_sender_id();
-	var online_match: OnlineMatch = _server_outgoing_matches.get(remove_peer_id);
+	var remote_peer_id = multiplayer.get_remote_sender_id();
+	var online_match: OnlineMatch = _server_outgoing_matches.get(remote_peer_id);
 	
 	if online_match == null:
-		print("online match was not found: ", { remove_peer_id = remove_peer_id });
+		print("online match was not found: ", { remote_peer_id = remote_peer_id });
 		return;
 	
 	var game_match = online_match.game_match;	
 	var player: ServerPlayer = game_match.get_turn_player();
 	
-	if player.peer_id != remove_peer_id:
+	if player.peer_id != remote_peer_id:
 		print("not your turn: ", {
-			remove_peer_id = remove_peer_id,
+			remote_peer_id = remote_peer_id,
 			turn_player = player
 		})
 		return;
 	
 	player.on_move.emit(index);
+
+@rpc("any_peer", "call_remote", "reliable")
+func restart_match():
+	if not multiplayer.is_server():
+		return;
+		
+	var remote_peer_id = multiplayer.get_remote_sender_id();
+	var online_match: OnlineMatch = _server_outgoing_matches.get(remote_peer_id);
+	var game_match = online_match.game_match;
+	
+	if not game_match.is_finished():
+		print("cannot restart game, is not finished");
+		return;
+		
+	game_match.reset_board();
+	_server_sync_game_for_all_players_in_match(remote_peer_id);
+	game_match.start_match();
+		

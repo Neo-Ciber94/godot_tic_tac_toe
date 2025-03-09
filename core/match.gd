@@ -1,9 +1,16 @@
 class_name Match;
 extends Node
 
+enum MatchStatus {
+	WAITING,
+	PLAYING,
+	DONE
+}
+
 var _board: Array[String] = []
 var _players: Dictionary[String, Player] = {};
 var _current_player: String;
+var _status := MatchStatus.WAITING;
 
 signal on_player_move(player: Player, value: String, index: int);
 signal on_game_over(winner: Winner);
@@ -15,6 +22,7 @@ func _ready():
 	reset_board()
 
 func reset_board() -> void:
+	_status = MatchStatus.WAITING;
 	_board = []
 	
 	for idx in range(9):
@@ -37,7 +45,12 @@ func set_current_player(value: String):
 	
 func start_match() -> void:
 	assert(_players.size() == 2, "expected 2 players to start the match");
+	
+	if _status != MatchStatus.WAITING:
+		print("cannot start a match that its not waiting");
+		return;
 		
+	_status = MatchStatus.PLAYING;
 	on_game_start.emit(_players, _current_player);
 	
 	while(true):
@@ -52,12 +65,19 @@ func start_match() -> void:
 		var winner = Utils.check_winner(_board, Constants.EMPTY);
 		
 		if winner.is_finished():
+			_status = MatchStatus.DONE;
 			_declare_winner(winner);
 			break;
 		else:
 			print("switch players")
 			_switch_players();
 	
+func is_waiting() -> bool:
+	return _status == MatchStatus.WAITING;
+
+func is_finished()  -> bool:
+	return _status == MatchStatus.DONE;
+
 func get_turn_player() -> Player:
 	return _players[_current_player];
 
