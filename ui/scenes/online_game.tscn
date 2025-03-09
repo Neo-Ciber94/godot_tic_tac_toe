@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bsnfsnusy3s2j" path="res://ui/board/board.tscn" id="3_mp2bn"]
 [ext_resource type="PackedScene" uid="uid://bxxdx3ieo2oag" path="res://ui/game_mode_label.tscn" id="4_5ktll"]
 [ext_resource type="Script" uid="uid://b8tkbg60gbvia" path="res://ui/exit_button.gd" id="4_nnyyo"]
-[ext_resource type="PackedScene" uid="uid://c5x01dexo3f2f" path="res://ui/result_message.tscn" id="5_mp2bn"]
+[ext_resource type="PackedScene" uid="uid://c5x01dexo3f2f" path="res://ui/message_display.tscn" id="5_mp2bn"]
 [ext_resource type="PackedScene" uid="uid://00niqossu4ex" path="res://ui/server_indicator.tscn" id="6_5ktll"]
 
 [node name="OnlineGame" type="Node"]
@@ -18,7 +18,7 @@ script = ExtResource("1_3xpx7")
 
 [node name="GameModeLabel" parent="." instance=ExtResource("4_5ktll")]
 
-[node name="ResultMessage" parent="." instance=ExtResource("5_mp2bn")]
+[node name="MessageDisplay" parent="." instance=ExtResource("5_mp2bn")]
 visible = false
 
 [node name="ServerIndicator" parent="." instance=ExtResource("6_5ktll")]

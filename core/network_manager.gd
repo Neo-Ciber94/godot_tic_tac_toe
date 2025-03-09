@@ -1,6 +1,12 @@
 class_name NetworkManager;
 extends Node
 
+enum GameTerminationReason {
+	PLAYER_QUIT,
+	TIMEOUT,
+	JUST_BECAUSE
+}
+
 class OnlineMatch:
 	var game_match: Match;
 	var peer_ids: Array[int];
@@ -18,7 +24,7 @@ signal on_game_over(winner: Winner);
 signal on_game_start(players: Dictionary[String, Player], my_player: String, current_player: String);
 signal on_switch_turns(player: Player, value: String);
 signal on_sync_game_state(board_state: Array[String], current_player: String);
-signal on_player_quit();
+signal on_game_match_terminated(reason: GameTerminationReason);
 
 func _ready():
 	# start the server or client
@@ -36,6 +42,14 @@ func _on_player_connected(player_peer: PlayerPeer):
 func _on_player_disconnected(player_peer: PlayerPeer):
 	print("_on_player_disconnected: ", { player_peer = player_peer })
 	_online_players.erase(player_peer.peer_id)
+	
+	# remove the match this player was on if any
+	var online_match: OnlineMatch = _server_outgoing_matches.get(player_peer.peer_id);
+	
+	if online_match == null:
+		return;
+		
+	_server_terminate_game_match(online_match)
 
 @rpc("any_peer", "call_remote", "reliable")
 func join_game():
@@ -54,14 +68,23 @@ func join_game():
 	_server_players_queue.push_back(player);
 	_server_check_can_start_match();
 	
-@rpc("any_peer", "call_remote", "reliable")
-func quit_game():
-	if not multiplayer.is_server():
-		return;	
+func _server_terminate_game_match(online_match: OnlineMatch):
+	var peer_ids = online_match.peer_ids;
+	for peer_id in peer_ids:
+		_server_outgoing_matches.erase(peer_id);
 		
-	# TODO: notify the other client this player quit
-	on_player_quit.emit();
+	var game_match = online_match.game_match;
+	game_match.queue_free();
 	
+	for peer_id in peer_ids:
+		_notify_game_match_terminated.rpc_id(peer_id, GameTerminationReason.JUST_BECAUSE)
+	
+
+@rpc("authority", "call_remote", "reliable")	
+func _notify_game_match_terminated(reason: GameTerminationReason):
+	print("_notify_game_match_terminated")
+	on_game_match_terminated.emit(reason)
+
 func _server_check_can_start_match():
 	if _server_players_queue.size() < 2:
 		return;

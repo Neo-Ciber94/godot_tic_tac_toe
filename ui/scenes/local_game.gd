@@ -2,7 +2,7 @@ class_name LocalGame;
 extends Node
 
 @onready var _board: Board = $Board;
-@onready var _game_over_message: ResultMessage = $ResultMessage;
+@onready var _message_display: MessageDisplay = $MessageDisplay;
 
 @export var mode: Constants.GameMode = Application.game_mode;
 @export var difficulty: CpuPlayer.Difficulty = Application.difficulty;
@@ -12,7 +12,7 @@ var _game_match: Match;
 var _my_player: String;
 
 func _ready():
-	_game_over_message.hide();
+	_message_display.hide();
 	_board.on_hover.connect(_on_hover);
 	
 	start_game()
@@ -84,16 +84,16 @@ func _on_game_over(winner: Winner):
 	
 	# Show the winner result_message
 	if winner.is_tie():
-		_game_over_message.change_text("It's a tie", Color.BLACK);
+		_message_display.change_text("It's a tie", Color.BLACK);
 	else:
 		var color = Constants.PLAYER_DEFAULTS[winner.get_value()];
-		_game_over_message.change_text("winner!", color)
+		_message_display.change_text("winner!", color)
 		
-	_game_over_message.show();
+	_message_display.show();
 
 	# Wait to click for restart
-	await _game_over_message.on_click;
-	_game_over_message.hide();
+	await _message_display.on_click;
+	_message_display.hide();
 	_game_match.reset_board();
 	_start_match();
 	

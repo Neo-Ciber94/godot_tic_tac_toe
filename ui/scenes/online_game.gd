@@ -2,7 +2,7 @@ class_name OnlineGame;
 extends Node
 
 @onready var _board: Board = $Board;
-@onready var _game_over_message: ResultMessage = $ResultMessage;
+@onready var _message_display: MessageDisplay = $MessageDisplay;
 
 var _players : Dictionary[String, Player] = {}
 var _my_player: String;
@@ -13,8 +13,8 @@ var _is_finished = false;
 
 func _ready():
 	_board.hide();
-	_game_over_message.show();
-	_game_over_message.change_text("Waiting for players...");
+	_message_display.show();
+	_message_display.with_size(MessageDisplay.Size.MEDIUM).with_effect(MessageDisplay.Effect.FADE).show_message("Waiting for players...");
 	
 	_board.on_hover.connect(_on_hover);
 	_board.on_click.connect(_on_click);
@@ -25,6 +25,7 @@ func _ready():
 	NetworkManagerInstance.on_game_over.connect(_on_game_over)
 	NetworkManagerInstance.on_player_move.connect(_on_player_move)
 	NetworkManagerInstance.on_switch_turns.connect(_on_switch_turns)
+	NetworkManagerInstance.on_game_match_terminated.connect(_on_game_match_terminated)
 
 func _on_sync_game_state(board_state: Array[String], current_player: String):
 	_board_state = board_state;
@@ -36,7 +37,7 @@ func _on_game_start(players: Dictionary[String, Player], my_player: String, curr
 	_my_player = my_player;
 	_is_finished = false;
 	
-	_game_over_message.hide();
+	_message_display.hide();
 	_board.show()
 	_board.prepare_board();
 	_board.fill_slots(Constants.EMPTY, Color.TRANSPARENT)
@@ -62,23 +63,37 @@ func _on_game_over(winner: Winner):
 	
 	# Show the winner result_message
 	if winner.is_tie():
-		_game_over_message.change_text("It's a tie", Color.BLACK);
+		_message_display.change_text("It's a tie", Color.BLACK);
 	else:
 		var color = Constants.PLAYER_DEFAULTS[winner.get_value()];
-		_game_over_message.change_text("winner!", color)
+		_message_display.change_text("winner!", color)
 		
-	_game_over_message.show();
+	_message_display.show();
 
 	# Wait to click for restart
-	await _game_over_message.on_click;
-	_game_over_message.hide();
+	await _message_display.on_click;
+	_message_display.hide();
 	NetworkManagerInstance.restart_match.rpc();
-
+	
+func _on_game_match_terminated(reason: NetworkManager.GameTerminationReason):
+	var msg = (
+		"Player Timeout" if reason == NetworkManager.GameTerminationReason.TIMEOUT
+		else "Player Quit" if reason == NetworkManager.GameTerminationReason.PLAYER_QUIT
+		else "Done with you" if reason == NetworkManager.GameTerminationReason.JUST_BECAUSE
+		else "Game was terminated" # unreachable
+	)
+	
+	_is_finished = true;
+	_board.hide();
+	_message_display.change_text(msg, Color.RED);
 
 func _has_value(index: int):
 	return _board_state[index] != Constants.EMPTY
 
 func _on_click(_slot: Slot, index: int):
+	if _is_finished:
+		return;
+
 	if _my_player != _current_player:
 		print("not your turn")
 		return;
