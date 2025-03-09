@@ -44,6 +44,7 @@ func _setup_players():
 			assert(false, "only local and cpu are allowed")
 	
 func _start_match():
+	_board.show();
 	_board.prepare_board();
 	_board.fill_slots(Constants.EMPTY, Color.TRANSPARENT)
 

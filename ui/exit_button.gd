@@ -4,7 +4,7 @@ extends Button
 signal on_exit();
 
 func _ready():
-	pressed.connect(_on_exit);
+	pressed.connect(_on_exit);	
 	
 func _on_exit():
 	on_exit.emit();
