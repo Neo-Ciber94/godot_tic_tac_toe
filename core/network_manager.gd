@@ -20,7 +20,7 @@ signal on_sync_game_state(board_state: Array[String], current_player: String);
 
 func _ready():
 	# start the server or client
-	if GameConfig.is_server:
+	if Application.is_server():
 		MultiplayerInstance.create_server()
 	else:
 		MultiplayerInstance.create_client()

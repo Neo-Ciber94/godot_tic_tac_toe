@@ -9,11 +9,13 @@ enum Difficulty {
 }
 
 var _difficulty: Difficulty;
-var _value: String;
+var _my_player: String;
+var _opp_player: String;
 
-func _init(value: String, difficulty = Difficulty.RANDOM) -> void:
+func _init(my_player: String, opp_player: String, difficulty = Difficulty.RANDOM) -> void:
 	_difficulty = difficulty;
-	_value = value;
+	_my_player = my_player;
+	_opp_player = opp_player;
 
 func next_move(game_state: Array[String]):
 	print("waiting for cpu move")
@@ -32,8 +34,8 @@ func _next_move(board: Array[String]):
 		Difficulty.HARD:
 			return _find_next_move(board, true)
 		Difficulty.IMPOSSIBLE:
-			var my_result = _minimax(board, _value, true)
-			var opp_result = _minimax(board, Game.get_opponent(_value), true);
+			var my_result = _minimax(board, _my_player, true)
+			var opp_result = _minimax(board, _opp_player, true);
 			
 			if my_result.best_eval > opp_result.best_eval:
 				return my_result.best_index;
@@ -46,24 +48,24 @@ func _get_next_random(board: Array[String]) -> int:
 	for idx in board.size():
 		var value = board[idx];
 		
-		if value == Game.EMPTY:
+		if value == Constants.EMPTY:
 			indices.push_back(idx);
 	
 	return indices.pick_random()
 
 func _find_next_move(board: Array[String], is_max: bool) -> int:
 	# If the board is empty we can start anywhere.
-	if (board.all(func(x): return x == Game.EMPTY)):
+	if (board.all(func(x): return x == Constants.EMPTY)):
 		return range(0, board.size).pick_random()
 	
-	var result = _minimax(board, _value, is_max);
+	var result = _minimax(board, _my_player, is_max);
 	return result.best_index;
 
 func _minimax(board: Array[String], player_value: String, is_max: bool):	
 	var win_positions = Utils.WIN_POSITIONS;
 	var best_index = -1;
 	var best_eval = -1000 if is_max else 1000;
-	var valid_values = [player_value, Game.EMPTY];
+	var valid_values = [player_value, Constants.EMPTY];
 	
 	for idx in win_positions.size():
 		var indices : Array[int] = [];
@@ -87,7 +89,7 @@ func _minimax(board: Array[String], player_value: String, is_max: bool):
 	
 	# Set a fallback value
 	if best_index == -1:
-		best_index = board.find(Game.EMPTY)
+		best_index = board.find(Constants.EMPTY)
 		
 	return {
 		best_index = best_index,
@@ -98,10 +100,10 @@ func _find_empty_index(board: Array, indices: Array[int]):
 	for board_idx in indices:
 		var value = board[board_idx];
 		
-		if value == Game.EMPTY:
+		if value == Constants.EMPTY:
 			return board_idx;
 			
 	return -1;
 
 func _to_string() -> String:
-	return "CpuPlayer(%s, %s)" % [_difficulty, _value]
+	return "CpuPlayer(%s, %s)" % [_difficulty, _my_player]

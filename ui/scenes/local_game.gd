@@ -6,17 +6,12 @@ const PLAYER_DEFAULTS = {
 	o = Color.BLUE
 }
 
-enum LocalGameMode {
-	LOCAL,
-	CPU,
-}
-
 @onready var _board: Board = $Board;
 @onready var _game_over_message: ResultMessage = $ResultMessage;
 @onready var _game_mode_label: GameModeLabel = $GameModeLabel;
 
-@export var mode: LocalGameMode = LocalGameMode.LOCAL;
-@export var difficulty: CpuPlayer.Difficulty = CpuPlayer.Difficulty.RANDOM;
+@export var mode: Constants.GameMode = Application.game_mode;
+@export var difficulty: CpuPlayer.Difficulty = Application.difficulty;
 
 var _players : Dictionary[String, Player] = {}
 var _game_match: Match;
@@ -29,20 +24,20 @@ func _ready():
 	start_game()
 
 func start_game():	
-	_game_mode_label.update_text(mode as Constants.GameMode, difficulty);
+	_game_mode_label.update_text(mode, difficulty);
 	_setup_players();
 	_start_match()
 	
 func _setup_players():
 	match mode:
-		LocalGameMode.LOCAL:
+		Constants.GameMode.LOCAL:
 			print("starting local match: pvp")			
 			var values = PLAYER_DEFAULTS.keys().duplicate();
 			values.shuffle();
 			
 			_players[values[0]] = HumanPlayer.new(_board);
 			_players[values[1]] = HumanPlayer.new(_board);
-		LocalGameMode.CPU:
+		Constants.GameMode.CPU:
 			print("starting local match: pvc")			
 			var values = PLAYER_DEFAULTS.keys().duplicate();
 			values.shuffle();
@@ -51,7 +46,9 @@ func _setup_players():
 			var p2 = values.pop_back();
 			
 			_players[p1] = HumanPlayer.new(_board);
-			_players[p2] = CpuPlayer.new(p2, difficulty)
+			_players[p2] = CpuPlayer.new(p2, p1, difficulty)
+		_:
+			assert(false, "only local and cpu are allowed")
 	
 func _start_match():
 	_board.prepare_board();
@@ -124,11 +121,11 @@ func _on_hover(slot: Slot, index: int, is_over: bool):
 func _on_game_start(players: Dictionary[String, Player], current_player: String):
 	match mode:
 		# on pvp any player its the current player
-		LocalGameMode.LOCAL:
+		Constants.GameMode.LOCAL:
 			_my_player = current_player;
 		
 		# on pvc the human player its the current player
-		LocalGameMode.CPU:
+		Constants.GameMode.CPU:
 			for player_value in _players:
 				var player = _players.get(player_value);
 				
