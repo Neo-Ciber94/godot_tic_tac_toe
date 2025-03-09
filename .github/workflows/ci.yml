@@ -35,6 +35,7 @@ jobs:
           path: build/web
     
   deploy-web:
+    name: Web Deploy
     needs: export-web
     permissions:
       pages: write  
@@ -44,6 +45,6 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to GitHub Pages
+      - name: web
         id: deployment
         uses: actions/deploy-pages@v4 
