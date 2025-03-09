@@ -73,6 +73,25 @@ func join_game():
 	_server_players_queue.push_back(player);
 	_server_check_can_start_match();
 
+@rpc("any_peer", "call_remote", "reliable")
+func quit_game():
+	if not multiplayer.is_server():
+		return;
+		
+	var remote_peer_id = multiplayer.get_remote_sender_id();
+	Logger.debug("player exited the game: ", { remote_peer_id = remote_peer_id });
+	
+	if not _online_players.has(remote_peer_id):
+		Logger.debug("player was not connected: ", { remote_peer_id = remote_peer_id });
+		return;
+		
+	var online_match: OnlineMatch = _server_outgoing_matches.get(remote_peer_id);
+	
+	if online_match == null:
+		return;
+		
+	_server_terminate_game_match(online_match, TerminationReason.PLAYER_QUIT);
+
 func _server_check_can_start_match():
 	if _server_players_queue.size() < 2:
 		return;
@@ -207,6 +226,13 @@ func _notify_on_game_start(server_players: Dictionary[String, int], my_player: S
 	on_game_start.emit(players, my_player, current_player)
 	
 func _server_on_game_over(peer_ids: Array[int], winner: Winner):
+	var online_match: OnlineMatch = _server_outgoing_matches.get(peer_ids[0]);
+	
+	if online_match == null:
+		return;
+		
+	online_match.turn_timer.stop();
+	
 	for peer_id in peer_ids:
 		_notify_on_game_over.rpc_id(peer_id, winner.to_json())
 	
@@ -306,6 +332,10 @@ func restart_match():
 		
 	var remote_peer_id = multiplayer.get_remote_sender_id();
 	var online_match: OnlineMatch = _server_outgoing_matches.get(remote_peer_id);
+	
+	if online_match == null:
+		return;
+		
 	var game_match = online_match.game_match;
 	
 	if not game_match.is_finished():
@@ -315,4 +345,5 @@ func restart_match():
 	game_match.reset_board();
 	_server_sync_game_for_all_players_in_match(remote_peer_id);
 	game_match.start_match();
+	online_match.turn_timer.restart();
 		

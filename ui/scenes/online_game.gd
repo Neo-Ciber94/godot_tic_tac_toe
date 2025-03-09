@@ -21,7 +21,7 @@ func _ready():
 	_board.on_hover.connect(_on_hover);
 	_board.on_click.connect(_on_click);
 	
-	ServerInstance.join_game.rpc()
+	ServerInstance.join_game.rpc_id(Multiplayer.SERVER_ID)
 	ServerInstance.on_sync_game_state.connect(_on_sync_game_state)
 	ServerInstance.on_game_start.connect(_on_game_start)
 	ServerInstance.on_game_over.connect(_on_game_over)
@@ -76,12 +76,12 @@ func _on_game_over(winner: Winner):
 	# Wait to click for restart
 	await _message_display.on_click;
 	_message_display.hide();
-	ServerInstance.restart_match.rpc();
+	ServerInstance.restart_match.rpc_id(Multiplayer.SERVER_ID)
 	
 func _on_game_match_terminated(current_player: String, reason: Server.TerminationReason):
 	var msg = (
 		"player timeout" if reason == Server.TerminationReason.TIMEOUT
-		else "player quit" if reason == Server.TerminationReason.PLAYER_QUIT
+		else "opponent quit" if reason == Server.TerminationReason.PLAYER_QUIT
 		else "done with you" if reason == Server.TerminationReason.JUST_BECAUSE
 		else "game was terminated" # unreachable
 	)
@@ -89,9 +89,8 @@ func _on_game_match_terminated(current_player: String, reason: Server.Terminatio
 	_is_finished = true;
 	_board.hide();
 	
-	var player_color: Color = Constants.PLAYER_DEFAULTS[current_player];
 	_message_display.set_message_size(MessageDisplay.Size.MEDIUM);
-	_message_display.show_message(msg, player_color);
+	_message_display.show_message(msg, Color.DIM_GRAY);
 	_message_display.show();
 
 func _on_game_match_turn_timer_update(current_player: String, remaining_seconds: int):
@@ -147,3 +146,6 @@ func _on_hover(slot: Slot, index: int, is_over: bool):
 		slot.set_value(_current_player, Color(color, 0.5), false)
 	else:
 		slot.set_value(Constants.EMPTY, Color.TRANSPARENT, false)
+
+func _exit_tree() -> void:
+	ServerInstance.quit_game.rpc_id(Multiplayer.SERVER_ID)
