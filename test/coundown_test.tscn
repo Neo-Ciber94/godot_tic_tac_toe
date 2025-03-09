@@ -1,0 +1,50 @@
+[gd_scene load_steps=2 format=3 uid="uid://dd2mg1u5nea77"]
+
+[ext_resource type="Script" uid="uid://cyxujq3m020qv" path="res://test/coundown_test.gd" id="1_0x6tf"]
+
+[node name="CoundownTest" type="Node"]
+script = ExtResource("1_0x6tf")
+duration = 10
+
+[node name="Time" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 100
+text = "0:00"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Actions" type="HBoxContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = 64.0
+offset_right = 20.0
+offset_bottom = 104.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="StartButton" type="Button" parent="Actions"]
+layout_mode = 2
+text = "Start"
+
+[node name="RestartButton" type="Button" parent="Actions"]
+layout_mode = 2
+text = "Restart
+"
+
+[node name="StopResumeButton" type="Button" parent="Actions"]
+layout_mode = 2
+text = "Stop"

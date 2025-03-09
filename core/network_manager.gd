@@ -81,7 +81,7 @@ func _server_terminate_game_match(online_match: OnlineMatch):
 	
 
 @rpc("authority", "call_remote", "reliable")	
-func _notify_game_match_terminated(reason: GameTerminationReason):
+func _notify_game_match_terminated(reason: TerminationReason):
 	print("_notify_game_match_terminated")
 	on_game_match_terminated.emit(reason)
 
