@@ -51,7 +51,7 @@ func _on_player_move(player: Player, value: String, index: int):
 	_board.set_slot_value(index, value, color, true);
 	_board_state[index] = value;
 
-func _on_switch_turns(player: Player, value: String):
+func _on_switch_turns(_player: Player, value: String):
 	_current_player = value;
 
 func _on_game_over(winner: Winner):

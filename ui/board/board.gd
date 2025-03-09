@@ -38,10 +38,10 @@ func fill_slots(value: String, color: Color):
 	for slot in _slots:
 		slot.set_value(value, color)
 
-func show_board(visible: bool):
+func show_board(is_visible: bool):
 	const speed = 4.0;
 	
-	if visible:
+	if is_visible:
 		_anim.play("appear", -1, speed)
 	else:
 		_anim.play("appear", -1, -speed, true)
