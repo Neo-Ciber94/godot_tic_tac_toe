@@ -10,9 +10,11 @@ enum TerminationReason {
 class OnlineMatch:
 	var game_match: Match;
 	var peer_ids: Array[int];
+	var match_timer: Countdown;
 	
-	func _init(cur_match: Match, player_peer_ids: Array[int]):
+	func _init(cur_match: Match, timer: Countdown, player_peer_ids: Array[int]):
 		self.game_match = cur_match;
+		self.match_timer = timer;
 		self.peer_ids = player_peer_ids;
 
 var _server_outgoing_matches: Dictionary[int, OnlineMatch] = {}
@@ -49,7 +51,7 @@ func _on_player_disconnected(player_peer: PlayerPeer):
 	if online_match == null:
 		return;
 		
-	_server_terminate_game_match(online_match)
+	_server_terminate_game_match(online_match, TerminationReason.PLAYER_QUIT)
 
 @rpc("any_peer", "call_remote", "reliable")
 func join_game():
@@ -67,23 +69,6 @@ func join_game():
 	var player = ServerPlayer.new(player_peer.peer_id);
 	_server_players_queue.push_back(player);
 	_server_check_can_start_match();
-	
-func _server_terminate_game_match(online_match: OnlineMatch):
-	var peer_ids = online_match.peer_ids;
-	for peer_id in peer_ids:
-		_server_outgoing_matches.erase(peer_id);
-		
-	var game_match = online_match.game_match;
-	game_match.queue_free();
-	
-	for peer_id in peer_ids:
-		_notify_game_match_terminated.rpc_id(peer_id, TerminationReason.JUST_BECAUSE)
-	
-
-@rpc("authority", "call_remote", "reliable")	
-func _notify_game_match_terminated(reason: TerminationReason):
-	Logger.debug("_notify_game_match_terminated")
-	on_game_match_terminated.emit(reason)
 
 func _server_check_can_start_match():
 	if _server_players_queue.size() < 2:
@@ -95,16 +80,28 @@ func _server_check_can_start_match():
 	var p1: ServerPlayer = _server_players_queue.pop_front();
 	var p2: ServerPlayer = _server_players_queue.pop_front();
 	var game_match = Match.new();
-	add_child(game_match);
-	_add_online_match(game_match, p1.peer_id, p2.peer_id);
+
+	var peer_ids: Array[int] = [p1.peer_id, p2.peer_id];
+	var match_timer = _create_match_timer(p1.peer_id);
 	
+	var online_match = OnlineMatch.new(
+		game_match, 
+		match_timer,
+		peer_ids
+	);
+	
+	_server_outgoing_matches.set(p1.peer_id, online_match);
+	_server_outgoing_matches.set( p2.peer_id, online_match);
+	
+	add_child(game_match);
+	add_child(match_timer);
+		
 	var players: Dictionary[String, Player] = {};
 	players[values[0]] = p1;
 	players[values[1]] = p2;
 	game_match.add_players(players);
 
 	# bind listeners to match to notify clients
-	var peer_ids: Array[int] = [p1.peer_id, p2.peer_id];
 	game_match.on_game_start.connect(_server_on_game_start)
 	game_match.on_player_move.connect(_server_on_player_move)
 	game_match.on_switch_turns.connect(_server_on_switch_turns);
@@ -113,7 +110,9 @@ func _server_check_can_start_match():
 	# start
 	Logger.debug("starting match: ", { p1 = p1, p2 = p2 });
 	_server_sync_game_state(p1.peer_id, p2.peer_id);
+	
 	game_match.start_match()
+	match_timer.start();
 	
 	# notify the clients to start the match
 	var player_peers_map: Dictionary[String, int] = {}
@@ -121,10 +120,44 @@ func _server_check_can_start_match():
 		var server_player: ServerPlayer = players.get(player_value);
 		player_peers_map[player_value] = server_player.peer_id;
 
-func _add_online_match(game_match: Match, peer_1: int, peer_2: int):
-	var online_match = OnlineMatch.new(game_match, [peer_1, peer_2]);
-	_server_outgoing_matches.set(peer_1, online_match);
-	_server_outgoing_matches.set(peer_2, online_match);
+func _create_match_timer(any_player_peer_id: int) -> Countdown:
+	var match_timer = Countdown.new();
+	
+	match_timer.on_timeout.connect(func(): 
+		_server_on_match_timeout(any_player_peer_id)
+	)
+	
+	match_timer.on_update.connect(func(remaining_seconds):
+		Logger.debug("Match remaining seconds: ", { remaining_seconds = remaining_seconds })
+	)
+	
+	return match_timer;
+
+func _server_on_match_timeout(any_player_peer_id: int):
+	Logger.debug("_server_on_match_timeout");
+	var online_match: OnlineMatch = _server_outgoing_matches.get(any_player_peer_id);
+	
+	if online_match == null:
+		return;
+		
+	_server_terminate_game_match(online_match, TerminationReason.TIMEOUT)
+
+func _server_terminate_game_match(online_match: OnlineMatch, reason: TerminationReason):
+	var peer_ids = online_match.peer_ids;
+	for peer_id in peer_ids:
+		_server_outgoing_matches.erase(peer_id);
+		
+	var game_match = online_match.game_match;
+	game_match.queue_free();
+	online_match.match_timer.queue_free()
+	
+	for peer_id in peer_ids:
+		_notify_game_match_terminated.rpc_id(peer_id, reason)
+	
+@rpc("authority", "call_remote", "reliable")	
+func _notify_game_match_terminated(reason: TerminationReason):
+	Logger.debug("_notify_game_match_terminated")
+	on_game_match_terminated.emit(reason)
 
 func _server_on_game_start(players: Dictionary[String, Player], current_player: String):
 	Logger.debug("_server_on_game_start")

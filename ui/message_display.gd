@@ -67,8 +67,8 @@ func show_message(msg: String, color: Color = Color.BLACK):
 			append_text("[fade]" + msg + "[/fade]")
 		Effect.RAINBOW:
 			append_text("[rainbow]" + msg + "[/rainbow]")
-			
-	#_reset_message.call_deferred()
+	
+	_reset_message.call_deferred()
 
 func _reset_message():
 	_position = Position.CENTER;

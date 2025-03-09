@@ -1,11 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://ca6ri6moqctqh"]
+[gd_scene load_steps=7 format=3 uid="uid://ca6ri6moqctqh"]
 
 [ext_resource type="Script" uid="uid://b8my1ru6pdin8" path="res://ui/scenes/online_game.gd" id="1_3xpx7"]
 [ext_resource type="PackedScene" uid="uid://dhig53gq04o6f" path="res://ui/bg.tscn" id="2_xx145"]
 [ext_resource type="PackedScene" uid="uid://b3ip1iq14gssr" path="res://ui/exit_button.tscn" id="3_cxq4h"]
 [ext_resource type="PackedScene" uid="uid://bsnfsnusy3s2j" path="res://ui/board/board.tscn" id="3_mp2bn"]
 [ext_resource type="PackedScene" uid="uid://bxxdx3ieo2oag" path="res://ui/game_mode_label.tscn" id="4_5ktll"]
-[ext_resource type="Script" uid="uid://b8tkbg60gbvia" path="res://ui/exit_button.gd" id="4_nnyyo"]
 [ext_resource type="PackedScene" uid="uid://c5x01dexo3f2f" path="res://ui/message_display.tscn" id="5_mp2bn"]
 
 [node name="OnlineGame" type="Node"]
@@ -21,4 +20,3 @@ script = ExtResource("1_3xpx7")
 visible = false
 
 [node name="ExitButton" parent="." instance=ExtResource("3_cxq4h")]
-script = ExtResource("4_nnyyo")

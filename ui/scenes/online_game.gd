@@ -87,7 +87,10 @@ func _on_game_match_terminated(reason: Server.TerminationReason):
 	
 	_is_finished = true;
 	_board.hide();
+	
+	_message_display.set_message_size(MessageDisplay.Size.MEDIUM);
 	_message_display.show_message(msg, Color.RED);
+	_message_display.show();
 
 func _has_value(index: int):
 	return _board_state[index] != Constants.EMPTY
