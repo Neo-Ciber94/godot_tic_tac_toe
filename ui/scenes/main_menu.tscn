@@ -6,7 +6,7 @@
 [ext_resource type="StyleBox" uid="uid://u2kfkut6slb0" path="res://art/styles/button_normal.tres" id="3_7homs"]
 [ext_resource type="StyleBox" uid="uid://c0vg1hr1pgc2r" path="res://art/styles/button_disabled.tres" id="4_kh21q"]
 [ext_resource type="StyleBox" uid="uid://inq4sf0eei6u" path="res://art/styles/button_hover.tres" id="5_48hjw"]
-[ext_resource type="PackedScene" uid="uid://dps2mir7ylw1d" path="res://ui/screen_scaler.tscn" id="7_hsxsj"]
+[ext_resource type="PackedScene" uid="uid://dps2mir7ylw1d" path="res://scripts/resize_screen.tscn" id="7_hsxsj"]
 [ext_resource type="PackedScene" uid="uid://00niqossu4ex" path="res://ui/server_indicator.tscn" id="8_afilx"]
 [ext_resource type="PackedScene" uid="uid://b3ip1iq14gssr" path="res://ui/exit_button.tscn" id="9_xh8ku"]
 
@@ -149,3 +149,10 @@ offset_bottom = 0.0
 [node name="ExitButton" parent="." instance=ExtResource("9_xh8ku")]
 layout_mode = 0
 anchors_preset = 0
+anchor_left = 0.0
+anchor_right = 0.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 79.0
+offset_bottom = 31.0
+grow_horizontal = 1
