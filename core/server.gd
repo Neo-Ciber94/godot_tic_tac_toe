@@ -1,4 +1,4 @@
-class_name NetworkManager;
+class_name Server;
 extends Node
 
 enum TerminationReason {

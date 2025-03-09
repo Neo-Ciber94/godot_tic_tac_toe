@@ -21,13 +21,13 @@ func _ready():
 	_board.on_hover.connect(_on_hover);
 	_board.on_click.connect(_on_click);
 	
-	NetworkManagerInstance.join_game.rpc()
-	NetworkManagerInstance.on_sync_game_state.connect(_on_sync_game_state)
-	NetworkManagerInstance.on_game_start.connect(_on_game_start)
-	NetworkManagerInstance.on_game_over.connect(_on_game_over)
-	NetworkManagerInstance.on_player_move.connect(_on_player_move)
-	NetworkManagerInstance.on_switch_turns.connect(_on_switch_turns)
-	NetworkManagerInstance.on_game_match_terminated.connect(_on_game_match_terminated)
+	ServerInstance.join_game.rpc()
+	ServerInstance.on_sync_game_state.connect(_on_sync_game_state)
+	ServerInstance.on_game_start.connect(_on_game_start)
+	ServerInstance.on_game_over.connect(_on_game_over)
+	ServerInstance.on_player_move.connect(_on_player_move)
+	ServerInstance.on_switch_turns.connect(_on_switch_turns)
+	ServerInstance.on_game_match_terminated.connect(_on_game_match_terminated)
 
 func _on_sync_game_state(board_state: Array[String], current_player: String):
 	_board_state = board_state;
@@ -75,13 +75,13 @@ func _on_game_over(winner: Winner):
 	# Wait to click for restart
 	await _message_display.on_click;
 	_message_display.hide();
-	NetworkManagerInstance.restart_match.rpc();
+	ServerInstance.restart_match.rpc();
 	
-func _on_game_match_terminated(reason: NetworkManager.TerminationReason):
+func _on_game_match_terminated(reason: Server.TerminationReason):
 	var msg = (
-		"Player Timeout" if reason == NetworkManager.TerminationReason.TIMEOUT
-		else "Player Quit" if reason == NetworkManager.TerminationReason.PLAYER_QUIT
-		else "Done with you" if reason == NetworkManager.TerminationReason.JUST_BECAUSE
+		"Player Timeout" if reason == Server.TerminationReason.TIMEOUT
+		else "Player Quit" if reason == Server.TerminationReason.PLAYER_QUIT
+		else "Done with you" if reason == Server.TerminationReason.JUST_BECAUSE
 		else "Game was terminated" # unreachable
 	)
 	
@@ -104,7 +104,7 @@ func _on_click(_slot: Slot, index: int):
 		print("value already set")
 		return;
 		
-	NetworkManagerInstance.request_move.rpc(index)
+	ServerInstance.request_move.rpc(index)
 	_board_state[index] = _my_player;
 	
 func _on_hover(slot: Slot, index: int, is_over: bool):
