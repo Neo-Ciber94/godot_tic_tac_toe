@@ -1,7 +1,7 @@
 class_name NetworkManager;
 extends Node
 
-enum GameTerminationReason {
+enum TerminationReason {
 	PLAYER_QUIT,
 	TIMEOUT,
 	JUST_BECAUSE
@@ -24,7 +24,7 @@ signal on_game_over(winner: Winner);
 signal on_game_start(players: Dictionary[String, Player], my_player: String, current_player: String);
 signal on_switch_turns(player: Player, value: String);
 signal on_sync_game_state(board_state: Array[String], current_player: String);
-signal on_game_match_terminated(reason: GameTerminationReason);
+signal on_game_match_terminated(reason: TerminationReason);
 
 func _ready():
 	# start the server or client
@@ -77,7 +77,7 @@ func _server_terminate_game_match(online_match: OnlineMatch):
 	game_match.queue_free();
 	
 	for peer_id in peer_ids:
-		_notify_game_match_terminated.rpc_id(peer_id, GameTerminationReason.JUST_BECAUSE)
+		_notify_game_match_terminated.rpc_id(peer_id, TerminationReason.JUST_BECAUSE)
 	
 
 @rpc("authority", "call_remote", "reliable")	

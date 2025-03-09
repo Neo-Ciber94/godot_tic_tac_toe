@@ -77,11 +77,11 @@ func _on_game_over(winner: Winner):
 	_message_display.hide();
 	NetworkManagerInstance.restart_match.rpc();
 	
-func _on_game_match_terminated(reason: NetworkManager.GameTerminationReason):
+func _on_game_match_terminated(reason: NetworkManager.TerminationReason):
 	var msg = (
-		"Player Timeout" if reason == NetworkManager.GameTerminationReason.TIMEOUT
-		else "Player Quit" if reason == NetworkManager.GameTerminationReason.PLAYER_QUIT
-		else "Done with you" if reason == NetworkManager.GameTerminationReason.JUST_BECAUSE
+		"Player Timeout" if reason == NetworkManager.TerminationReason.TIMEOUT
+		else "Player Quit" if reason == NetworkManager.TerminationReason.PLAYER_QUIT
+		else "Done with you" if reason == NetworkManager.TerminationReason.JUST_BECAUSE
 		else "Game was terminated" # unreachable
 	)
 	
