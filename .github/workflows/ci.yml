@@ -4,7 +4,7 @@ on: [push, pull_request]
 env:
   GODOT_VERSION: 4.4
   EXPORT_NAME: tic_tac_toe
-  PROJECT_PATH: tic_tac_toe
+  PROJECT_PATH: .
 
 jobs:
   export-web:
