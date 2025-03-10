@@ -96,6 +96,9 @@ func _minimax(board: Array[String], player_value: String, is_max: bool):
 		best_eval = best_eval
 	}
 
+func _is_board_full(board: Array[String]) -> bool:
+	return board.all(func(x): x != Constants.EMPTY)
+	
 func _find_empty_index(board: Array, indices: Array[int]):
 	for board_idx in indices:
 		var value = board[board_idx];

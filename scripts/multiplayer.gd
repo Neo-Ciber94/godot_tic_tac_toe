@@ -1,6 +1,12 @@
 class_name Multiplayer;
 extends Node
 
+enum ConnectionError {
+	NONE,
+	SERVER_DISCONNECTED,
+	FAILED_TO_CONNECT
+}
+
 const SERVER_ID = 1;
 
 @export var host = Application.server_host;
@@ -15,6 +21,7 @@ signal on_connection_failed();
 signal on_server_disconnected();
 
 var _connected_players: Dictionary[int, PlayerPeer] = {}
+var _connection_error: ConnectionError = ConnectionError.NONE;
 var _my_peer_id: int; # the peer id for the server/client that started
 
 func _ready():
@@ -59,7 +66,7 @@ func create_client() -> int:
 		
 	multiplayer.multiplayer_peer = peer;
 	var peer_id = peer.get_unique_id()
-	Logger.info("client connected to server: ", { peer_id = peer_id});
+	Logger.info("connecting to server: ", { peer_id = peer_id});
 	
 	_my_peer_id = peer_id;
 	return peer_id;
@@ -100,15 +107,23 @@ func _on_connected_to_server():
 	on_connection_ok.emit();
 
 func _on_connection_failed():
-	Logger.debug("_on_connection_failed")
+	Logger.error("failed to connect to server: ", { peer_id = _my_peer_id })
 	multiplayer.multiplayer_peer = null
+	_connection_error = ConnectionError.FAILED_TO_CONNECT;
 	on_connection_failed.emit();
 
 func _on_server_disconnected():
-	Logger.debug("_on_server_disconnected")
+	Logger.error("server disconnected: ", { peer_id = _my_peer_id })
 	multiplayer.multiplayer_peer = null
+	_connection_error = ConnectionError.SERVER_DISCONNECTED;
 	_connected_players.clear()
 	on_server_disconnected.emit();
 
 func get_my_peer_id():
 	return _my_peer_id;
+
+func has_failed_to_connect() -> bool:
+	return _connection_error != ConnectionError.NONE;
+
+func get_connection_error() -> ConnectionError:
+	return _connection_error;

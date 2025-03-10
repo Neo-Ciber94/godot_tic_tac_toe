@@ -12,15 +12,16 @@ var _current_player: String;
 var _is_finished = false;
 
 func _ready():
-	_board.hide();
-	_message_display.show();
-	_message_display.set_message_size(MessageDisplay.Size.MEDIUM)
-	_message_display.set_message_effect(MessageDisplay.Effect.PULSE)
-	_message_display.show_message("Waiting for players...");
-	
+	# Prepare board
+	_board.hide();	
 	_board.on_hover.connect(_on_hover);
 	_board.on_click.connect(_on_click);
 	
+	# Multiplayer signals
+	MultiplayerInstance.on_connection_failed.connect(_on_connection_failed)
+	MultiplayerInstance.on_server_disconnected.connect(_on_server_disconnected)
+	
+	# Server signals
 	ServerInstance.join_game.rpc_id(Multiplayer.SERVER_ID)
 	ServerInstance.on_sync_game_state.connect(_on_sync_game_state)
 	ServerInstance.on_game_start.connect(_on_game_start)
@@ -29,6 +30,18 @@ func _ready():
 	ServerInstance.on_switch_turns.connect(_on_switch_turns)
 	ServerInstance.on_game_match_terminated.connect(_on_game_match_terminated)
 	ServerInstance.on_game_match_turn_timer_update.connect(_on_game_match_turn_timer_update)
+	
+	# Display message
+	match MultiplayerInstance.get_connection_error():
+		Multiplayer.ConnectionError.FAILED_TO_CONNECT:
+			_on_connection_failed();
+		Multiplayer.ConnectionError.SERVER_DISCONNECTED:
+			_on_server_disconnected();
+		_:
+			_message_display.set_message_size(MessageDisplay.Size.MEDIUM)
+			_message_display.set_message_effect(MessageDisplay.Effect.PULSE)
+			_message_display.show_message("Waiting for players...");
+			_message_display.show();
 
 func _on_sync_game_state(board_state: Array[String], current_player: String):
 	_board_state = board_state;
@@ -114,6 +127,20 @@ func _on_game_match_turn_timer_update(current_player: String, remaining_seconds:
 	else:
 		_message_display.show_message("waiting opponent: %s" % mmss, color)
 		
+	_message_display.show();
+
+func _on_connection_failed():
+	Logger.debug("online_game: _on_connection_failed")
+	_message_display.set_message_size(MessageDisplay.Size.MEDIUM)
+	_message_display.set_message_effect(MessageDisplay.Effect.SHAKE)
+	_message_display.show_message("Failed to connect to server", Color.RED);
+	_message_display.show();
+	
+func _on_server_disconnected():
+	Logger.debug("online_game: _on_server_disconnected")
+	_message_display.set_message_size(MessageDisplay.Size.MEDIUM)
+	_message_display.set_message_effect(MessageDisplay.Effect.SHAKE)
+	_message_display.show_message("Server disconnected", Color.RED);
 	_message_display.show();
 
 func _has_value(index: int):
