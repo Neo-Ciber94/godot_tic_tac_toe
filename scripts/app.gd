@@ -20,14 +20,14 @@ static func get_turn_timeout_seconds() -> int:
 
 static var server_host: String:
 	get:
-		return ProjectSettings.get_setting("config/environment/server_host", "127.0.0.1")
+		return ProjectSettings.get_setting("environment/network/host", "127.0.0.1")
 	
 static var server_port: int:
 	get:
 		if is_server():
 			return Env.get_int("GODOT_SERVER_PORT", 7000);
 		else:
-			return ProjectSettings.get_setting("config/environment/server_port", 7000) 
+			return ProjectSettings.get_setting("environment/network/port", 7000) 
 		
 static var server_max_players: int:
 	get:
