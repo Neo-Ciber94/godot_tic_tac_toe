@@ -24,6 +24,7 @@ jobs:
       - uses: awalsh128/cache-apt-pkgs-action@latest
         with:
           packages: crudini
+          execute_install_scripts: true
       - name: Set Project Settings
         run: |
           crudini --set $PROJECT_PATH/project.godot environment network/host ${{ secrets.HOST }}
