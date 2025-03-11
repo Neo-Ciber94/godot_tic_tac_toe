@@ -1,30 +1,18 @@
-extends Node;
+extends Node
 
-@onready var viewport = get_viewport()
+@onready var viewport := get_viewport()
 
-var minimum_size = Vector2(1280, 720)
+const LARGE_VIEWPORT = Vector2(1280, 720)
+const MEDIUM_VIEWPORT = Vector2(720, 1280)
 
 func _ready() -> void:
-	get_viewport().size_changed.connect(_on_viewport_resize)
-	_on_viewport_resize();
+	get_tree().root.size_changed.connect(_adjust_viewport)
+	_adjust_viewport()
 
-func _on_viewport_resize():
-	var window_size = DisplayServer.window_get_size()
-	var scale_factor = get_scale_factor(window_size)
-	get_tree().root.content_scale_factor = scale_factor;
-
-func get_scale_factor(window_size: Vector2):
-	if window_size < minimum_size:
-		var factor =  window_size.x / minimum_size.x
-		
-		# mobile phone
-		if window_size.x < 400:
-			return factor * 2;
-			
-		# tablet
-		if window_size.x < 800:
-			return factor * 1.8;
-		
-		return factor;
+func _adjust_viewport() -> void:
+	var screen_size = DisplayServer.window_get_size()
+	
+	if screen_size.x > screen_size.y:
+		get_tree().root.content_scale_size = LARGE_VIEWPORT;
 	else:
-		return 1
+		get_tree().root.content_scale_size  = MEDIUM_VIEWPORT;
