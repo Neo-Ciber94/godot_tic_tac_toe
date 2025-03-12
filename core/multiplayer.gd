@@ -11,7 +11,7 @@ const SERVER_ID = 1;
 
 @export var host = Application.server_host;
 @export var port = Application.server_port;
-@export var max_clients = Application.server_max_players;
+@export var max_players = Application.server_max_players;
 
 signal on_player_connected(player: PlayerPeer);
 signal on_player_disconnected(player: PlayerPeer);
@@ -39,13 +39,13 @@ func _bind_listeners():
 	
 func create_server() -> int:
 	var peer = ENetMultiplayerPeer.new();
-	var err = peer.create_server(port, max_clients);
+	var err = peer.create_server(port, max_players);
 	
 	if err:
 		Logger.error("failed to start server");
 		return 0;
 		
-	Logger.info("server started");
+	Logger.info("server started: ", { port = port, max_players = max_players });
 	multiplayer.multiplayer_peer = peer;
 	
 	var peer_id = peer.get_unique_id();
@@ -66,7 +66,11 @@ func create_client() -> int:
 		
 	multiplayer.multiplayer_peer = peer;
 	var peer_id = peer.get_unique_id()
-	Logger.info("connecting to server: ", { peer_id = peer_id});
+	Logger.info("connecting to server: ", { 
+		peer_id = peer_id, 
+		host = host, 
+		port = port 
+	});
 	
 	_my_peer_id = peer_id;
 	return peer_id;

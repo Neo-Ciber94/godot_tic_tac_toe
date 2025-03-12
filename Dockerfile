@@ -11,4 +11,4 @@ RUN apt update
 RUN apt install libfontconfig1 -y
 RUN chmod +x ./tictactoe-server
 
-CMD ["bash", "-c", "./tictactoe-server --server"]
+CMD ["./tictactoe-server", "--server"]
