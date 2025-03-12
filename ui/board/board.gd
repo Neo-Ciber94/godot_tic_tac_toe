@@ -72,7 +72,7 @@ func hide_slots(slots_indices: Array[int] = []):
 	for slot in other_slots:
 		tween.tween_property(slot, "modulate:a", 0.0, 0.05);
 	
-	var screen_center = Vector2(get_viewport().size / 2)
+	var screen_center = Vector2(get_viewport().get_visible_rect().size / 2)
 	
 	for slot in winner_slots:
 		var center_position = screen_center - slot.size / 2;
