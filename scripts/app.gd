@@ -9,7 +9,7 @@ static func is_server() -> bool:
 
 static func get_turn_timeout_seconds() -> int:
 	const default_turn_timeout_seconds = 60;
-	const env_name = "GODOT_TURN_TIMEOUT_SECONDS";
+	const env_name = "TURN_TIMEOUT_SECONDS";
 	
 	var value = Env.get_int(env_name, default_turn_timeout_seconds);
 	
@@ -25,10 +25,10 @@ static var server_host: String:
 static var server_port: int:
 	get:
 		if is_server():
-			return Env.get_int("GODOT_SERVER_PORT", 7000);
+			return Env.get_int("PORT", 7000);
 		else:
 			return ProjectSettings.get_setting("environment/network/port", 7000) 
 		
 static var server_max_players: int:
 	get:
-		return Env.get_int("GODOT_SERVER_MAX_PLAYERS", 1000)
+		return Env.get_int("MAX_PLAYERS", 1000)

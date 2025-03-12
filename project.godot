@@ -23,7 +23,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-MultiplayerInstance="*res://scripts/multiplayer.gd"
+MultiplayerInstance="*res://core/multiplayer.gd"
 ServerInstance="*res://core/server.gd"
 
 [display]
