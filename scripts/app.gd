@@ -37,4 +37,4 @@ static var server_port: int:
 		
 static var server_max_players: int:
 	get:
-		return Env.get_int("MAX_PLAYERS", 1000)
+		return Env.get_int("MAX_PLAYERS", 128)
