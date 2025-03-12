@@ -75,7 +75,7 @@ func _on_switch_turns(_player: Player, value: String):
 func _on_game_over(winner: Winner):
 	var indices = winner.get_indices()
 	_board.show_board(false)
-	await _board.hide_slots(indices);
+	await _board.highlight_winner(indices);
 	
 	# Show the winner result_message
 	if winner.is_tie():

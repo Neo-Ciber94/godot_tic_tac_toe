@@ -54,7 +54,7 @@ func hide_lines():
 		if child is Line2D:
 			child.modulate.a = 0;
 
-func hide_slots(slots_indices: Array[int] = []):	
+func highlight_winner(slots_indices: Array[int] = []):	
 	var winner_slots: Array[Slot] = [];
 	var other_slots : Array[Slot] = [];
 
