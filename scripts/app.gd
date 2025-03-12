@@ -38,3 +38,27 @@ static var server_port: int:
 static var server_max_players: int:
 	get:
 		return Env.get_int("MAX_PLAYERS", 128)
+
+static var log_level: Logger.LogLevel:
+	get:
+		const ENV_VAR = "LOG_LEVEL";
+		
+		if OS.has_environment(ENV_VAR):
+			var value = OS.get_environment(ENV_VAR);
+			match value.to_lower():
+				"debug":
+					return Logger.LogLevel.DEBUG;
+				"info":
+					return Logger.LogLevel.INFO;
+				"warn":
+					return Logger.LogLevel.WARN;
+				"error":
+					return Logger.LogLevel.ERROR;
+				_:
+					push_warning("Invalid log level: " + value);
+					return Logger.LogLevel.INFO;
+			
+		if OS.is_debug_build():
+			return Logger.LogLevel.DEBUG;
+		
+		return Logger.LogLevel.INFO;

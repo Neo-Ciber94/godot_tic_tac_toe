@@ -13,7 +13,7 @@ const FORMATS = {
 	SIMPLE = "[{level}] "
 }
 
-static var min_level: LogLevel = LogLevel.DEBUG;
+static var min_level: LogLevel = Application.log_level;
 static var enabled = true;
 static var log_format_string = FORMATS.DEFAULT;
 static var colored = true;
