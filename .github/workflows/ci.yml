@@ -32,7 +32,7 @@ jobs:
           godot --headless --verbose --export-release "Windows Desktop" "$EXPORT_DIR/windows/$EXPORT_NAME.exe"
       
       - name: Generate Artifact Name
-        run: echo "ARTIFACT_NAME=windows-build-$(date +'%d.%m.%Y')" >> $GITHUB_ENV
+        run: echo "ARTIFACT_NAME=windows-build-$(date +'%Y.%m.%d')" >> $GITHUB_ENV
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
