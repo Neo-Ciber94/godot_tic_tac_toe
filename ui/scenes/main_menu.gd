@@ -18,7 +18,7 @@ func _on_play_vs_cpu(difficulty: CpuPlayer.Difficulty):
 func _on_play_online():
 	_load_scene(Constants.GameMode.ONLINE);
 
-func _load_scene(mode: Constants.GameMode, difficulty: CpuPlayer.Difficulty = CpuPlayer.Difficulty.RANDOM):
+func _load_scene(mode: Constants.GameMode, difficulty: CpuPlayer.Difficulty = CpuPlayer.Difficulty.NORMAL):
 	Application.game_mode = mode;
 	Application.difficulty = difficulty;
 	

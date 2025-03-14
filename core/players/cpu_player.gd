@@ -2,8 +2,8 @@ class_name CpuPlayer;
 extends Player;
 
 enum Difficulty {
-	RANDOM,
 	EASY,
+	NORMAL,
 	HARD,
 	IMPOSSIBLE
 }
@@ -12,7 +12,7 @@ var _difficulty: Difficulty;
 var _my_player: String;
 var _opp_player: String;
 
-func _init(my_player: String, opp_player: String, difficulty = Difficulty.RANDOM) -> void:
+func _init(my_player: String, opp_player: String, difficulty = Difficulty.EASY) -> void:
 	_difficulty = difficulty;
 	_my_player = my_player;
 	_opp_player = opp_player;
@@ -27,20 +27,21 @@ func next_move(game_state: Array[String]):
 
 func _next_move(board: Array[String]):
 	match _difficulty:
-		Difficulty.RANDOM:
-			return _get_next_random(board);
 		Difficulty.EASY:
-			return _find_next_move(board, false)
+			return _get_next_random(board);
+		Difficulty.NORMAL:
+			return _next_move_with_probability(0.2, 1, board);
 		Difficulty.HARD:
-			return _find_next_move(board, true)
+			return _next_move_with_probability(0.4, 3, board);
 		Difficulty.IMPOSSIBLE:
-			var my_result = _minimax(board, _my_player, true)
-			var opp_result = _minimax(board, _opp_player, true);
-			
-			if my_result.best_eval > opp_result.best_eval:
-				return my_result.best_index;
-			else:
-				return opp_result.best_index;
+			return _find_best_move(board.duplicate(), INF);
+				
+
+func _next_move_with_probability(probability: float, depth: int, board: Array[String]):
+		if _rand_bool(probability):
+			return _find_best_move(board.duplicate(), depth)
+		else:
+			return _get_next_random(board)
 			
 func _get_next_random(board: Array[String]) -> int:
 	var indices : Array[int] = [];
@@ -53,60 +54,100 @@ func _get_next_random(board: Array[String]) -> int:
 	
 	return indices.pick_random()
 
-func _find_next_move(board: Array[String], is_max: bool) -> int:
-	# If the board is empty we can start anywhere.
-	if (board.all(func(x): return x == Constants.EMPTY)):
-		return range(0, board.size).pick_random()
-	
-	var result = _minimax(board, _my_player, is_max);
-	return result.best_index;
+func _find_best_move(board: Array[String], depth: int) -> int:
+	assert(!_is_board_full(board), "board is full");
 
-func _minimax(board: Array[String], player_value: String, is_max: bool):	
-	var win_positions = Utils.WIN_POSITIONS;
-	var best_index = -1;
-	var best_eval = -1000 if is_max else 1000;
-	var valid_values = [player_value, Constants.EMPTY];
+	var best_move = -1;
+	var best_score = -1000;
+	var alpha = -1000
+	var beta = 1000
 	
-	for idx in win_positions.size():
-		var indices : Array[int] = [];
-		indices.assign(win_positions[idx]);
-		var board_values = Utils.select_indices(board, indices)
-
-		# the best win position its the one that contains the value of this player, in order:
-		# [x, x, ~], [x, ~, ~] [~, ~, ~]
-		var opp_value = board_values.filter(func(x): return !valid_values.has(x)).size();
-		var my_value = board_values.count(player_value);
-		var evaluation = my_value - opp_value;
+	for idx in board.size():
+		if board[idx] != Constants.EMPTY:
+			continue;
 			
-		if is_max:			
-			if evaluation > best_eval:
-				best_eval = evaluation;
-				best_index = _find_empty_index(board, indices);			
-		else:
-			if evaluation < best_eval:
-				best_eval = evaluation
-				best_index = _find_empty_index(board, indices);
-	
-	# Set a fallback value
-	if best_index == -1:
-		best_index = board.find(Constants.EMPTY)
+		Logger.debug("Evaluating move for index: ", idx)
+		board[idx] = _my_player;
+		var score = _minimax(board, depth, false, alpha, beta);
+		board[idx] = Constants.EMPTY;
 		
-	return {
-		best_index = best_index,
-		best_eval = best_eval
-	}
+		Logger.debug("Score for move: ", { idx = idx, score = score });
+		if score > best_score:
+			best_score = score;
+			best_move = idx;
+	
+	if best_move == -1:
+		Logger.warn("failed to find best move for CPU, this its a bug");
+		return _find_empty_index(board);
+	
+	return best_move;
+
+func _minimax(board: Array[String], depth: int, is_max: bool, alpha: int, beta: int) -> int:
+	if _is_board_full(board) || depth == 0:
+		return _evaluate(board);
+	
+	var best_score = -1000 if is_max else 1000;
+	
+	if is_max:
+		for idx in board.size():
+			if board[idx] != Constants.EMPTY:
+				continue;
+				
+			board[idx] = _my_player;
+			var score = _minimax(board, depth - 1, !is_max, alpha, beta);
+			board[idx] = Constants.EMPTY;
+			best_score = max(score, best_score);
+			alpha = max(alpha, best_score);
+			
+			if beta <= alpha:
+				break
+				
+		return best_score;
+	else:
+		for idx in board.size():
+			if board[idx] != Constants.EMPTY:
+				continue;
+				
+			board[idx] = _opp_player;
+			var score = _minimax(board, depth - 1, !is_max, alpha, beta);
+			board[idx] = Constants.EMPTY;
+			best_score = min(score, best_score);
+			beta = min(beta, best_score);
+			
+			if beta <= alpha:
+				break
+	
+	return best_score;
+	
+func _evaluate(board: Array[String]) -> int:
+	var win_indices = Utils.WIN_POSITIONS;
+	
+	for idx in win_indices.size():
+		var indices : Array[int] = [];
+		indices.assign(win_indices[idx]);
+		var values = Utils.select_indices(board, indices)		
+		
+		if values.all(func(x): return x == _my_player):
+			return 10;
+			
+		if values.all(func(x): return x == _opp_player):
+			return -10;
+	
+	return 0;
 
 func _is_board_full(board: Array[String]) -> bool:
-	return board.all(func(x): x != Constants.EMPTY)
+	return !board.has(Constants.EMPTY)
 	
-func _find_empty_index(board: Array, indices: Array[int]):
-	for board_idx in indices:
-		var value = board[board_idx];
-		
-		if value == Constants.EMPTY:
-			return board_idx;
+func _find_empty_index(board: Array[String]):
+	for idx in board.size():
+		if board[idx] == Constants.EMPTY:
+			return idx;
 			
 	return -1;
 
+func _rand_bool(probability: float) -> bool:
+	return randf() <= probability;
+
 func _to_string() -> String:
-	return "CpuPlayer(%s, %s)" % [_difficulty, _my_player]
+	var name = Difficulty.find_key(_difficulty)
+	return "CpuPlayer(%s, %s)" % [name, _my_player]
