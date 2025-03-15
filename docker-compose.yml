@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  tic_tac_toe:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "7000:7000/udp"
