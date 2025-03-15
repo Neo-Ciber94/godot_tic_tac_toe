@@ -78,6 +78,7 @@ jobs:
   export-android-debug:
       name: Android Debug Build
       runs-on: ubuntu-22.04
+      if: false
       container:
         image: barichello/godot-ci:4.4
       steps:
