@@ -192,7 +192,7 @@ jobs:
         run: |
           echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 -d > $HOME/release.keystore
           echo "GODOT_ANDROID_KEYSTORE_RELEASE_PATH=$HOME/release.keystore" >> $GITHUB_ENV
-          echo "GODOT_ANDROID_KEYSTORE_RELEASE_USER=${{ secrets.RELEASE_KEYSTORE_USER }}" >> $GITHUB_ENV
+          echo "GODOT_ANDROID_KEYSTORE_RELEASE_USER=${{ secrets.RELEASE_KEYSTORE_ALIAS }}" >> $GITHUB_ENV
           echo "GODOT_ANDROID_KEYSTORE_RELEASE_PASS=${{ secrets.RELEASE_KEYSTORE_PASS }}" >> $GITHUB_ENV
 
       - name: Set up Godot editor settings
