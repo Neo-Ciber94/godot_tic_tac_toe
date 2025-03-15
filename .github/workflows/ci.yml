@@ -198,16 +198,19 @@ jobs:
           echo 'export/android/force_system_user = false' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
           echo 'export/android/timestamping_authority_url = ""' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
           echo 'export/android/shutdown_adb_on_exit = true' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
+          echo 'export/android/release_keystore = "/root/release.keystore"' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
+          echo 'export/android/release_keystore_user = "${{ secrets.RELEASE_KEYSTORE_PASS }}"' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
+          echo 'export/android/release_keystore_pass = "android"' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
       
       - name: Prepare keystore
         run: |
           echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 -d > /root/release.keystore
 
       - name: Android Build
-        env:
-          GODOT_ANDROID_KEYSTORE_RELEASE_PATH: /root/release.keystore
-          GODOT_ANDROID_KEYSTORE_RELEASE_USER: ${{ secrets.RELEASE_KEYSTORE_USER }}
-          GODOT_ANDROID_KEYSTORE_RELEASE_PASS: ${{ secrets.RELEASE_KEYSTORE_PASS }}
+        # env:
+        #   GODOT_ANDROID_KEYSTORE_RELEASE_PATH: /root/release.keystore
+        #   GODOT_ANDROID_KEYSTORE_RELEASE_USER: ${{ secrets.RELEASE_KEYSTORE_USER }}
+        #   GODOT_ANDROID_KEYSTORE_RELEASE_PASS: ${{ secrets.RELEASE_KEYSTORE_PASS }}
         run: |
           ls -la /root/release.keystore || echo "Keystore file not found"
           echo "GODOT_ANDROID_KEYSTORE_RELEASE_PATH is set to: $GODOT_ANDROID_KEYSTORE_RELEASE_PATH"
