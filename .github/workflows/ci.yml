@@ -206,32 +206,9 @@ jobs:
       - name: Android Build
         env:
           GODOT_ANDROID_KEYSTORE_RELEASE_PATH: /root/release.keystore
-          GODOT_ANDROID_KEYSTORE_RELEASE_USER: ${{ secrets.RELEASE_KEYSTORE_USER }}
-          GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD: ${{ secrets.GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD }}
+          GODOT_ANDROID_KEYSTORE_RELEASE_USER: testuser
+          GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD: testpass
         run: |
-          # Check if the keystore path is set
-          if [[ -z "$GODOT_ANDROID_KEYSTORE_RELEASE_PATH" ]]; then
-            echo "Error: GODOT_ANDROID_KEYSTORE_RELEASE_PATH is not set."
-            exit 1
-          fi
-
-          # Check if the keystore user is set
-          if [[ -z "$GODOT_ANDROID_KEYSTORE_RELEASE_USER" ]]; then
-            echo "Error: GODOT_ANDROID_KEYSTORE_RELEASE_USER is not set."
-            exit 1
-          fi
-
-          # Check if the keystore password is set
-          if [[ -z "$GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD" ]]; then
-            echo "Error: GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD is not set."
-            exit 1
-          fi
-
-          ls -la /root/release.keystore || echo "Keystore file not found"
-          echo "GODOT_ANDROID_KEYSTORE_RELEASE_PATH is set to: $GODOT_ANDROID_KEYSTORE_RELEASE_PATH"
-          echo "GODOT_ANDROID_KEYSTORE_RELEASE_USER is set: ${{ secrets.RELEASE_KEYSTORE_USER != '' }}"
-          echo "GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD is set: ${{ secrets.RELEASE_KEYSTORE_PASS != '' }}"
-
           mkdir -v -p build/android
           EXPORT_DIR="$(readlink -f build)"
           cd $PROJECT_PATH
