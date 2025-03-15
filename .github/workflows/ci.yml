@@ -201,20 +201,19 @@ jobs:
       
       - name: Prepare keystore
         run: |
-          echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 -d > $HOME/release.keystore
-          echo "GODOT_ANDROID_KEYSTORE_RELEASE_PATH=$HOME/release.keystore" >> $GITHUB_ENV
-          echo "GODOT_ANDROID_KEYSTORE_RELEASE_USER=${{ secrets.RELEASE_KEYSTORE_USER }}" >> $GITHUB_ENV
-          echo "GODOT_ANDROID_KEYSTORE_RELEASE_PASS=${{ secrets.RELEASE_KEYSTORE_PASS }}" >> $GITHUB_ENV
+          echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 -d > /root/release.keystore
 
-      - name: Debug keystore
+      - name: Android Build
+        env:
+          GODOT_ANDROID_KEYSTORE_RELEASE_PATH: /root/release.keystore
+          GODOT_ANDROID_KEYSTORE_RELEASE_USER: ${{ secrets.RELEASE_KEYSTORE_USER }}
+          GODOT_ANDROID_KEYSTORE_RELEASE_PASS: ${{ secrets.RELEASE_KEYSTORE_PASS }}
         run: |
-          ls -la $HOME/release.keystore || echo "Keystore file not found"
+          ls -la /root/release.keystore || echo "Keystore file not found"
           echo "GODOT_ANDROID_KEYSTORE_RELEASE_PATH is set to: $GODOT_ANDROID_KEYSTORE_RELEASE_PATH"
           echo "GODOT_ANDROID_KEYSTORE_RELEASE_USER is set: ${{ secrets.RELEASE_KEYSTORE_USER != '' }}"
           echo "GODOT_ANDROID_KEYSTORE_RELEASE_PASS is set: ${{ secrets.RELEASE_KEYSTORE_PASS != '' }}"
 
-      - name: Android Build
-        run: |
           mkdir -v -p build/android
           EXPORT_DIR="$(readlink -f build)"
           cd $PROJECT_PATH
