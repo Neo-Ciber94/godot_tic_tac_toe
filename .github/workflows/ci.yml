@@ -187,13 +187,6 @@ jobs:
       - name: Install Android SDK Dependencies
         if: steps.cache-android-sdk.outputs.cache-hit != 'true'
         run: sdkmanager "platform-tools" "build-tools;34.0.0" "platforms;android-34" "cmdline-tools;latest" "cmake;3.10.2.4988404" "ndk;23.2.8568313"
-        
-      - name: Prepare keystore
-        run: |
-          echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 -d > $HOME/release.keystore
-          echo "GODOT_ANDROID_KEYSTORE_RELEASE_PATH=$HOME/release.keystore" >> $GITHUB_ENV
-          echo "GODOT_ANDROID_KEYSTORE_RELEASE_USER=${{ secrets.RELEASE_KEYSTORE_ALIAS }}" >> $GITHUB_ENV
-          echo "GODOT_ANDROID_KEYSTORE_RELEASE_PASS=${{ secrets.RELEASE_KEYSTORE_PASS }}" >> $GITHUB_ENV
 
       - name: Set up Godot editor settings
         run: |
@@ -205,6 +198,20 @@ jobs:
           echo 'export/android/force_system_user = false' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
           echo 'export/android/timestamping_authority_url = ""' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
           echo 'export/android/shutdown_adb_on_exit = true' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
+      
+      - name: Prepare keystore
+        run: |
+          echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 -d > $HOME/release.keystore
+          echo "GODOT_ANDROID_KEYSTORE_RELEASE_PATH=$HOME/release.keystore" >> $GITHUB_ENV
+          echo "GODOT_ANDROID_KEYSTORE_RELEASE_USER=${{ secrets.RELEASE_KEYSTORE_USER }}" >> $GITHUB_ENV
+          echo "GODOT_ANDROID_KEYSTORE_RELEASE_PASS=${{ secrets.RELEASE_KEYSTORE_PASS }}" >> $GITHUB_ENV
+
+      - name: Debug keystore
+        run: |
+          ls -la $HOME/release.keystore || echo "Keystore file not found"
+          echo "GODOT_ANDROID_KEYSTORE_RELEASE_PATH is set to: $GODOT_ANDROID_KEYSTORE_RELEASE_PATH"
+          echo "GODOT_ANDROID_KEYSTORE_RELEASE_USER is set: ${{ secrets.RELEASE_KEYSTORE_USER != '' }}"
+          echo "GODOT_ANDROID_KEYSTORE_RELEASE_PASS is set: ${{ secrets.RELEASE_KEYSTORE_PASS != '' }}"
 
       - name: Android Build
         run: |
