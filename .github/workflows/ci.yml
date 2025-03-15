@@ -206,8 +206,8 @@ jobs:
       - name: Android Build
         env:
           GODOT_ANDROID_KEYSTORE_RELEASE_PATH: /root/release.keystore
-          GODOT_ANDROID_KEYSTORE_RELEASE_USER: testuser
-          GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD: testpass
+          GODOT_ANDROID_KEYSTORE_RELEASE_USER: ${{ secrets.RELEASE_KEYSTORE_USER }}
+          GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASS }}
         run: |
           mkdir -v -p build/android
           EXPORT_DIR="$(readlink -f build)"
