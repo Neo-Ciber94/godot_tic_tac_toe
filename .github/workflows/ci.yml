@@ -202,7 +202,7 @@ jobs:
           echo 'export/android/force_system_user = false' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
           echo 'export/android/timestamping_authority_url = ""' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
           echo 'export/android/shutdown_adb_on_exit = true' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
-          echo 'export/android/keystore = "/root/release.keystore"' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
+          echo 'export/android/release = "/root/release.keystore"' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
           echo 'export/android/release_keystore_user = "${{ secrets.RELEASE_KEYSTORE_USER }}"' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
           echo 'export/android/release_keystore_pass = "${{ secrets.RELEASE_KEYSTORE_PASS }}"' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
       
