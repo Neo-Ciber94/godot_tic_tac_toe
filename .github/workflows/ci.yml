@@ -190,7 +190,7 @@ jobs:
         
       - name: Prepare keystore
         run: |
-          base64 -d <<< ${{ secrets.RELEASE_KEYSTORE_BASE64 }} > /root/release.keystore
+          echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 -d > /root/release.keystore
         env:
           GODOT_ANDROID_KEYSTORE_RELEASE_PATH: /root/release.keystore
           GODOT_ANDROID_KEYSTORE_RELEASE_USER: ${{ secrets.RELEASE_KEYSTORE_USER }}
