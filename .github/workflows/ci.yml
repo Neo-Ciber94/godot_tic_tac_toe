@@ -128,20 +128,21 @@ jobs:
           run: |
             mkdir -v -p build/android
             EXPORT_DIR="$(readlink -f build)"
-            echo $EXPORT_DIR >> $GITHUB_ENV
+            echo "EXPORT_DIR=$EXPORT_DIR" >> $GITHUB_ENV 
             cd $PROJECT_PATH
             godot --headless --verbose --export-debug "Android" "$EXPORT_DIR/android/$EXPORT_NAME.apk"
 
         - name: Generate Artifact Name
           run: |
-            echo "ARTIFACT_NAME=tictactoe-android-build-$(date +'%Y%m%d').apk" >> $GITHUB_ENV
-            mv "${{ env.EXPORT_DIR }}/android/$EXPORT_NAME.apk" "${{ env.EXPORT_DIR }}/android/$ARTIFACT_NAME"
+            ARTIFACT_NAME="tictactoe-android-build-$(date +'%Y%m%d').apk"
+            echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV 
+            mv "$EXPORT_DIR/android/$EXPORT_NAME.apk" "$EXPORT_DIR/android/$ARTIFACT_NAME"
 
         - name: Upload Artifact
           uses: actions/upload-artifact@v4
           with:
             name: ${{ env.ARTIFACT_NAME }}
-            path: ${{ env.EXPORT_DIR }}/android/$ARTIFACT_NAME
+            path: ${{ env.EXPORT_DIR }}/android/${{ env.ARTIFACT_NAME }}
             retention-days: 7
             overwrite: true
   
