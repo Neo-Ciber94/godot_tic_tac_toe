@@ -100,6 +100,7 @@ jobs:
             mv /opt/android-sdk/cmdline-tools/cmdline-tools /opt/android-sdk/cmdline-tools/latest
             export ANDROID_HOME=/opt/android-sdk
             export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH
+            export PATH=$ANDROID_HOME:$PATH
             yes | sdkmanager --licenses
             sdkmanager "platform-tools" "build-tools;34.0.0" "platforms;android-34" "cmdline-tools;latest" "cmake;3.10.2.4988404" "ndk;23.2.8568313"
 
