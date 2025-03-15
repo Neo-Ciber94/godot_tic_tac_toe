@@ -94,7 +94,7 @@ jobs:
           mkdir -v -p build/android
           EXPORT_DIR="$(readlink -f build)"
           cd $PROJECT_PATH
-          godot --headless --verbose --export-release "Android" "$EXPORT_DIR/android/$EXPORT_NAME.apk"
+          godot --headless --verbose --export-debug "Android" "$EXPORT_DIR/android/$EXPORT_NAME.apk"
           
       - name: Generate Artifact Name
         run: echo "ARTIFACT_NAME=tictactoe-android-build-$(date +'%Y%m%d')" >> $GITHUB_ENV
