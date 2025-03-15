@@ -104,11 +104,11 @@ jobs:
           id: cache-android-sdk
           uses: actions/cache@v4
           with:
+            key: ${{ runner.os }}-android-sdk-${GODOT_VERSION}
             path: |
               ~/.android
               ~/.sdk
-          key: ${{ runner.os }}-android-sdk-${GODOT_VERSION}
-          
+
         - name: Install Android SDK Dependencies
           if: steps.cache-android-sdk.outputs.cache-hit != 'true'
           run: sdkmanager "platform-tools" "build-tools;34.0.0" "platforms;android-34" "cmdline-tools;latest" "cmake;3.10.2.4988404" "ndk;23.2.8568313"
