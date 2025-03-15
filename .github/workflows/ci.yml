@@ -201,15 +201,15 @@ jobs:
       
       - name: Prepare keystore
         run: |
-          echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 -d > $HOME/release.keystore
+          echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 -d > /root/release.keystore
 
       - name: Android Build
         env:
-          GODOT_ANDROID_KEYSTORE_RELEASE_PATH: $HOME/release.keystore
+          GODOT_ANDROID_KEYSTORE_RELEASE_PATH: /root/release.keystore
           GODOT_ANDROID_KEYSTORE_RELEASE_USER: ${{ secrets.RELEASE_KEYSTORE_USER }}
           GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD: ${{ secrets.GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD }}
         run: |
-          ls -la $HOME/release.keystore || echo "Keystore file not found"
+          ls -la /root/release.keystore || echo "Keystore file not found"
           echo "GODOT_ANDROID_KEYSTORE_RELEASE_PATH is set to: $GODOT_ANDROID_KEYSTORE_RELEASE_PATH"
           echo "GODOT_ANDROID_KEYSTORE_RELEASE_USER is set: ${{ secrets.RELEASE_KEYSTORE_USER != '' }}"
           echo "GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD is set: ${{ secrets.RELEASE_KEYSTORE_PASS != '' }}"
