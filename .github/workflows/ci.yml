@@ -188,6 +188,10 @@ jobs:
         if: steps.cache-android-sdk.outputs.cache-hit != 'true'
         run: sdkmanager "platform-tools" "build-tools;34.0.0" "platforms;android-34" "cmdline-tools;latest" "cmake;3.10.2.4988404" "ndk;23.2.8568313"
 
+      - name: Prepare keystore
+        run: |
+          echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 -d > /root/release.keystore
+
       - name: Set up Godot editor settings
         run: |
           mkdir -p ~/.config/godot/
@@ -199,13 +203,9 @@ jobs:
           echo 'export/android/timestamping_authority_url = ""' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
           echo 'export/android/shutdown_adb_on_exit = true' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
           echo 'export/android/release_keystore = "/root/release.keystore"' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
-          echo 'export/android/release_keystore_user = "${{ secrets.RELEASE_KEYSTORE_PASS }}"' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
-          echo 'export/android/release_keystore_pass = "android"' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
+          echo 'export/android/release_keystore_user = "${{ secrets.RELEASE_KEYSTORE_USER }}"' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
+          echo 'export/android/release_keystore_pass = "${{ secrets.RELEASE_KEYSTORE_PASS }}"' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
       
-      - name: Prepare keystore
-        run: |
-          echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 -d > /root/release.keystore
-
       - name: Android Build
         # env:
         #   GODOT_ANDROID_KEYSTORE_RELEASE_PATH: /root/release.keystore
