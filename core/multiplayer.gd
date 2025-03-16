@@ -79,14 +79,14 @@ func get_connected_players() -> Dictionary[int, PlayerPeer]:
 	return _connected_players.duplicate()
 
 func _register_player(peer_id: int):
-	Logger.debug("_register_player: ", { peer_id = peer_id });
+	Logger.info("player connected: ", { peer_id = peer_id });
 	var player = PlayerPeer.new(peer_id);
 	_connected_players[peer_id] = player;
 	
 	on_player_connected.emit(player);
 	
 func _remove_player(peer_id: int):
-	Logger.debug("_remove_player: ", { peer_id = peer_id });
+	Logger.info("player disconnected: ", { peer_id = peer_id });
 	var player_to_remove = _connected_players.get(peer_id)
 	_connected_players.erase(peer_id);
 	
