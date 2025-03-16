@@ -181,7 +181,7 @@ jobs:
         id: cache-android-sdk
         uses: actions/cache@v4
         with:
-          key: ${{ runner.os }}-android-sdk-${GODOT_VERSION}
+          key: ${{ runner.os }}-android-sdk-${{ env.GODOT_VERSION }}
           path: |
             ~/.android
             ~/.sdk
