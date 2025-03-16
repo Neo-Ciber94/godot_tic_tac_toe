@@ -42,7 +42,7 @@ jobs:
           retention-days: 7
           overwrite: true
   
-  export-linux:
+  export-linux-server:
     name: Linux Server Build
     runs-on: ubuntu-22.04
     container:
@@ -151,6 +151,7 @@ jobs:
             retention-days: 7
             overwrite: true
   
+  # Export android
   export-android:
     name: Android Build
     runs-on: ubuntu-22.04
@@ -279,3 +280,57 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4 
+
+
+  # Create release
+  create-or-update-release:
+    runs-on: ubuntu-latest
+    needs: [export-windows, export-linux-server, export-android]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Read version from version.txt
+        id: read-version
+        run: |
+          VERSION=$(cat version.txt | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Check if release exists
+        id: check-release
+        run: |
+          TAG_NAME=${{ env.VERSION }}
+          # Check if the release already exists using gh CLI
+          RELEASE_EXISTS=$(gh release view $TAG_NAME --json id --jq '.id // empty')
+          echo "RELEASE_EXISTS=$RELEASE_EXISTS" >> $GITHUB_ENV
+
+      - name: Create release if it doesn't exist
+        id: create-release
+        run: |
+          if [ -z "${{ env.RELEASE_EXISTS }}" ]; then
+            echo "Release not found. Creating a new one."
+            gh release create ${{ env.VERSION }} --title "TicTacToe ${{ env.VERSION }}"
+          else
+            echo "Release exists. Skipping creation."
+          fi
+
+      - name: Generate Artifact Name Tag
+        run: echo "ARTIFACT_NAME_TAG=$(date +'%Y%m%d')" >> $GITHUB_ENV
+
+      - name: Upload Windows Artifacts
+        uses: actions/upload-release-asset@v1
+        with:
+          asset_path: build/windows
+          asset_name: tictactoe-win-build-${{ env.ARTIFACT_NAME_TAG }}
+          asset_content_type: application/zip
+
+      - name: Upload Linux Server Artifacts
+        uses: actions/upload-release-asset@v1
+        with:
+          asset_path: build/linux
+          asset_name: tictactoe-linux-server-build-${{ env.ARTIFACT_NAME_TAG }}
+          asset_content_type: application/zip
+
+      - name: Upload Android Artifacts
+        uses: actions/upload-release-asset@v1
+        with:
+          asset_path: build/android
+          asset_name: tictactoe-android-build-${{ env.ARTIFACT_NAME_TAG }}.apk
