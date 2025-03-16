@@ -44,6 +44,8 @@ jobs:
 
       - name: Update Release Assets
         continue-on-error: true
+        permissions:
+          contents: write
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -62,7 +64,6 @@ jobs:
           echo "Uploading ${{ env.EXPORT_NAME }}-windows.zip to release $VERSION"
           gh release upload $VERSION ${{ env.EXPORT_NAME }}-windows.zip --clobber
           
-
   export-linux-server:
     name: Linux Server Build
     runs-on: ubuntu-22.04
