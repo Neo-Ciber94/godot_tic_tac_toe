@@ -5,6 +5,10 @@ extends Control
 @onready var play_online_btn: Button = $Menu/PlayOnlineButton;
 
 func _ready():
+	if OS.has_feature("web"):
+		play_online_btn.disabled = true;
+		play_online_btn.tooltip_text = "Online is not feature on web"
+	
 	play_local_btn.pressed.connect(_on_play_local)
 	play_cpu_menu.get_popup().id_pressed.connect(_on_play_vs_cpu)
 	play_online_btn.pressed.connect(_on_play_online)

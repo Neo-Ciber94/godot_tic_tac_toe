@@ -2,6 +2,7 @@ FROM barichello/godot-ci:4.4 as base
 
 WORKDIR /source
 COPY . ./
+RUN mkdir -p build/linux
 RUN godot --headless --verbose --export-release "Linux Server" "./build/linux/tictactoe-server"
 
 FROM ubuntu:24.04 as runner
