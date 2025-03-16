@@ -67,6 +67,8 @@ jobs:
   export-linux-server:
     name: Linux Server Build
     runs-on: ubuntu-22.04
+    permissions:
+      contents: write # permission required to update the release    
     container:
       image: barichello/godot-ci:4.4
     steps:
@@ -197,6 +199,8 @@ jobs:
   export-android:
     name: Android Build
     runs-on: ubuntu-22.04
+    permissions:
+      contents: write # permission required to update the release
     container:
       image: barichello/godot-ci:4.4
     steps:
