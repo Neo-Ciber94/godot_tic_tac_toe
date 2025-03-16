@@ -288,8 +288,8 @@ jobs:
           # Get the version from version.txt
           VERSION=$(cat version.txt | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
 
-          echo "Uploading ./build/android/${{ env.EXPORT_NAME }}.apk to release $VERSION"
-          gh release upload $VERSION ./build/android/${{ env.EXPORT_NAME }}.apk --clobber
+          echo "Uploading ./build/android/${{ env.EXPORT_NAME }}-android.apk to release $VERSION"
+          gh release upload $VERSION ./build/android/${{ env.EXPORT_NAME }}-android.apk --clobber
 
   # Export web
   export-web:
