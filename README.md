@@ -53,6 +53,6 @@ docker run -dp 7000:7000/udp tictactoe-server
 - [ ] Deploy dedicated server
 - [x] Web build
 - [x] Windows build
-- [ ] Android build
+- [x] Android build
 - [x] Add icons
 - [x] Add dockerfile 
