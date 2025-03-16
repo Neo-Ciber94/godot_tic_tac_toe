@@ -11,6 +11,8 @@ jobs:
   export-windows:
     name: Windows Build
     runs-on: ubuntu-22.04
+    permissions:
+      contents: write # permission required to update the release
     container:
       image: barichello/godot-ci:4.4
     steps:
@@ -44,8 +46,6 @@ jobs:
 
       - name: Update Release Assets
         continue-on-error: true
-        permissions:
-          contents: write
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
