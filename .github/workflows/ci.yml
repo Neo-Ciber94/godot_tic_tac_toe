@@ -30,7 +30,7 @@ jobs:
           EXPORT_DIR="$(readlink -f build)"
           cd $PROJECT_PATH
           godot --headless --verbose --export-release "Windows Desktop" "$EXPORT_DIR/windows/$EXPORT_NAME.exe"
-      
+
       - name: Generate Artifact Name
         run: echo "ARTIFACT_NAME=tictactoe-win-build-$(date +'%Y%m%d')" >> $GITHUB_ENV
 
@@ -41,7 +41,7 @@ jobs:
           path: build/windows
           retention-days: 7
           overwrite: true
-  
+
   export-linux-server:
     name: Linux Server Build
     runs-on: ubuntu-22.04
@@ -62,7 +62,7 @@ jobs:
           EXPORT_DIR="$(readlink -f build)"
           cd $PROJECT_PATH
           godot --headless --verbose --export-release "Linux Server" "$EXPORT_DIR/linux/$EXPORT_NAME-server"
-          
+
       - name: Generate Artifact Name
         run: echo "ARTIFACT_NAME=tictactoe-server-linux-build-$(date +'%Y%m%d')" >> $GITHUB_ENV
 
@@ -76,81 +76,81 @@ jobs:
 
   # Export debug android
   export-android-debug:
-      name: Android Debug Build
-      runs-on: ubuntu-22.04
-      if: false
-      container:
-        image: barichello/godot-ci:4.4
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-          with:
-            lfs: true
+    name: Android Debug Build
+    runs-on: ubuntu-22.04
+    if: false
+    container:
+      image: barichello/godot-ci:4.4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
 
-        - name: Setup Export Templates
-          run: |
-            mkdir -v -p ~/.local/share/godot/export_templates/
-            mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+      - name: Setup Export Templates
+        run: |
+          mkdir -v -p ~/.local/share/godot/export_templates/
+          mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
 
-        - name: Setup JDK
-          uses: actions/setup-java@v4
-          with:
-            distribution: temurin
-            java-version: 17
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
 
-        - name: Setup Android SDK
-          uses: android-actions/setup-android@v3
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
-        - name: Cache Android SDK
-          id: cache-android-sdk
-          uses: actions/cache@v4
-          with:
-            key: ${{ runner.os }}-android-sdk-${GODOT_VERSION}
-            path: |
-              ~/.android
-              ~/.sdk
+      - name: Cache Android SDK
+        id: cache-android-sdk
+        uses: actions/cache@v4
+        with:
+          key: ${{ runner.os }}-android-sdk-${GODOT_VERSION}
+          path: |
+            ~/.android
+            ~/.sdk
 
-        - name: Install Android SDK Dependencies
-          if: steps.cache-android-sdk.outputs.cache-hit != 'true'
-          run: sdkmanager "platform-tools" "build-tools;34.0.0" "platforms;android-34" "cmdline-tools;latest" "cmake;3.10.2.4988404" "ndk;23.2.8568313"
-          
-        - name: Generate debug keystore
-          run: |
-            keytool -keyalg RSA -genkeypair -alias androiddebugkey -keypass android -keystore debug.keystore -storepass android -dname "CN=Android Debug,O=Android,C=US" -validity 9999
-            mv debug.keystore /root/debug.keystore
+      - name: Install Android SDK Dependencies
+        if: steps.cache-android-sdk.outputs.cache-hit != 'true'
+        run: sdkmanager "platform-tools" "build-tools;34.0.0" "platforms;android-34" "cmdline-tools;latest" "cmake;3.10.2.4988404" "ndk;23.2.8568313"
 
-        - name: Set up Godot editor settings
-          run: |
-            mkdir -p ~/.config/godot/
-            echo '[gd_resource type="EditorSettings" format=3]' > ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
-            echo '[resource]' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
-            echo 'export/android/java_sdk_path = "/usr/lib/jvm/java-17-openjdk-amd64"' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
-            echo 'export/android/android_sdk_path = "/usr/lib/android-sdk"' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
-            echo 'export/android/debug_keystore = "/root/debug.keystore"' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
-            echo 'export/android/debug_keystore_user = "androiddebugkey"' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
-            echo 'export/android/debug_keystore_pass = "android"' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
-            echo 'export/android/force_system_user = false' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
-            echo 'export/android/timestamping_authority_url = ""' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
-            echo 'export/android/shutdown_adb_on_exit = true' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
+      - name: Generate debug keystore
+        run: |
+          keytool -keyalg RSA -genkeypair -alias androiddebugkey -keypass android -keystore debug.keystore -storepass android -dname "CN=Android Debug,O=Android,C=US" -validity 9999
+          mv debug.keystore /root/debug.keystore
 
-        - name: Android Debug Build
-          run: |
-            mkdir -v -p build/android
-            EXPORT_DIR="$(readlink -f build)"
-            cd $PROJECT_PATH
-            godot --headless --verbose --export-debug "Android" "$EXPORT_DIR/android/$EXPORT_NAME.apk"
+      - name: Set up Godot editor settings
+        run: |
+          mkdir -p ~/.config/godot/
+          echo '[gd_resource type="EditorSettings" format=3]' > ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
+          echo '[resource]' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
+          echo 'export/android/java_sdk_path = "/usr/lib/jvm/java-17-openjdk-amd64"' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
+          echo 'export/android/android_sdk_path = "/usr/lib/android-sdk"' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
+          echo 'export/android/debug_keystore = "/root/debug.keystore"' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
+          echo 'export/android/debug_keystore_user = "androiddebugkey"' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
+          echo 'export/android/debug_keystore_pass = "android"' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
+          echo 'export/android/force_system_user = false' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
+          echo 'export/android/timestamping_authority_url = ""' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
+          echo 'export/android/shutdown_adb_on_exit = true' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
 
-        - name: Generate Artifact Name
-          run: echo "ARTIFACT_NAME=tictactoe-android-debug-build-$(date +'%Y%m%d')" >> $GITHUB_ENV
+      - name: Android Debug Build
+        run: |
+          mkdir -v -p build/android
+          EXPORT_DIR="$(readlink -f build)"
+          cd $PROJECT_PATH
+          godot --headless --verbose --export-debug "Android" "$EXPORT_DIR/android/$EXPORT_NAME.apk"
 
-        - name: Upload Artifact
-          uses: actions/upload-artifact@v4
-          with:
-            name: ${{ env.ARTIFACT_NAME }}
-            path: build/android
-            retention-days: 7
-            overwrite: true
-  
+      - name: Generate Artifact Name
+        run: echo "ARTIFACT_NAME=tictactoe-android-debug-build-$(date +'%Y%m%d')" >> $GITHUB_ENV
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: build/android
+          retention-days: 7
+          overwrite: true
+
   # Export android
   export-android:
     name: Android Build
@@ -200,7 +200,7 @@ jobs:
           echo 'export/android/force_system_user = false' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
           echo 'export/android/timestamping_authority_url = ""' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
           echo 'export/android/shutdown_adb_on_exit = true' >> ~/.config/godot/editor_settings-${GODOT_VERSION}.tres
-      
+
       - name: Prepare keystore
         run: |
           echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 -d > /root/release.keystore
@@ -230,7 +230,7 @@ jobs:
   # Export web
   export-web:
     name: Web Build
-    runs-on: ubuntu-22.04 
+    runs-on: ubuntu-22.04
     container:
       image: barichello/godot-ci:4.4
     steps:
@@ -264,13 +264,13 @@ jobs:
         id: web-artifacts
         with:
           path: build/web
-    
+
   # Deploy Web
   deploy-web:
     name: Web Deploy
     needs: export-web
     permissions:
-      pages: write  
+      pages: write
       id-token: write
     environment:
       name: github-pages
@@ -279,53 +279,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4 
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Read version from version.txt
-        id: read-version
-        run: |
-          VERSION=$(cat version.txt | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-      - name: Check if release exists
-        id: check-release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          TAG_NAME=${{ env.VERSION }}
-          # Check if the release already exists using gh CLI
-          RELEASE_EXISTS=$(gh release view $TAG_NAME --json id --jq '.id // empty')
-          echo "RELEASE_EXISTS=$RELEASE_EXISTS" >> $GITHUB_ENV
-
-      - name: Create release if it doesn't exist
-        id: create-release
-        run: |
-          if [ -z "${{ env.RELEASE_EXISTS }}" ]; then
-            echo "Release not found. Creating a new one."
-            gh release create ${{ env.VERSION }} --title "TicTacToe ${{ env.VERSION }}"
-          else
-            echo "Release exists. Skipping creation."
-          fi
-
-      - name: Generate Artifact Name Tag
-        run: echo "ARTIFACT_NAME_TAG=$(date +'%Y%m%d')" >> $GITHUB_ENV
-
-      - name: Upload Windows Artifacts
-        uses: actions/upload-release-asset@v1
-        with:
-          asset_path: build/windows
-          asset_name: tictactoe-win-build-${{ env.ARTIFACT_NAME_TAG }}
-          asset_content_type: application/zip
-
-      - name: Upload Linux Server Artifacts
-        uses: actions/upload-release-asset@v1
-        with:
-          asset_path: build/linux
-          asset_name: tictactoe-linux-server-build-${{ env.ARTIFACT_NAME_TAG }}
-          asset_content_type: application/zip
-
-      - name: Upload Android Artifacts
-        uses: actions/upload-release-asset@v1
-        with:
-          asset_path: build/android
-          asset_name: tictactoe-android-build-${{ env.ARTIFACT_NAME_TAG }}.apk
+        uses: actions/deploy-pages@v4
