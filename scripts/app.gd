@@ -20,7 +20,7 @@ static func get_turn_timeout_seconds() -> int:
 
 static var server_host: String:
 	get:
-		return Env.get_string("HOST", "127.0.0.1")
+		return Env.get_string("HOST", "host.docker.internal")
 	
 static var server_port: int:
 	get:
