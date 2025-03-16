@@ -52,7 +52,7 @@ jobs:
           apt install gh
           
           # Mark repo as safe
-          run: git config --global --add safe.directory /__w/godot_tic_tac_toe/godot_tic_tac_toe
+          git config --global --add safe.directory /__w/godot_tic_tac_toe/godot_tic_tac_toe
 
           # Get the version from version.txt
           VERSION=$(cat version.txt | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
