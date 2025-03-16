@@ -47,10 +47,17 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          # Install Github CLI
           apt update
           apt install gh
           
+          # Mark repo as safe
+          run: git config --global --add safe.directory /__w/godot_tic_tac_toe/godot_tic_tac_toe
+
+          # Get the version from version.txt
           VERSION=$(cat version.txt | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+
+          # Zip and upload the windows build
           zip -r ${{ env.EXPORT_NAME }}-windows.zip build/windows
           echo "Uploading ${{ env.EXPORT_NAME }}-windows.zip to release $VERSION"
           gh release upload $VERSION ${{ env.EXPORT_NAME }}-windows.zip --clobber
